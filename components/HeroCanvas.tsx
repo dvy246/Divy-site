@@ -49,26 +49,6 @@ function AnimatedLights() {
   );
 }
 
-/* === Background Set Dressing (Terracotta Refraction Target) === */
-function SetDressing({ baseX, baseY, baseZ, isMobile }: { baseX: number; baseY: number; baseZ: number; isMobile: boolean }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    // Slow drift matching the drop but out of phase
-    const elapsed = state.clock.getElapsedTime();
-    meshRef.current.position.x = baseX + Math.sin(elapsed * 0.4) * 0.05;
-    meshRef.current.position.y = baseY + Math.cos(elapsed * 0.5) * 0.05;
-  });
-
-  return (
-    <mesh ref={meshRef} position={[baseX, baseY, baseZ - 0.8]} scale={isMobile ? 0.35 : 0.55}>
-      <ringGeometry args={[0, 0.75, 64]} />
-      <meshBasicMaterial color="#B5502D" transparent opacity={0.08} depthWrite={false} />
-    </mesh>
-  );
-}
-
 interface AccentProps {
   baseX: number;
   baseY: number;
@@ -187,7 +167,7 @@ function AccentElement({
         <sphereGeometry args={[1, 64, 64]} />
         <MeshTransmissionMaterial
           ref={materialRef}
-          color="#F6DEC9" // Warm, luxurious terracotta-champagne tint
+          color="#F6DEC9" // Warm, luxurious champagne-terracotta tint
           roughness={0.02} // Super polished look
           transmission={0.93} // Blend refraction and champagne-warm background tint
           thickness={isMobile ? 0.7 : 1.6} // Thinner on mobile for faster render passes
@@ -230,28 +210,52 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
 
   const vWidth = viewport.width;
 
-  // Position exactly one gemstone completely clear of the text block
-  const dropConfig = isMobile
-    ? {
-        baseX: 0, // centered on mobile
-        baseY: 2.3, // high up, completely above category label and title text
-        baseZ: 0.5,
-        scale: [0.2, 0.33, 0.2] as [number, number, number], // Stretched teardrop
-        parallax: 1.0,
-        floatSpeed: 0.9,
-        floatAmp: 0.06,
-        rotSpeed: [0.1, 0.2, 0.05] as [number, number, number],
-      }
-    : {
-        baseX: vWidth * 0.34, // spacious right margin on desktop, away from centered text container
-        baseY: 0.1,
-        baseZ: 0.5,
-        scale: [0.34, 0.56, 0.34] as [number, number, number], // stretched premium teardrop
-        parallax: 1.0,
-        floatSpeed: 1.1,
-        floatAmp: 0.08,
-        rotSpeed: [0.15, 0.25, 0.05] as [number, number, number],
-      };
+  // Symmetrical layout of two gemstones to frame "Divy Yadav" completely clear of the text block
+  const accentsList = isMobile
+    ? [
+        {
+          baseX: -vWidth * 0.35, // left corner on mobile
+          baseY: 2.2, // high up, completely above text
+          baseZ: 0.5,
+          scale: [0.2, 0.33, 0.2] as [number, number, number], // Stretched teardrop
+          parallax: 1.0,
+          floatSpeed: 0.9,
+          floatAmp: 0.06,
+          rotSpeed: [0.1, 0.2, 0.05] as [number, number, number],
+        },
+        {
+          baseX: vWidth * 0.35, // right corner on mobile
+          baseY: 2.2, // high up, completely above text
+          baseZ: 0.5,
+          scale: [0.2, 0.33, 0.2] as [number, number, number], // Stretched teardrop
+          parallax: 1.02,
+          floatSpeed: 1.15,
+          floatAmp: 0.06,
+          rotSpeed: [-0.08, 0.18, 0.07] as [number, number, number],
+        },
+      ]
+    : [
+        {
+          baseX: -vWidth * 0.34, // spacious left margin on desktop, away from centered text container
+          baseY: 0.1,
+          baseZ: 0.5,
+          scale: [0.34, 0.56, 0.34] as [number, number, number], // stretched premium teardrop
+          parallax: 1.0,
+          floatSpeed: 1.0,
+          floatAmp: 0.08,
+          rotSpeed: [0.12, 0.22, 0.07] as [number, number, number],
+        },
+        {
+          baseX: vWidth * 0.34, // spacious right margin on desktop, away from centered text container
+          baseY: 0.1,
+          baseZ: 0.5,
+          scale: [0.34, 0.56, 0.34] as [number, number, number], // stretched premium teardrop
+          parallax: 1.02,
+          floatSpeed: 1.25,
+          floatAmp: 0.08,
+          rotSpeed: [0.15, -0.25, 0.05] as [number, number, number],
+        },
+      ];
 
   return (
     <group>
@@ -262,36 +266,34 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
         rotation={[Math.PI / 2, 0, 0]} 
       />
 
-      {/* 2. Soft terracotta graphic disk behind the gem so it refracts a gorgeous terracotta shape */}
-      <SetDressing
-        baseX={dropConfig.baseX}
-        baseY={dropConfig.baseY}
-        baseZ={dropConfig.baseZ}
-        isMobile={isMobile}
-      />
+      {/* 2. Symmetrical liquid crystal gems */}
+      {accentsList.map((item, idx) => (
+        <AccentElement
+          key={`gem-${idx}`}
+          baseX={item.baseX}
+          baseY={item.baseY}
+          baseZ={item.baseZ}
+          scale={item.scale}
+          parallax={item.parallax}
+          floatSpeed={item.floatSpeed}
+          floatAmp={item.floatAmp}
+          rotSpeed={item.rotSpeed}
+          isMobile={isMobile}
+          mouseRef={mouse}
+        />
+      ))}
 
-      {/* 3. Signature liquid crystal gem */}
-      <AccentElement
-        baseX={dropConfig.baseX}
-        baseY={dropConfig.baseY}
-        baseZ={dropConfig.baseZ}
-        scale={dropConfig.scale}
-        parallax={dropConfig.parallax}
-        floatSpeed={dropConfig.floatSpeed}
-        floatAmp={dropConfig.floatAmp}
-        rotSpeed={dropConfig.rotSpeed}
-        isMobile={isMobile}
-        mouseRef={mouse}
-      />
-
-      {/* 4. Soft Contact Shadows below the crystal space */}
-      <ContactShadows
-        position={[dropConfig.baseX, dropConfig.baseY - 1.6, dropConfig.baseZ - 1.0]}
-        opacity={isMobile ? 0.25 : 0.4}
-        scale={isMobile ? 3.0 : 4.5}
-        blur={isMobile ? 1.5 : 2.2}
-        far={3.0}
-      />
+      {/* 3. Soft Contact Shadows below each crystal space */}
+      {accentsList.map((item, idx) => (
+        <ContactShadows
+          key={`shadow-${idx}`}
+          position={[item.baseX, item.baseY - 1.6, item.baseZ - 1.0]}
+          opacity={isMobile ? 0.25 : 0.4}
+          scale={isMobile ? 3.0 : 4.5}
+          blur={isMobile ? 1.5 : 2.2}
+          far={3.0}
+        />
+      ))}
     </group>
   );
 }
