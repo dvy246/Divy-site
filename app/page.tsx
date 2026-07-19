@@ -8,6 +8,8 @@ import { RoughNotation } from 'react-rough-notation';
 import { motion } from 'framer-motion';
 import ArticleCard from '@/components/ArticleCard';
 import SketchDivider from '@/components/SketchDivider';
+import ScrollReveal3D from '@/components/ScrollReveal3D';
+import Magnetic from '@/components/Magnetic';
 import { BIO } from '@/lib/bio';
 import articles from '@/data/articles.json';
 
@@ -183,7 +185,7 @@ export default function HomePage() {
     return () => { clearTimeout(t); window.removeEventListener('resize', check); };
   }, []);
 
-  /* GSAP scroll triggers */
+  /* GSAP scroll triggers for page-specific elements */
   useEffect(() => {
     if (!mounted) return;
     const init = async () => {
@@ -191,89 +193,17 @@ export default function HomePage() {
       const { ScrollTrigger } = await import('gsap/ScrollTrigger');
       gsap.registerPlugin(ScrollTrigger);
 
-      // Bio text swing-in
-      gsap.fromTo('.bio-section > div > div:first-child', 
-        { 
-          opacity: 0, 
-          y: 90, 
-          rotationX: 18, 
-          scale: 0.9, 
-          transformOrigin: 'top center' 
-        }, 
-        {
-          opacity: 1, 
-          y: 0, 
-          rotationX: 0, 
-          scale: 1, 
-          duration: 1.2, 
-          ease: 'power4.out',
-          scrollTrigger: { trigger: '.bio-section', start: 'top 85%' },
+      // Parallax scroll on marquee text strip or background elements if needed
+      gsap.to('.marquee-inner', {
+        xPercent: -15,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.bio-section',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 0.8,
         }
-      );
-
-      // Stats counter 3D pop
-      gsap.fromTo('.stat-item', 
-        { 
-          opacity: 0, 
-          y: 60, 
-          rotationX: 22, 
-          scale: 0.85, 
-          transformOrigin: 'top center' 
-        }, 
-        {
-          opacity: 1, 
-          y: 0, 
-          rotationX: 0, 
-          scale: 1, 
-          duration: 0.9, 
-          stagger: 0.12, 
-          ease: 'power4.out',
-          scrollTrigger: { trigger: '.stats-grid', start: 'top 82%' },
-        }
-      );
-
-      // Article cards 3D swing-in stagger
-      gsap.fromTo('.article-card-item', 
-        { 
-          opacity: 0, 
-          y: 100, 
-          rotationX: 25, 
-          rotationY: -8, 
-          scale: 0.9, 
-          transformOrigin: 'top center' 
-        }, 
-        {
-          opacity: 1, 
-          y: 0, 
-          rotationX: 0, 
-          rotationY: 0, 
-          scale: 1, 
-          duration: 1.2, 
-          stagger: 0.16, 
-          ease: 'power4.out',
-          scrollTrigger: { trigger: '.articles-preview', start: 'top 82%' },
-        }
-      );
-
-      // CTA section 3D swing-in
-      gsap.fromTo('.cta-section', 
-        { 
-          opacity: 0, 
-          y: 80, 
-          rotationX: 16, 
-          scale: 0.96, 
-          transformOrigin: 'top center' 
-        }, 
-        {
-          opacity: 1, 
-          y: 0, 
-          rotationX: 0, 
-          scale: 1, 
-          duration: 1.1, 
-          ease: 'power4.out',
-          scrollTrigger: { trigger: '.cta-section', start: 'top 85%' },
-        }
-      );
+      });
     };
     init();
   }, [mounted]);
@@ -346,12 +276,12 @@ export default function HomePage() {
             {/* Main heading - cinematic letter reveal */}
             <h1
               style={{
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-body)',
                 fontSize: 'clamp(3.5rem, 9vw, 9rem)',
-                fontWeight: 700,
+                fontWeight: 800,
                 fontStyle: 'normal',
                 lineHeight: 1.0,
-                letterSpacing: '0.02em',
+                letterSpacing: '-0.01em',
                 color: '#1b1c1c',
                 marginBottom: '1.75rem',
                 overflow: 'hidden',
@@ -412,7 +342,7 @@ export default function HomePage() {
               {BIO}
             </p>
 
-            {/* Social links */}
+            {/* Social links with Magnetic wrappers */}
             <div
               style={{
                 display: 'flex',
@@ -420,34 +350,37 @@ export default function HomePage() {
                 flexWrap: 'wrap',
                 animation: 'fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 1.05s both',
                 justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
               {SOCIAL_LINKS.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover-underline"
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '10px',
-                    letterSpacing: '0.2em',
-                    textTransform: 'uppercase',
-                    fontWeight: 600,
-                    color: '#1b1c1c',
-                    textDecoration: 'none',
-                    transition: 'color 160ms ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.color = '#B5502D';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.color = '#1b1c1c';
-                  }}
-                >
-                  {link.label}
-                </a>
+                <Magnetic key={link.label} range={30} strength={0.35}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover-underline"
+                    style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '10px',
+                      letterSpacing: '0.2em',
+                      textTransform: 'uppercase',
+                      fontWeight: 600,
+                      color: '#1b1c1c',
+                      textDecoration: 'none',
+                      transition: 'color 160ms ease',
+                      display: 'block',
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLAnchorElement).style.color = '#B5502D';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLAnchorElement).style.color = '#1b1c1c';
+                    }}
+                  >
+                    {link.label}
+                  </a>
+                </Magnetic>
               ))}
             </div>
           </div>
@@ -546,125 +479,130 @@ export default function HomePage() {
       <section
         ref={bioRef}
         className="bio-section"
-        style={{ padding: '7rem 5vw', perspective: '1200px' }}
+        style={{ padding: '7rem 5vw', perspective: '1200px', overflow: 'visible' }}
       >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-            gap: '5rem',
-            alignItems: 'start',
-          }}
-        >
-          {/* Left text */}
-          <div>
-            <p className="label-caps" style={{ marginBottom: '1rem' }}>About</p>
-            <h2
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
-                fontWeight: 700,
-                color: '#1b1c1c',
-                lineHeight: 1.15,
-                marginBottom: '1.75rem',
-              }}
-            >
-              Building at the intersection of{' '}
-              <span style={{ fontStyle: 'italic', color: '#B5502D' }}>
-                AI and communication
-              </span>
-            </h2>
-            <p
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '1rem',
-                lineHeight: 1.85,
-                color: '#444748',
-                marginBottom: '2rem',
-              }}
-            >
-              From RAG pipelines to agentic systems - I build and write about the
-              technical substrate of modern AI applications. Every project is a proof
-              of concept; every article is a blueprint that 2,000+ engineers read weekly.
-            </p>
-            <Link
-              href="/articles"
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '10px',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                fontWeight: 600,
-                color: '#1b1c1c',
-                borderBottom: '1px solid #1b1c1c',
-                paddingBottom: '3px',
-                transition: 'color 160ms ease, border-color 160ms ease',
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget;
-                el.style.color = '#B5502D';
-                el.style.borderColor = '#B5502D';
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget;
-                el.style.color = '#1b1c1c';
-                el.style.borderColor = '#1b1c1c';
-              }}
-            >
-              Read my writing →
-            </Link>
-          </div>
-
-          {/* Right stats grid */}
+        <ScrollReveal3D>
           <div
-            className="stats-grid"
-            ref={statsRef}
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '1px',
-              backgroundColor: '#1b1c1c',
-              border: '1px solid #1b1c1c',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+              gap: '5rem',
+              alignItems: 'start',
             }}
           >
-            {STATS.map((stat, i) => (
-              <div
-                key={stat.label}
-                className="stat-item"
+            {/* Left text */}
+            <div>
+              <p className="label-caps" style={{ marginBottom: '1rem' }}>About</p>
+              <h2
                 style={{
-                  backgroundColor: i % 2 === 0 ? '#F5F5DC' : '#E8E8D0',
-                  padding: '2.5rem 2rem',
-                  textAlign: 'center',
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
+                  fontWeight: 700,
+                  color: '#1b1c1c',
+                  lineHeight: 1.15,
+                  marginBottom: '1.75rem',
                 }}
               >
-                <p
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: 'clamp(2rem, 4vw, 3rem)',
-                    fontWeight: 700,
-                    color: '#1b1c1c',
-                    lineHeight: 1,
-                    marginBottom: '0.5rem',
-                  }}
-                >
-                  {stat.num}
-                </p>
-                <p
+                Building at the intersection of{' '}
+                <span style={{ fontStyle: 'italic', color: '#B5502D' }}>
+                  AI and communication
+                </span>
+              </h2>
+              <p
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '1rem',
+                  lineHeight: 1.85,
+                  color: '#444748',
+                  marginBottom: '2.5rem',
+                }}
+              >
+                From RAG pipelines to agentic systems - I build and write about the
+                technical substrate of modern AI applications. Every project is a proof
+                of concept; every article is a blueprint that 2,000+ engineers read weekly.
+              </p>
+              <Magnetic range={36} strength={0.3}>
+                <Link
+                  href="/articles"
                   style={{
                     fontFamily: 'var(--font-body)',
                     fontSize: '10px',
-                    letterSpacing: '0.15em',
+                    letterSpacing: '0.2em',
                     textTransform: 'uppercase',
-                    color: '#747878',
                     fontWeight: 600,
+                    color: '#1b1c1c',
+                    borderBottom: '1px solid #1b1c1c',
+                    paddingBottom: '3px',
+                    transition: 'color 160ms ease, border-color 160ms ease',
+                    display: 'inline-block',
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget;
+                    el.style.color = '#B5502D';
+                    el.style.borderColor = '#B5502D';
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget;
+                    el.style.color = '#1b1c1c';
+                    el.style.borderColor = '#1b1c1c';
                   }}
                 >
-                  {stat.label}
-                </p>
-              </div>
-            ))}
+                  Read my writing →
+                </Link>
+              </Magnetic>
+            </div>
+
+            {/* Right stats grid */}
+            <div
+              className="stats-grid"
+              ref={statsRef}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '1px',
+                backgroundColor: '#1b1c1c',
+                border: '1px solid #1b1c1c',
+              }}
+            >
+              {STATS.map((stat, i) => (
+                <div
+                  key={stat.label}
+                  className="stat-item"
+                  style={{
+                    backgroundColor: i % 2 === 0 ? '#F5F5DC' : '#E8E8D0',
+                    padding: '2.5rem 2rem',
+                    textAlign: 'center',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: 'clamp(2rem, 4vw, 3rem)',
+                      fontWeight: 700,
+                      color: '#1b1c1c',
+                      lineHeight: 1,
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    {stat.num}
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '10px',
+                      letterSpacing: '0.15em',
+                      textTransform: 'uppercase',
+                      color: '#747878',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </ScrollReveal3D>
       </section>
 
       <SketchDivider />
@@ -672,7 +610,7 @@ export default function HomePage() {
       {/* --- LATEST WRITING --- */}
       <section
         className="articles-preview"
-        style={{ padding: '7rem 5vw', perspective: '1200px' }}
+        style={{ padding: '7rem 5vw', perspective: '1200px', overflow: 'visible' }}
       >
         {/* Section header */}
         <div
@@ -700,24 +638,27 @@ export default function HomePage() {
               From the studio
             </h2>
           </div>
-          <Link
-            href="/articles"
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '10px',
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              color: '#B5502D',
-              borderBottom: '1px solid #B5502D',
-              paddingBottom: '3px',
-            }}
-          >
-            All Articles →
-          </Link>
+          <Magnetic range={30} strength={0.3}>
+            <Link
+              href="/articles"
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '10px',
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                color: '#B5502D',
+                borderBottom: '1px solid #B5502D',
+                paddingBottom: '3px',
+                display: 'inline-block',
+              }}
+            >
+              All Articles →
+            </Link>
+          </Magnetic>
         </div>
 
-        {/* Article cards */}
+        {/* Article cards wrapped in 3D reveals */}
         <div
           style={{
             display: 'grid',
@@ -726,9 +667,11 @@ export default function HomePage() {
             overflow: 'visible',
           }}
         >
-          {articles.slice(0, 2).map((article) => (
+          {articles.slice(0, 2).map((article, idx) => (
             <div key={article.title} className="article-card-item" style={{ overflow: 'visible' }}>
-              <ArticleCard {...article} />
+              <ScrollReveal3D delay={idx * 0.08}>
+                <ArticleCard {...article} />
+              </ScrollReveal3D>
             </div>
           ))}
         </div>
@@ -741,74 +684,84 @@ export default function HomePage() {
         className="cta-section"
         style={{
           padding: '8rem 5vw',
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1fr auto',
-          gap: '3rem',
-          alignItems: 'center',
           borderTop: '1px solid rgba(27,28,28,0.08)',
           perspective: '1200px',
+          overflow: 'visible',
         }}
       >
-        <div>
-          <p className="label-caps" style={{ marginBottom: '1rem' }}>
-            Newsletter
-          </p>
-          <h2
+        <ScrollReveal3D>
+          <div
             style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2rem, 4vw, 3.25rem)',
-              fontWeight: 700,
-              color: '#1b1c1c',
-              lineHeight: 1.1,
-              marginBottom: '1rem',
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr auto',
+              gap: '3rem',
+              alignItems: 'center',
             }}
           >
-            AI Engineering{' '}
-            <span style={{ fontStyle: 'italic', color: '#B5502D' }}>
-              Simplified
-            </span>
-          </h2>
-          <p
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '1rem',
-              color: '#444748',
-              maxWidth: '420px',
-              lineHeight: 1.75,
-            }}
-          >
-            Weekly deep-dives on RAG, agents, and production AI engineering.
-            Join 2,000+ engineers who build.
-          </p>
-        </div>
+            <div>
+              <p className="label-caps" style={{ marginBottom: '1rem' }}>
+                Newsletter
+              </p>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(2rem, 4vw, 3.25rem)',
+                  fontWeight: 700,
+                  color: '#1b1c1c',
+                  lineHeight: 1.1,
+                  marginBottom: '1rem',
+                }}
+              >
+                AI Engineering{' '}
+                <span style={{ fontStyle: 'italic', color: '#B5502D' }}>
+                  Simplified
+                </span>
+              </h2>
+              <p
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '1rem',
+                  color: '#444748',
+                  maxWidth: '420px',
+                  lineHeight: 1.75,
+                }}
+              >
+                Weekly deep-dives on RAG, agents, and production AI engineering.
+                Join 2,000+ engineers who build.
+              </p>
+            </div>
 
-        <a
-          href="https://aiengsimplified.beehiiv.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-magnetic"
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '11px',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            fontWeight: 700,
-            color: '#F5F5DC',
-            backgroundColor: '#1b1c1c',
-            padding: '1.1rem 2.5rem',
-            display: 'inline-block',
-            whiteSpace: 'nowrap',
-            transition: 'background-color 180ms ease',
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#B5502D';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1b1c1c';
-          }}
-        >
-          Subscribe Free →
-        </a>
+            <Magnetic range={45} strength={0.35}>
+              <a
+                href="https://aiengsimplified.beehiiv.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-magnetic"
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '11px',
+                  letterSpacing: '0.2em',
+                  textTransform: 'uppercase',
+                  fontWeight: 700,
+                  color: '#F5F5DC',
+                  backgroundColor: '#1b1c1c',
+                  padding: '1.1rem 2.5rem',
+                  display: 'inline-block',
+                  whiteSpace: 'nowrap',
+                  transition: 'background-color 180ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#B5502D';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1b1c1c';
+                }}
+              >
+                Subscribe Free →
+              </a>
+            </Magnetic>
+          </div>
+        </ScrollReveal3D>
       </section>
     </>
   );

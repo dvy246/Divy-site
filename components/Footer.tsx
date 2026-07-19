@@ -81,7 +81,7 @@ export default function Footer() {
           <div>
             <p
               style={{
-                fontFamily: '"Playfair Display", Georgia, serif',
+                fontFamily: '"DM Sans", system-ui, sans-serif',
                 fontSize: '1.5rem',
                 fontWeight: 700,
                 color: '#f2f0f0',
