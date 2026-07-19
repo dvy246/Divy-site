@@ -98,8 +98,8 @@ function AccentElement({
     // 3. Proximity Interactive Reaction (warp & scale when cursor gets close)
     let proximityScale = 1.0;
     let proximityRoughness = type === 'lens' ? 0.01 : 0.02;
-    let proximityThickness = 1.5;
-    let proximityDistortion = 0.12;
+    let proximityThickness = isMobile ? 0.7 : 1.5;
+    let proximityDistortion = isMobile ? 0.04 : 0.12;
 
     if (!isMobile && mouseRef.current) {
       // Projected mouse coordinates at the depth of the element
@@ -141,7 +141,7 @@ function AccentElement({
     currentScaleFactor.current = THREE.MathUtils.lerp(currentScaleFactor.current, 1.0, 0.04);
     
     // Phase-shifted sine waves for organic squash/stretch wobble (simulating water surface tension wiggles)
-    const wobbleSpeed = 1.8;
+    const wobbleSpeed = 1.2;
     const wobbleAmp = 0.07;
     const wobbleX = 1.0 + Math.sin(elapsed * wobbleSpeed) * wobbleAmp;
     const wobbleY = 1.0 + Math.cos(elapsed * wobbleSpeed * 1.15) * wobbleAmp;
@@ -191,20 +191,21 @@ function AccentElement({
         {renderGeometry()}
         <MeshTransmissionMaterial
           ref={materialRef}
-          color="#faf8f5"
+          color="#FFFBF2"
           roughness={type === 'lens' ? 0.01 : 0.02} // Super polished look
-          transmission={1.0} // Fully transparent
-          thickness={1.5} // Thick, gorgeous refraction
+          transmission={0.93} // Blend refraction and diffuse champagne-warm background tint
+          thickness={isMobile ? 0.7 : 1.5} // Thinner on mobile for faster render passes
           ior={1.38} // Exact refraction of premium fluid
-          chromaticAberration={0.012} // Color separation at curves
-          anisotropicBlur={0.15}
-          distortion={0.12} // Warp of background
-          distortionScale={0.25}
+          chromaticAberration={isMobile ? 0.004 : 0.012} // Color separation at curves
+          anisotropicBlur={isMobile ? 0.0 : 0.15}
+          distortion={isMobile ? 0.04 : 0.12} // Warp of background
+          distortionScale={isMobile ? 0.1 : 0.25}
           temporalDistortion={0.0}
           backside={!isMobile} // Double-sided refraction (desktop only for performance)
           clearcoat={isMobile ? 0 : 1.0} // Extra reflective coating (desktop only)
           clearcoatRoughness={0.01}
-          samples={isMobile ? 4 : 8}
+          resolution={isMobile ? 128 : 512} // Substantially reduces mobile GPU buffer width for 60 FPS
+          samples={isMobile ? 2 : 8} // Fewer light sample taps on mobile
           transparent
         />
       </mesh>
@@ -259,10 +260,10 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
     ? [
         {
           type: 'droplet' as const,
-          baseX: -vWidth * 0.28,
-          baseY: 1.3,
+          baseX: -vWidth * 0.38,
+          baseY: 1.8,
           baseZ: 0.5,
-          scale: [0.15, 0.26, 0.15] as [number, number, number],
+          scale: [0.08, 0.15, 0.08] as [number, number, number],
           parallax: 1.0,
           floatSpeed: 1.0,
           floatAmp: 0.06,
@@ -270,10 +271,10 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
         },
         {
           type: 'disc' as const,
-          baseX: vWidth * 0.28,
-          baseY: -1.4,
+          baseX: vWidth * 0.38,
+          baseY: -1.8,
           baseZ: 0.8,
-          scale: [0.28, 0.28, 0.05] as [number, number, number],
+          scale: [0.16, 0.16, 0.03] as [number, number, number],
           parallax: 1.05,
           floatSpeed: 0.8,
           floatAmp: 0.08,
@@ -424,7 +425,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
         <directionalLight position={[0, 4, -5]} intensity={0.65} color="#B5502D" />
 
         {/* Studio HDRI environment for reflections */}
-        <Environment preset="studio" />
+        <Environment preset="sunset" />
 
         <FloatingGeometry isMobile={isMobile} />
       </Canvas>
