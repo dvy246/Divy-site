@@ -60,6 +60,7 @@ interface AccentProps {
   floatAmp: number;
   rotSpeed: [number, number, number];
   isMobile: boolean;
+  mouseRef: React.MutableRefObject<{ x: number; y: number; tx: number; ty: number }>;
 }
 
 /* === Individual Accent Element Component === */
@@ -74,8 +75,10 @@ function AccentElement({
   floatAmp,
   rotSpeed,
   isMobile,
+  mouseRef,
 }: AccentProps) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const materialRef = useRef<any>(null);
   const timeOffset = useRef(Math.random() * 100);
   const currentScaleFactor = useRef(0.001);
 
@@ -92,6 +95,35 @@ function AccentElement({
     const floatY = Math.sin(elapsed * floatSpeed) * floatAmp;
     const floatX = Math.cos(elapsed * floatSpeed * 0.8) * floatAmp * 0.5;
 
+    // 3. Proximity Interactive Reaction (warp & scale when cursor gets close)
+    let proximityScale = 1.0;
+    let proximityRoughness = type === 'lens' ? 0.04 : 0.08;
+    let proximityThickness = 0.5;
+    let proximityDistortion = 0.01;
+
+    if (!isMobile && mouseRef.current) {
+      // Projected mouse coordinates at the depth of the element
+      const mouseX3D = mouseRef.current.x * state.viewport.width * 0.5;
+      const mouseY3D = mouseRef.current.y * state.viewport.height * 0.5;
+
+      const dx = meshRef.current.position.x - mouseX3D;
+      const dy = meshRef.current.position.y - mouseY3D;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      // Reaction radius of 2.2 units in 3D space
+      if (dist < 2.2) {
+        const influence = Math.max(0, 1 - dist / 2.2); // 0 to 1
+        proximityScale = 1.0 + influence * 0.28; // scale up by up to 28%
+        proximityRoughness = THREE.MathUtils.lerp(proximityRoughness, 0.01, influence); // polish surface
+        proximityThickness = THREE.MathUtils.lerp(0.5, 0.95, influence); // magnify glass thickness
+        proximityDistortion = THREE.MathUtils.lerp(0.01, 0.08, influence); // warp refractions
+        
+        // Add subtle tilt/attraction towards mouse
+        meshRef.current.rotation.x += dx * influence * 0.012;
+        meshRef.current.rotation.y += dy * influence * 0.012;
+      }
+    }
+
     // Interpolate target positions (scrolling up relative to camera)
     const targetY = baseY + scrollOffset * parallax + floatY;
     const targetX = baseX + floatX;
@@ -100,18 +132,26 @@ function AccentElement({
     meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.08);
     meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, baseZ, 0.08);
 
-    // 3. Calm constant rotation
+    // 4. Calm constant rotation
     meshRef.current.rotation.x += delta * rotSpeed[0] * 0.25;
     meshRef.current.rotation.y += delta * rotSpeed[1] * 0.25;
     meshRef.current.rotation.z += delta * rotSpeed[2] * 0.25;
 
-    // 4. Subtle entrance reveal scaling
+    // 5. Entrance bloom scale + hover scale factor
     currentScaleFactor.current = THREE.MathUtils.lerp(currentScaleFactor.current, 1.0, 0.04);
+    
     meshRef.current.scale.set(
-      scale[0] * currentScaleFactor.current,
-      scale[1] * currentScaleFactor.current,
-      scale[2] * currentScaleFactor.current
+      scale[0] * currentScaleFactor.current * proximityScale,
+      scale[1] * currentScaleFactor.current * proximityScale,
+      scale[2] * currentScaleFactor.current * proximityScale
     );
+
+    // Update material properties dynamically on GPU thread
+    if (materialRef.current) {
+      materialRef.current.roughness = THREE.MathUtils.lerp(materialRef.current.roughness, proximityRoughness, 0.08);
+      materialRef.current.thickness = THREE.MathUtils.lerp(materialRef.current.thickness, proximityThickness, 0.08);
+      materialRef.current.distortion = THREE.MathUtils.lerp(materialRef.current.distortion, proximityDistortion, 0.08);
+    }
   });
 
   const renderGeometry = () => {
@@ -143,6 +183,7 @@ function AccentElement({
       >
         {renderGeometry()}
         <MeshTransmissionMaterial
+          ref={materialRef}
           color="#faf8f5"
           roughness={type === 'lens' ? 0.04 : 0.08}
           transmission={0.97}
@@ -302,6 +343,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           floatAmp={item.floatAmp}
           rotSpeed={item.rotSpeed}
           isMobile={isMobile}
+          mouseRef={mouse}
         />
       ))}
 

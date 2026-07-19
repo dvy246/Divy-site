@@ -300,10 +300,10 @@ export default function HomePage() {
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(4.2rem, 10vw, 8.5rem)',
-                fontWeight: 900,
+                fontWeight: 700,
                 fontStyle: 'normal',
                 lineHeight: 0.95,
-                letterSpacing: '-0.03em',
+                letterSpacing: '0.02em',
                 color: '#0e0f0f',
                 marginBottom: '2.5rem',
                 overflow: 'hidden',
