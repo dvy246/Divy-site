@@ -154,6 +154,8 @@ export default function HomePage() {
   const [mounted, setMounted] = useState(false);
   const [coords, setCoords]   = useState({ x: 50, y: 50 });
   const [revealState, setRevealState] = useState<'idle' | 'revealing' | 'complete'>('idle');
+  const [heroVisible, setHeroVisible] = useState(true);
+  const heroRef   = useRef<HTMLElement>(null);
   const bioRef    = useRef<HTMLElement>(null);
   const statsRef  = useRef<HTMLDivElement>(null);
 
@@ -190,6 +192,21 @@ export default function HomePage() {
       window.removeEventListener('dy_sculpture_reveal_complete', handleRevealComplete);
     };
   }, []);
+
+  /* Visibility Gating for Hero Canvas Render Loop */
+  useEffect(() => {
+    if (!mounted || typeof window === 'undefined' || !heroRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setHeroVisible(entry.isIntersecting);
+      },
+      {
+        rootMargin: '100px 0px 400px 0px', // start loading early / keep active slightly past viewport
+      }
+    );
+    observer.observe(heroRef.current);
+    return () => observer.disconnect();
+  }, [mounted]);
 
   /* GSAP scroll triggers for page-specific elements */
   useEffect(() => {
@@ -228,10 +245,11 @@ export default function HomePage() {
       <ScrollProgress />
 
       {/* Flagship Fixed 3D Hero Canvas Overlay - Runs performantly on both desktop and mobile viewports */}
-      <HeroCanvas isMobile={isMobile} />
+      {heroVisible && <HeroCanvas isMobile={isMobile} />}
 
       {/* --- HERO --- */}
       <section
+        ref={heroRef}
         aria-label="Hero"
         style={{
           minHeight: '100svh',
