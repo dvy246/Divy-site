@@ -10,7 +10,7 @@ import SketchDivider from '@/components/SketchDivider';
 import { BIO } from '@/lib/bio';
 import articles from '@/data/articles.json';
 
-/* ── Dynamic 3D import ──────────────────────────────────── */
+/* === Dynamic 3D import === */
 const HeroCanvas = dynamic(() => import('@/components/HeroCanvas'), {
   ssr: false,
   loading: () => (
@@ -36,7 +36,7 @@ const HeroCanvas = dynamic(() => import('@/components/HeroCanvas'), {
   ),
 });
 
-/* ── Constants ──────────────────────────────────────────── */
+/* === Constants === */
 const MARQUEE_ITEMS = [
   'AI Engineer', '·', 'Technical Writer', '·',
   'Solopreneur', '·', 'RAG Pipelines', '·',
@@ -61,7 +61,7 @@ const STATS = [
 
 const TAGLINE = ['The Architect.', 'Writer.', 'Solopreneur.'];
 
-/* ── Marquee strip ──────────────────────────────────────── */
+/* === Marquee strip === */
 function MarqueeStrip({ inverted = false }: { inverted?: boolean }) {
   const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS,
                    ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
@@ -99,7 +99,7 @@ function MarqueeStrip({ inverted = false }: { inverted?: boolean }) {
   );
 }
 
-/* ── Scroll progress bar ────────────────────────────────── */
+/* === Scroll progress bar === */
 function ScrollProgress() {
   useEffect(() => {
     const bar = document.getElementById('scroll-progress');
@@ -120,7 +120,7 @@ function ScrollProgress() {
   return <div id="scroll-progress" aria-hidden="true" />;
 }
 
-/* ── Letter-by-letter reveal ───────────────────────────── */
+/* === Letter-by-letter reveal === */
 function SplitText({
   text,
   delay = 0,
@@ -149,7 +149,7 @@ function SplitText({
   );
 }
 
-/* ── Homepage ───────────────────────────────────────────── */
+/* === Homepage === */
 export default function HomePage() {
   const [show, setShow]       = useState(false);
   const [isMobile, setMobile] = useState(false);
@@ -208,7 +208,7 @@ export default function HomePage() {
     <>
       <ScrollProgress />
 
-      {/* ──────────── HERO ──────────── */}
+      {/* --- HERO --- */}
       <section
         aria-label="Hero"
         style={{
@@ -244,7 +244,7 @@ export default function HomePage() {
             alignItems: 'center',
           }}
         >
-          {/* ── LEFT: editorial text ── */}
+          {/* LEFT: editorial text */}
           <div>
             {/* Label */}
             <p
@@ -254,10 +254,10 @@ export default function HomePage() {
                 animation: 'fadeIn 0.5s ease 0.2s both',
               }}
             >
-              AI Engineer · Technical Writer · Solopreneur
+              AI Engineer * Technical Writer * Solopreneur
             </p>
 
-            {/* Main heading — cinematic letter reveal */}
+            {/* Main heading - cinematic letter reveal */}
             <h1
               style={{
                 fontFamily: 'var(--font-display)',
@@ -283,7 +283,7 @@ export default function HomePage() {
               </RoughNotation>
             </h1>
 
-            {/* Tagline — staggered words */}
+            {/* Tagline - staggered words */}
             <div
               style={{
                 display: 'flex',
@@ -362,7 +362,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* ── RIGHT: 3D or fallback ── */}
+          {/* RIGHT: 3D or fallback */}
           <div
             style={{
               display: 'flex',
@@ -438,10 +438,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ──────────── MARQUEE ──────────── */}
+      {/* --- MARQUEE --- */}
       <MarqueeStrip inverted />
 
-      {/* ──────────── ABOUT / STATS ──────────── */}
+      {/* --- ABOUT / STATS --- */}
       <section
         ref={bioRef}
         className="bio-section"
@@ -482,7 +482,7 @@ export default function HomePage() {
                 marginBottom: '2rem',
               }}
             >
-              From RAG pipelines to agentic systems — I build and write about the
+              From RAG pipelines to agentic systems - I build and write about the
               technical substrate of modern AI applications. Every project is a proof
               of concept; every article is a blueprint that 2,000+ engineers read weekly.
             </p>
@@ -495,7 +495,6 @@ export default function HomePage() {
                 textTransform: 'uppercase',
                 fontWeight: 600,
                 color: '#1b1c1c',
-                textDecoration: 'none',
                 borderBottom: '1px solid #1b1c1c',
                 paddingBottom: '3px',
                 transition: 'color 160ms ease, border-color 160ms ease',
@@ -569,7 +568,7 @@ export default function HomePage() {
 
       <SketchDivider />
 
-      {/* ──────────── LATEST WRITING ──────────── */}
+      {/* --- LATEST WRITING --- */}
       <section
         className="articles-preview"
         style={{ padding: '7rem 5vw' }}
@@ -609,7 +608,6 @@ export default function HomePage() {
               textTransform: 'uppercase',
               fontWeight: 600,
               color: '#B5502D',
-              textDecoration: 'none',
               borderBottom: '1px solid #B5502D',
               paddingBottom: '3px',
             }}
@@ -638,7 +636,7 @@ export default function HomePage() {
 
       <SketchDivider />
 
-      {/* ──────────── CTA — NEWSLETTER ──────────── */}
+      {/* --- CTA - NEWSLETTER --- */}
       <section
         className="cta-section"
         style={{
@@ -696,7 +694,6 @@ export default function HomePage() {
             fontWeight: 700,
             color: '#F5F5DC',
             backgroundColor: '#1b1c1c',
-            textDecoration: 'none',
             padding: '1.1rem 2.5rem',
             display: 'inline-block',
             whiteSpace: 'nowrap',

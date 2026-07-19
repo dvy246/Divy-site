@@ -5,7 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, Environment, Sparkles, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-/* ─── Main geometry + material ──────────────────────────── */
+/* === Main geometry + material === */
 function FloatingGeometry() {
   const groupRef = useRef<THREE.Group>(null);
   const mouse = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
@@ -47,7 +47,7 @@ function FloatingGeometry() {
       groupRef.current.rotation.y += mouse.current.x * 0.0006;
     }
 
-    // Scroll-driven scale — shrinks as you scroll past hero
+    // Scroll-driven scale - shrinks as you scroll past hero
     const vhProgress = scrollY.current /
       (typeof window !== 'undefined' ? window.innerHeight : 1000);
     const targetScale = Math.max(0.3, 1 - vhProgress * 0.6);
@@ -112,7 +112,7 @@ function FloatingGeometry() {
   );
 }
 
-/* ─── Canvas export ─────────────────────────────────────── */
+/* === Canvas export === */
 export default function HeroCanvas() {
   return (
     <div style={{ width: '100%', height: '100%', minHeight: '520px' }}>
@@ -147,7 +147,7 @@ export default function HeroCanvas() {
           color="#ffffff"
           castShadow
         />
-        {/* Accent rim light — terracotta */}
+        {/* Accent rim light - terracotta */}
         <pointLight
           position={[-6, 2, -3]}
           intensity={1.5}
