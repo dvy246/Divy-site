@@ -289,9 +289,9 @@ function OrganicBubbleScene({
       {/* Translucent Frosted Glass Cursor pointer overlap */}
       <mesh
         ref={cursorRef}
-        position={[0.15, 0.15, 0.72]}
-        rotation={[-0.1, 0.0, 0.15]}
-        scale={[0.58, 0.58, 0.58]}
+        position={[0.9, -0.4, 0.85]}
+        rotation={[-0.1, 0.1, 0.15]}
+        scale={[0.6, 0.6, 0.6]}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
         onClick={onClick}
@@ -300,13 +300,16 @@ function OrganicBubbleScene({
         <meshPhysicalMaterial
           ref={cursorMaterialRef}
           color="#ffffff"
-          transmission={0.65}
-          roughness={0.24}
-          metalness={0.1}
-          thickness={3.5}
-          ior={1.5}
+          transmission={0.9}
+          roughness={0.05}
+          metalness={0.05}
+          reflectivity={1.0}
+          thickness={2.5}
+          ior={1.6}
+          iridescence={0.5}
+          iridescenceIOR={1.6}
           clearcoat={1.0}
-          clearcoatRoughness={0.05}
+          clearcoatRoughness={0.02}
           emissive="#ffffff"
           emissiveIntensity={0}
         />
@@ -314,9 +317,9 @@ function OrganicBubbleScene({
 
       {/* Wireframe Outline cursor overlay to make it highly visible and technical */}
       <mesh
-        position={[0.15, 0.15, 0.725]}
-        rotation={[-0.1, 0.0, 0.15]}
-        scale={[0.585, 0.585, 0.585]}
+        position={[0.9, -0.4, 0.855]}
+        rotation={[-0.1, 0.1, 0.15]}
+        scale={[0.605, 0.605, 0.605]}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
         onClick={onClick}
@@ -449,6 +452,29 @@ export default function EntranceOverlay() {
               setCoords={setCoords}
             />
           </Canvas>
+
+          {/* Symmetrically centered Click Here bold white overlay text over the bubble */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              pointerEvents: 'none',
+              color: '#ffffff',
+              fontFamily: 'var(--font-body)',
+              fontSize: 'clamp(10px, 2.5vw, 12px)',
+              fontWeight: 900,
+              letterSpacing: '0.25em',
+              textTransform: 'uppercase',
+              textShadow: '0 2px 10px rgba(0, 0, 0, 0.22)',
+              opacity: isHovered ? 1 : 0.85,
+              transition: 'opacity 0.2s ease, transform 0.2s ease',
+              textAlign: 'center',
+            }}
+          >
+            Click Here
+          </div>
         </div>
 
         {/* Invitation Typography and Actions */}
