@@ -115,21 +115,28 @@ export default function Nav() {
           left: 0,
           right: 0,
           zIndex: 1000,
-          padding: '1.1rem 5vw',
+          padding: scrolled 
+            ? '0.9rem 5vw' 
+            : '1.6rem 5vw',
           transition:
-            'background 400ms cubic-bezier(0.16,1,0.3,1), ' +
+            'background-color 450ms cubic-bezier(0.16,1,0.3,1), ' +
+            'padding 450ms cubic-bezier(0.16,1,0.3,1), ' +
             'transform 350ms cubic-bezier(0.16,1,0.3,1), ' +
-            'border-color 400ms ease',
+            'border-color 450ms ease',
           backgroundColor: scrolled
-            ? 'rgba(245, 245, 220, 0.75)'
-            : 'transparent',
-          backdropFilter: scrolled ? 'blur(20px) saturate(1.35)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(1.35)' : 'none',
+            ? 'rgba(245, 245, 220, 0.78)'
+            : 'rgba(245, 245, 220, 0.35)',
+          backdropFilter: scrolled 
+            ? 'blur(20px) saturate(1.2)' 
+            : 'blur(8px)',
+          WebkitBackdropFilter: scrolled 
+            ? 'blur(20px) saturate(1.2)' 
+            : 'blur(8px)',
           borderBottom: scrolled
             ? '1px solid rgba(27, 28, 28, 0.08)'
-            : '1px solid transparent',
+            : '1px solid rgba(27, 28, 28, 0.03)',
           boxShadow: scrolled
-            ? '0 10px 30px rgba(27, 28, 28, 0.04), 0 1px 0 rgba(27, 28, 28, 0.02)'
+            ? '0 10px 35px rgba(27, 28, 28, 0.03), 0 1px 0 rgba(27, 28, 28, 0.02)'
             : 'none',
           transform: visible ? 'translateY(0)' : 'translateY(-100%)',
         }}

@@ -66,7 +66,7 @@ const STATS = [
   { num: '2',   label: 'Production Clients' },
 ];
 
-const TAGLINE = ['The Architect.', 'Writer.', 'Solopreneur.'];
+const TAGLINE = ['AI', 'Engineer', 'crafting', 'intelligent', 'software', 'and', 'ideas.'];
 
 /* === Marquee strip === */
 function MarqueeStrip({ inverted = false }: { inverted?: boolean }) {
@@ -292,24 +292,28 @@ export default function HomePage() {
             <p
               className="label-caps"
               style={{
-                marginBottom: '1.5rem',
+                marginBottom: '2rem',
+                fontSize: '11px',
+                letterSpacing: '0.22em',
+                fontWeight: 700,
+                color: '#B5502D',
                 animation: 'fadeIn 0.5s ease 0.2s both',
               }}
             >
-              AI Engineer * Technical Writer * Solopreneur
+              AI ENGINEER
             </p>
 
             {/* Main heading - cinematic letter reveal */}
             <h1
               style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 'clamp(3.5rem, 9vw, 9rem)',
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(4.2rem, 10vw, 8.5rem)',
                 fontWeight: 900,
                 fontStyle: 'normal',
-                lineHeight: 1.0,
-                letterSpacing: '-0.02em',
+                lineHeight: 0.95,
+                letterSpacing: '-0.03em',
                 color: '#0e0f0f',
-                marginBottom: '1.75rem',
+                marginBottom: '2.5rem',
                 overflow: 'hidden',
                 textAlign: 'center',
               }}
@@ -318,7 +322,7 @@ export default function HomePage() {
                 type="underline"
                 color="#B5502D"
                 show={show}
-                strokeWidth={3}
+                strokeWidth={4}
                 animationDelay={1000}
                 animationDuration={700}
               >
@@ -332,19 +336,19 @@ export default function HomePage() {
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: '0.5rem',
-                marginBottom: '2.5rem',
+                marginBottom: '3rem',
                 justifyContent: 'center',
               }}
             >
               {TAGLINE.map((word, idx) => (
                 <span
-                  key={word}
+                  key={idx}
                   style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: 'clamp(1.1rem, 2.5vw, 1.75rem)',
-                    fontWeight: 700,
-                    color: idx === 0 ? '#0e0f0f' : '#1b1c1c',
-                    animation: `fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) ${0.6 + idx * 0.15}s both`,
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 'clamp(1.1rem, 2.5vw, 1.7rem)',
+                    fontWeight: 600,
+                    color: idx < 2 ? '#0e0f0f' : '#444748',
+                    animation: `fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) ${0.6 + idx * 0.12}s both`,
                   }}
                 >
                   {word}

@@ -41,21 +41,51 @@ export default function BackgroundGrid() {
   const combinedY = useTransform(() => springY.get() + springScroll.get());
 
   return (
-    <motion.div
-      aria-hidden="true"
-      style={{
-        position: 'fixed',
-        inset: '-60px', // bleed area to prevent raw borders showing during translation
-        zIndex: -1,
-        pointerEvents: 'none',
-        backgroundImage: `
-          linear-gradient(to right, rgba(27, 28, 28, 0.03) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(27, 28, 28, 0.03) 1px, transparent 1px)
-        `,
-        backgroundSize: '48px 48px',
-        x: springX,
-        y: combinedY,
-      }}
-    />
+    <>
+      {/* 1. Ambient radial vignette lighting */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          pointerEvents: 'none',
+          zIndex: -3,
+          background: 'radial-gradient(circle at 50% 45%, rgba(245, 245, 220, 0) 30%, rgba(27, 28, 28, 0.035) 100%)',
+        }}
+      />
+
+      {/* 2. Tactile magazine-like paper grain overlay */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          pointerEvents: 'none',
+          zIndex: -2,
+          opacity: 0.055,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* 3. Dynamic Parallax Background Grid with radial focus fade mask */}
+      <motion.div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: '-60px', // bleed area to prevent raw borders showing during translation
+          zIndex: -1,
+          pointerEvents: 'none',
+          backgroundImage: `
+            linear-gradient(to right, rgba(27, 28, 28, 0.035) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(27, 28, 28, 0.035) 1px, transparent 1px)
+          `,
+          backgroundSize: '48px 48px',
+          maskImage: 'radial-gradient(circle at 50% 50%, transparent 15%, rgba(0, 0, 0, 0.15) 50%, black 100%)',
+          WebkitMaskImage: 'radial-gradient(circle at 50% 50%, transparent 15%, rgba(0, 0, 0, 0.15) 50%, black 100%)',
+          x: springX,
+          y: combinedY,
+        }}
+      />
+    </>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, Environment, Sparkles } from '@react-three/drei';
+import { Float, Environment, Sparkles, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 
 /* === Animated lights coordinated with scroll === */
@@ -373,8 +373,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
   // Shared ref holding morphable 3D parameters
   const scrollParams = useRef({
     // Initial Hero State (Identity)
-    x: isMobile ? 0 : 1.4,
-    y: isMobile ? -0.25 : 0,
+    x: isMobile ? 0 : 1.55,
+    y: isMobile ? -0.25 : -0.28,
     z: 0,
     rotationSpeedX: 0.08,
     rotationSpeedY: 0.25,
@@ -412,8 +412,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
 
       // Define standard layout states
       const state1 = {
-        x: isMobile ? 0 : 1.4,
-        y: isMobile ? -0.25 : 0,
+        x: isMobile ? 0 : 1.55,
+        y: isMobile ? -0.25 : -0.28,
         z: 0,
         scale: isMobile ? 0.65 : 0.85,
         color: isMobile ? '#ffffff' : '#dfb46c',
@@ -434,8 +434,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       };
 
       const state2 = {
-        x: isMobile ? 0 : 1.4,
-        y: isMobile ? -0.25 : 0,
+        x: isMobile ? 0 : 1.55,
+        y: isMobile ? -0.25 : -0.28,
         z: 0,
         scale: isMobile ? 0.65 : 0.85,
         color: isMobile ? '#ffffff' : '#dfb46c',
@@ -456,8 +456,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       };
 
       const state3 = {
-        x: isMobile ? 0 : 1.4,
-        y: isMobile ? -0.25 : 0,
+        x: isMobile ? 0 : 1.55,
+        y: isMobile ? -0.25 : -0.28,
         z: 0,
         scale: isMobile ? 0.75 : 1.1,
         color: '#ffffff', // Turn white behind text layouts
@@ -478,8 +478,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       };
 
       const state4 = {
-        x: isMobile ? 0 : 1.4,
-        y: isMobile ? -0.25 : 0,
+        x: isMobile ? 0 : 1.55,
+        y: isMobile ? -0.25 : -0.28,
         z: 0,
         scale: isMobile ? 0.6 : 0.8,
         color: '#ffffff', // Turn white behind CTA form
@@ -580,10 +580,32 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
 
         <AnimatedLights scrollParams={scrollParams} />
 
+        {/* Ambient background rim light matching terracotta */}
+        <directionalLight position={[0, 4, -5]} intensity={3.5} color="#B5502D" />
+
         {/* Studio HDRI environment for reflections */}
         <Environment preset="studio" />
 
         <FloatingGeometry scrollParams={scrollParams} isMobile={isMobile} />
+
+        {/* Cinematic drop contact shadow plane to anchor sculpture in physical space */}
+        <ContactShadows
+          position={[isMobile ? 0 : 1.55, -1.8, 0]}
+          opacity={0.4}
+          scale={6.0}
+          blur={2.5}
+          far={4.0}
+        />
+
+        {/* Environmental drifting sparkles representing dust particles in atmospheric space */}
+        <Sparkles
+          count={isMobile ? 15 : 45}
+          scale={6.0}
+          size={isMobile ? 0.8 : 1.5}
+          speed={0.2}
+          opacity={0.35}
+          color="#B5502D"
+        />
       </Canvas>
     </div>
   );
