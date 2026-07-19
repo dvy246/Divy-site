@@ -338,18 +338,19 @@ function FloatingGeometry({
           <torusKnotGeometry args={isMobile ? [1, 0.26, 128, 24] : [1, 0.26, 256, 48]} />
           <meshPhysicalMaterial
             ref={materialRef}
-            color="#e8e5e0"
-            metalness={0.92}
-            roughness={0.08}
+            color="#ffffff"
+            metalness={0.0}
+            roughness={0.06}
             roughnessMap={noiseTexture || undefined}
             reflectivity={1.0}
             clearcoat={1.0}
-            clearcoatRoughness={0.02}
+            clearcoatRoughness={0.01}
             envMapIntensity={3.5}
-            iridescence={0.8}
+            iridescence={0.6}
             iridescenceThicknessRange={[100, 400]}
-            transmission={0.35}
-            thickness={1.2}
+            transmission={0.95}
+            thickness={1.5}
+            ior={1.5}
           />
         </mesh>
 
@@ -461,21 +462,21 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
     x: 0,
     y: 0,
     z: 0,
-    rotationSpeedX: 0.03, // slow, visual luxury museum feel
-    rotationSpeedY: 0.05,
+    rotationSpeedX: 0.015, // extremely slow, premium watch movement feel
+    rotationSpeedY: 0.025,
     rotationSpeedZ: 0.0,
-    scale: hasScrolledOnLoad ? (isMobile ? 1.0 : 1.45) : 0.001,
-    color: isMobile ? '#ffffff' : '#dfb46c',
+    scale: hasScrolledOnLoad ? (isMobile ? 1.25 : 1.65) : 0.001,
+    color: '#ffffff',
 
     roughness: 0.06,
-    metalness: 0.05,
-    transmission: hasScrolledOnLoad ? 0.88 : 1.0,
-    iridescence: 0.5,
+    metalness: 0.0,
+    transmission: hasScrolledOnLoad ? 0.95 : 1.0,
+    iridescence: 0.6,
 
-    inkWireframeOpacity: hasScrolledOnLoad ? 0.15 : 0.0,
-    redlineWireframeOpacity: hasScrolledOnLoad ? 0.15 : 0.0,
-    ring1Opacity: hasScrolledOnLoad ? 0.35 : 0.0,
-    ring2Opacity: hasScrolledOnLoad ? 0.25 : 0.0,
+    inkWireframeOpacity: hasScrolledOnLoad ? 0.06 : 0.0,
+    redlineWireframeOpacity: hasScrolledOnLoad ? 0.06 : 0.0,
+    ring1Opacity: hasScrolledOnLoad ? 0.2 : 0.0,
+    ring2Opacity: hasScrolledOnLoad ? 0.15 : 0.0,
     ring1Speed: 1.0,
     ring2Speed: 1.0,
 
@@ -498,12 +499,12 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       // Reveal animation emerging from portrait (0.8s delay)
       if (!hasScrolledOnLoad) {
         revealTween = gsap.to(scrollParams.current, {
-          scale: isMobile ? 1.0 : 1.45,
-          transmission: 0.88,
-          inkWireframeOpacity: 0.15,
-          redlineWireframeOpacity: 0.15,
-          ring1Opacity: 0.35,
-          ring2Opacity: 0.25,
+          scale: isMobile ? 1.25 : 1.65,
+          transmission: 0.95,
+          inkWireframeOpacity: 0.06,
+          redlineWireframeOpacity: 0.06,
+          ring1Opacity: 0.2,
+          ring2Opacity: 0.15,
           duration: 2.2,
           delay: 0.8,
           ease: 'power3.out',
