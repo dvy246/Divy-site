@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#F5F5DC" />
+
+  <!-- Background grid lines -->
+  <line x1="20" y1="30" x2="380" y2="30" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="20" y1="125" x2="380" y2="125" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="20" y1="220" x2="380" y2="220" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="100" y1="10" x2="100" y2="240" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="300" y1="10" x2="300" y2="240" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+
+  <!-- Molecule line-art sketch (Left) -->
+  <!-- Benzene ring style nodes -->
+  <path d="M 60,80 L 95,65 L 130,80 L 130,120 L 95,135 L 60,120 Z" fill="none" stroke="#1b1c1c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Inner double bonds sketched -->
+  <path d="M 95,73 L 122,86 M 122,114 L 95,127 M 68,114 L 68,86" stroke="#1b1c1c" stroke-width="1" opacity="0.75"/>
+  <!-- Attached carbon groups -->
+  <line x1="95" y1="65" x2="95" y2="40" stroke="#1b1c1c" stroke-width="1.5" />
+  <circle cx="95" cy="40" r="4.5" fill="#B5502D" />
+  <line x1="130" y1="120" x2="150" y2="135" stroke="#1b1c1c" stroke-width="1.5" />
+  <circle cx="150" cy="135" r="4" fill="#1b1c1c" />
+
+  <!-- Similarity mapping arrow -->
+  <path d="M 160,95 Q 185,85 210,95" fill="none" stroke="#1b1c1c" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M 203,89 L 212,96 L 202,101" fill="none" stroke="#1b1c1c" stroke-width="1.5" stroke-linecap="round" />
+  <text x="168" y="78" font-family="Courier, monospace" font-size="8" fill="#747878">EMBED</text>
+
+  <!-- Vector Axis space (Right) -->
+  <line x1="240" y1="165" x2="350" y2="165" stroke="#1b1c1c" stroke-width="1.5" stroke-linecap="round" />
+  <line x1="240" y1="165" x2="240" y2="55" stroke="#1b1c1c" stroke-width="1.5" stroke-linecap="round" />
+  <line x1="240" y1="165" x2="210" y2="195" stroke="#1b1c1c" stroke-width="1.5" stroke-linecap="round" />
+
+  <!-- Clusters of vectors (Similarity Search) -->
+  <!-- Cluster A (Near) -->
+  <circle cx="280" cy="85" r="4.5" fill="#B5502D" />
+  <circle cx="290" cy="95" r="3" fill="#B5502D" />
+  <circle cx="270" cy="98" r="3" fill="#B5502D" />
+  <!-- Cluster B (Farther) -->
+  <circle cx="320" cy="135" r="3" fill="#1b1c1c" />
+  <circle cx="330" cy="125" r="3" fill="#1b1c1c" />
+  <circle cx="335" cy="140" r="3.5" fill="#1b1c1c" />
+
+  <!-- Nearest Neighbor distance line -->
+  <line x1="280" y1="85" x2="290" y2="95" stroke="#1b1c1c" stroke-width="1" stroke-dasharray="2 2" />
+  <path d="M 265,70 Q 280,60 295,78" fill="none" stroke="#747878" stroke-width="0.8" />
+  <text x="282" y="55" font-family="Courier, monospace" font-size="8" fill="#747878">k-NN</text>
+
+  <text x="75" y="160" font-family="Courier, monospace" font-size="10" fill="#1b1c1c" font-weight="bold">MOLECULE</text>
+  <text x="260" y="190" font-family="Courier, monospace" font-size="10" fill="#1b1c1c" font-weight="bold">VECTOR_SPACE</text>
+</svg>

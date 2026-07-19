@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#F5F5DC" />
+
+  <!-- Background grid lines -->
+  <line x1="20" y1="30" x2="380" y2="30" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="20" y1="125" x2="380" y2="125" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="20" y1="220" x2="380" y2="220" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="200" y1="10" x2="200" y2="240" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+
+  <!-- Orchestrator Node (Top Center) -->
+  <rect x="170" y="40" width="60" height="40" rx="3" fill="none" stroke="#1b1c1c" stroke-width="1.8" />
+  <circle cx="200" cy="60" r="8" fill="none" stroke="#B5502D" stroke-width="1.5" />
+  <line x1="200" y1="52" x2="200" y2="68" stroke="#B5502D" stroke-width="1.5" />
+  <line x1="192" y1="60" x2="208" y2="60" stroke="#B5502D" stroke-width="1.5" />
+  <text x="178" y="96" font-family="Courier, monospace" font-size="9" fill="#1b1c1c" font-weight="bold">ORCHESTRATOR</text>
+
+  <!-- Fan Out workers (Bottom Row) -->
+  <!-- Worker 1 -->
+  <circle cx="90" cy="155" r="16" fill="none" stroke="#1b1c1c" stroke-width="1.5" />
+  <text x="80" y="158" font-family="Courier, monospace" font-size="8" fill="#1b1c1c" font-weight="bold">W1</text>
+
+  <!-- Worker 2 -->
+  <circle cx="200" cy="155" r="16" fill="none" stroke="#1b1c1c" stroke-width="1.5" />
+  <text x="190" y="158" font-family="Courier, monospace" font-size="8" fill="#1b1c1c" font-weight="bold">W2</text>
+
+  <!-- Worker 3 -->
+  <circle cx="310" cy="155" r="16" fill="none" stroke="#1b1c1c" stroke-width="1.5" />
+  <text x="300" y="158" font-family="Courier, monospace" font-size="8" fill="#1b1c1c" font-weight="bold">W3</text>
+
+  <!-- Connectors -->
+  <path d="M 180,80 L 110,140" fill="none" stroke="#1b1c1c" stroke-width="1.2" stroke-linecap="round" />
+  <path d="M 200,80 L 200,138" fill="none" stroke="#B5502D" stroke-width="1.2" stroke-dasharray="3 3" />
+  <path d="M 220,80 L 290,140" fill="none" stroke="#1b1c1c" stroke-width="1.2" stroke-linecap="round" />
+  
+  <!-- Arrow heads sketchy -->
+  <path d="M 112,132 L 109,141 L 119,138" fill="none" stroke="#1b1c1c" stroke-width="1.2" />
+  <path d="M 281,138 L 291,141 L 288,132" fill="none" stroke="#1b1c1c" stroke-width="1.2" />
+  <path d="M 196,131 L 200,139 L 204,131" fill="none" stroke="#B5502D" stroke-width="1.2" />
+
+  <text x="145" y="210" font-family="Courier, monospace" font-size="10" fill="#B5502D" font-weight="bold">AGENT_DELEGATION</text>
+</svg>

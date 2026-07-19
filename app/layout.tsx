@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import CustomCursor from "@/components/CustomCursor";
 import SmoothScroll from "@/components/SmoothScroll";
+import BackgroundGrid from "@/components/BackgroundGrid";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -53,6 +54,7 @@ export default function RootLayout({
       <body>
         <CustomCursor />
         <SmoothScroll />
+        <BackgroundGrid />
         <Nav />
         <main id="main-content">
           {children}

@@ -98,13 +98,12 @@ export default function ArticlesPage() {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))',
-            gap: '1px',
-            backgroundColor: '#1b1c1c',
-            border: '1px solid #1b1c1c',
+            gap: '2.5rem',
+            overflow: 'visible',
           }}
         >
           {articles.map((article) => (
-            <div key={article.title} className="article-grid-card">
+            <div key={article.title} className="article-grid-card" style={{ overflow: 'visible' }}>
               <ArticleCard {...article} />
             </div>
           ))}

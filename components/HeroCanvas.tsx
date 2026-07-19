@@ -115,7 +115,7 @@ function FloatingGeometry() {
 /* === Canvas export === */
 export default function HeroCanvas() {
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: '520px' }}>
+    <div style={{ width: '100%', height: '100%', minHeight: '520px', pointerEvents: 'none' }}>
       <Canvas
         camera={{ position: [0, 0, 5], fov: 40 }}
         gl={{

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#F5F5DC" />
+  
+  <!-- Sketchy background grid lines -->
+  <line x1="20" y1="30" x2="380" y2="30" stroke="#1b1c1c" stroke-width="0.5" opacity="0.15" stroke-dasharray="4 4" />
+  <line x1="20" y1="125" x2="380" y2="125" stroke="#1b1c1c" stroke-width="0.5" opacity="0.15" stroke-dasharray="4 4" />
+  <line x1="20" y1="220" x2="380" y2="220" stroke="#1b1c1c" stroke-width="0.5" opacity="0.15" stroke-dasharray="4 4" />
+  <line x1="80" y1="10" x2="80" y2="240" stroke="#1b1c1c" stroke-width="0.5" opacity="0.15" stroke-dasharray="4 4" />
+  <line x1="200" y1="10" x2="200" y2="240" stroke="#1b1c1c" stroke-width="0.5" opacity="0.15" stroke-dasharray="4 4" />
+  <line x1="320" y1="10" x2="320" y2="240" stroke="#1b1c1c" stroke-width="0.5" opacity="0.15" stroke-dasharray="4 4" />
+
+  <!-- Document ingestion (Left) -->
+  <!-- Document 1 -->
+  <path d="M 40,62 L 95,60 L 95,115 L 42,118 Z" fill="none" stroke="#1b1c1c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M 46,75 L 85,73 M 47,88 L 89,86 M 45,101 L 75,100" stroke="#1b1c1c" stroke-width="1.2" stroke-linecap="round" />
+  
+  <!-- Document 2 (stacked slightly behind) -->
+  <path d="M 52,48 L 105,46 L 105,95 L 80,96" fill="none" stroke="#1b1c1c" stroke-width="1" opacity="0.6" stroke-linecap="round" />
+
+  <!-- Vector DB (Middle) -->
+  <!-- DB Cylinder sketched -->
+  <ellipse cx="200" cy="80" rx="35" ry="12" fill="none" stroke="#1b1c1c" stroke-width="1.8" stroke-linecap="round" />
+  <path d="M 165,80 L 164,150 C 164,162 236,162 236,150 L 235,80" fill="none" stroke="#1b1c1c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M 165,115 C 165,127 235,127 235,115" fill="none" stroke="#1b1c1c" stroke-width="1.2" stroke-linecap="round" />
+  <!-- Vector points inside DB -->
+  <circle cx="185" cy="100" r="3" fill="#B5502D" />
+  <circle cx="215" cy="110" r="3" fill="#1b1c1c" />
+  <circle cx="200" cy="130" r="4" fill="#B5502D" />
+  <circle cx="180" cy="140" r="2.5" fill="#1b1c1c" />
+
+  <!-- LLM & Generation (Right) -->
+  <!-- Brain/Processor Box -->
+  <rect x="295" y="65" width="70" height="70" rx="5" fill="none" stroke="#1b1c1c" stroke-width="1.8" stroke-linecap="round" />
+  <path d="M 310,85 A 8,8 0 0,1 326,85 A 8,8 0 0,1 342,85" fill="none" stroke="#1b1c1c" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M 315,95 L 345,95 M 310,110 L 350,110" stroke="#B5502D" stroke-width="1.5" stroke-linecap="round" />
+  
+  <!-- Flow Arrows (Ingestion -> DB) -->
+  <path d="M 110,85 Q 135,75 155,85" fill="none" stroke="#1b1c1c" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M 148,78 L 157,86 L 147,90" fill="none" stroke="#1b1c1c" stroke-width="1.5" stroke-linecap="round" />
+  
+  <!-- Query & Retrieval -->
+  <path d="M 190,195 L 180,185 L 155,185" fill="none" stroke="#1b1c1c" stroke-width="1.5" stroke-linecap="round" />
+  <!-- Magnifying glass -->
+  <circle cx="198" cy="202" r="8" fill="none" stroke="#1b1c1c" stroke-width="1.5" />
+  <line x1="204" y1="208" x2="216" y2="220" stroke="#1b1c1c" stroke-width="1.8" stroke-linecap="round" />
+  <!-- Retrieval link back to DB -->
+  <path d="M 200,185 Q 200,172 200,165" fill="none" stroke="#B5502D" stroke-width="1.5" stroke-dasharray="3 3" />
+
+  <!-- DB -> LLM Connection -->
+  <path d="M 245,115 Q 268,125 288,115" fill="none" stroke="#1b1c1c" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M 280,121 L 290,114 L 282,109" fill="none" stroke="#1b1c1c" stroke-width="1.5" stroke-linecap="round" />
+
+  <!-- Label tags handwritten style -->
+  <text x="45" y="140" font-family="Courier, monospace" font-size="10" fill="#1b1c1c" font-weight="bold">DOCS</text>
+  <text x="185" y="180" font-family="Courier, monospace" font-size="10" fill="#1b1c1c" font-weight="bold">VEC_DB</text>
+  <text x="315" y="155" font-family="Courier, monospace" font-size="10" fill="#1b1c1c" font-weight="bold">LLM</text>
+</svg>

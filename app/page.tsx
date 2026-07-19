@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { RoughNotation } from 'react-rough-notation';
+import { motion } from 'framer-motion';
 import ArticleCard from '@/components/ArticleCard';
 import SketchDivider from '@/components/SketchDivider';
 import { BIO } from '@/lib/bio';
@@ -124,26 +125,39 @@ function ScrollProgress() {
 function SplitText({
   text,
   delay = 0,
-  style = {},
 }: {
   text: string;
   delay?: number;
-  style?: React.CSSProperties;
 }) {
   return (
-    <span aria-label={text}>
+    <span aria-label={text} style={{ display: 'inline-block' }}>
       {text.split('').map((char, i) => (
-        <span
+        <motion.span
           key={i}
           aria-hidden="true"
           style={{
             display: 'inline-block',
-            animation: `fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) ${delay + i * 0.025}s both`,
-            ...style,
+            cursor: 'default',
+            originX: 0.5,
+            originY: 0.5,
+          }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            type: 'spring',
+            stiffness: 150,
+            damping: 15,
+            delay: delay + i * 0.03,
+          }}
+          whileHover={{
+            scale: 1.25,
+            rotate: 8,
+            color: '#B5502D',
+            transition: { type: 'spring', stiffness: 450, damping: 10 }
           }}
         >
           {char === ' ' ? '\u00A0' : char}
-        </span>
+        </motion.span>
       ))}
     </span>
   );
@@ -621,13 +635,12 @@ export default function HomePage() {
           style={{
             display: 'grid',
             gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-            gap: '1px',
-            backgroundColor: '#1b1c1c',
-            border: '1px solid #1b1c1c',
+            gap: '2.5rem',
+            overflow: 'visible',
           }}
         >
           {articles.slice(0, 2).map((article) => (
-            <div key={article.title} className="article-card-item">
+            <div key={article.title} className="article-card-item" style={{ overflow: 'visible' }}>
               <ArticleCard {...article} />
             </div>
           ))}

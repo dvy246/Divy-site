@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#F5F5DC" />
+
+  <!-- Background grid lines -->
+  <line x1="20" y1="30" x2="380" y2="30" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="20" y1="125" x2="380" y2="125" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="20" y1="220" x2="380" y2="220" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="200" y1="10" x2="200" y2="240" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+
+  <!-- Cloud / Server Server Stack (Left) -->
+  <path d="M 65,80 C 65,70 85,60 100,70 C 110,60 135,65 135,80 C 145,80 155,95 145,110 C 135,120 75,120 65,110 Z" fill="none" stroke="#1b1c1c" stroke-width="1.8" stroke-linejoin="round" />
+  
+  <!-- Server racks inside cloud -->
+  <rect x="85" y="80" width="30" height="8" rx="1" fill="none" stroke="#1b1c1c" stroke-width="1.2" />
+  <circle cx="90" cy="84" r="1.5" fill="#B5502D" />
+  <rect x="85" y="93" width="30" height="8" rx="1" fill="none" stroke="#1b1c1c" stroke-width="1.2" />
+  <circle cx="90" cy="97" r="1.5" fill="#1b1c1c" />
+
+  <!-- Gauge/Dashboard Speed dial (Right) -->
+  <path d="M 255,125 A 35,35 0 0,1 325,125" fill="none" stroke="#1b1c1c" stroke-width="1.8" stroke-linecap="round" />
+  <!-- Speed dial marks -->
+  <line x1="255" y1="125" x2="262" y2="125" stroke="#1b1c1c" stroke-width="1.5" />
+  <line x1="290" y1="90" x2="290" y2="97" stroke="#1b1c1c" stroke-width="1.5" />
+  <line x1="325" y1="125" x2="318" y2="125" stroke="#1b1c1c" stroke-width="1.5" />
+  <!-- Indicator needle pointing high speed -->
+  <line x1="290" y1="125" x2="315" y2="100" stroke="#B5502D" stroke-width="2.2" stroke-linecap="round" />
+  <circle cx="290" cy="125" r="4" fill="#1b1c1c" />
+
+  <!-- Flow connecting line -->
+  <path d="M 152,95 C 185,80 215,110 245,105" fill="none" stroke="#1b1c1c" stroke-width="1.5" stroke-dasharray="3 3" />
+  <path d="M 237,98 L 246,104 L 239,111" fill="none" stroke="#1b1c1c" stroke-width="1.5" />
+
+  <!-- Labels -->
+  <text x="75" y="145" font-family="Courier, monospace" font-size="10" fill="#1b1c1c" font-weight="bold">CLOUD</text>
+  <text x="268" y="150" font-family="Courier, monospace" font-size="10" fill="#1b1c1c" font-weight="bold">LATENCY_MS</text>
+</svg>

@@ -24,6 +24,8 @@ export default function CustomCursor() {
     const dot    = dotRef.current;
     if (!cursor || !dot) return;
 
+    let isHovered = false;
+
     /* Track mouse */
     const onMove = (e: MouseEvent) => {
       target.current.x = e.clientX;
@@ -38,8 +40,10 @@ export default function CustomCursor() {
 
       cursor.style.transform =
         `translate(${pos.current.x}px, ${pos.current.y}px) translate(-50%, -50%)`;
+      
+      const scaleVal = isHovered ? 2.5 : 1.0;
       dot.style.transform =
-        `translate(${target.current.x}px, ${target.current.y}px) translate(-50%, -50%)`;
+        `translate(${target.current.x}px, ${target.current.y}px) translate(-50%, -50%) scale(${scaleVal})`;
 
       raf.current = requestAnimationFrame(tick);
     };
@@ -47,16 +51,20 @@ export default function CustomCursor() {
 
     /* Expand on hover of interactive elements */
     const expand = () => {
-      cursor.style.width  = '60px';
-      cursor.style.height = '60px';
-      cursor.style.background = 'rgba(181, 80, 45, 0.15)';
+      isHovered = true;
+      cursor.style.width  = '54px';
+      cursor.style.height = '54px';
+      cursor.style.background = 'transparent';
       cursor.style.border = '1px solid #B5502D';
+      dot.style.backgroundColor = '#B5502D';
     };
     const contract = () => {
-      cursor.style.width  = '32px';
-      cursor.style.height = '32px';
+      isHovered = false;
+      cursor.style.width  = '28px';
+      cursor.style.height = '28px';
       cursor.style.background = 'transparent';
       cursor.style.border = '1px solid #1b1c1c';
+      dot.style.backgroundColor = '#1b1c1c';
     };
 
     const targets = document.querySelectorAll<HTMLElement>(
@@ -109,7 +117,7 @@ export default function CustomCursor() {
           width: '32px',
           height: '32px',
           border: '1px solid #1b1c1c',
-          borderRadius: '50% !important',
+          borderRadius: '50%',
           pointerEvents: 'none',
           mixBlendMode: 'difference',
           willChange: 'transform',
@@ -131,7 +139,7 @@ export default function CustomCursor() {
           width: '4px',
           height: '4px',
           backgroundColor: '#1b1c1c',
-          borderRadius: '50% !important',
+          borderRadius: '50%',
           pointerEvents: 'none',
           willChange: 'transform',
         }}

@@ -154,13 +154,12 @@ export default function NewsletterPage() {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))',
-            gap: '1px',
-            backgroundColor: '#1b1c1c',
-            border: '1px solid #1b1c1c',
+            gap: '2.5rem',
+            overflow: 'visible',
           }}
         >
           {newsletters.map((issue) => (
-            <div key={issue.title} className="newsletter-grid-card">
+            <div key={issue.title} className="newsletter-grid-card" style={{ overflow: 'visible' }}>
               <ArticleCard {...issue} />
             </div>
           ))}

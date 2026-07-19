@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#F5F5DC" />
+
+  <!-- Background grid lines -->
+  <line x1="20" y1="30" x2="380" y2="30" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="20" y1="125" x2="380" y2="125" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="20" y1="220" x2="380" y2="220" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="133" y1="10" x2="133" y2="240" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+  <line x1="266" y1="10" x2="266" y2="240" stroke="#1b1c1c" stroke-width="0.5" opacity="0.1" stroke-dasharray="4 4" />
+
+  <!-- Panel 1: Qdrant (Circular cluster/graph) -->
+  <circle cx="76" cy="80" r="22" fill="none" stroke="#1b1c1c" stroke-width="1.8" />
+  <circle cx="76" cy="80" r="4" fill="#B5502D" />
+  <!-- Nodes on circle perimeter -->
+  <circle cx="60" cy="68" r="3" fill="#1b1c1c" />
+  <circle cx="92" cy="68" r="3" fill="#1b1c1c" />
+  <circle cx="64" cy="94" r="3" fill="#1b1c1c" />
+  <circle cx="88" cy="94" r="3" fill="#1b1c1c" />
+  <!-- Connections -->
+  <line x1="76" y1="80" x2="60" y2="68" stroke="#1b1c1c" stroke-width="1" />
+  <line x1="76" y1="80" x2="92" y2="68" stroke="#1b1c1c" stroke-width="1" />
+  <line x1="76" y1="80" x2="64" y2="94" stroke="#1b1c1c" stroke-width="1" />
+  <line x1="76" y1="80" x2="88" y2="94" stroke="#1b1c1c" stroke-width="1" />
+  <text x="56" y="125" font-family="Courier, monospace" font-size="9" fill="#1b1c1c" font-weight="bold">QDRANT</text>
+
+  <!-- Panel 2: Pinecone (Pine tree/hierarchical tree grid) -->
+  <path d="M 200,50 L 180,90 L 220,90 Z" fill="none" stroke="#1b1c1c" stroke-width="1.8" stroke-linejoin="round" />
+  <path d="M 200,45 L 175,85" stroke="#B5502D" stroke-width="1.2" />
+  <circle cx="175" cy="85" r="3.5" fill="#B5502D" />
+  <path d="M 200,45 L 225,85" stroke="#1b1c1c" stroke-width="1" />
+  <circle cx="225" cy="85" r="3.5" fill="#1b1c1c" />
+  <text x="175" y="125" font-family="Courier, monospace" font-size="9" fill="#1b1c1c" font-weight="bold">PINECONE</text>
+
+  <!-- Panel 3: Chroma (RGB color segments/layers) -->
+  <rect x="303" y="55" width="30" height="40" fill="none" stroke="#1b1c1c" stroke-width="1.8" />
+  <line x1="303" y1="68" x2="333" y2="68" stroke="#B5502D" stroke-width="1.5" />
+  <line x1="303" y1="81" x2="333" y2="81" stroke="#1b1c1c" stroke-width="1.5" />
+  <!-- A small dot pattern inside -->
+  <circle cx="318" cy="62" r="2.5" fill="#B5502D" />
+  <circle cx="312" cy="74" r="2.5" fill="#1b1c1c" />
+  <circle cx="324" cy="74" r="2" fill="#1b1c1c" />
+  <circle cx="318" cy="90" r="3" fill="#B5502D" />
+  <text x="300" y="125" font-family="Courier, monospace" font-size="9" fill="#1b1c1c" font-weight="bold">CHROMA</text>
+
+  <text x="145" y="180" font-family="Courier, monospace" font-size="10" fill="#B5502D" font-weight="bold">DB_ARCHITECTURES</text>
+</svg>

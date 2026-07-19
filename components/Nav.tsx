@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 const NAV_LINKS = [
   { label: 'Writing',    href: '/articles' },
@@ -16,6 +17,7 @@ export default function Nav() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
   const [visible, setVisible]     = useState(true);
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const lastScrollY = useRef(0);
 
   /* Scroll: show/hide + frosted glass transition */
@@ -102,40 +104,60 @@ export default function Nav() {
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href ||
               (link.href !== '/' && pathname.startsWith(link.href));
+            const showUnderline = hoveredLink === link.href || (!hoveredLink && isActive);
+
             return (
-              <Link
+              <div
                 key={link.href}
-                href={link.href}
-                aria-current={isActive ? 'page' : undefined}
-                style={{
-                  fontFamily: '"DM Sans", sans-serif',
-                  fontSize: '10px',
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  fontWeight: 600,
-                  color: isActive ? '#B5502D' : '#1b1c1c',
-                  textDecoration: 'none',
-                  paddingBottom: '2px',
-                  borderBottom: isActive
-                    ? '1px solid #B5502D'
-                    : '1px solid transparent',
-                  transition: 'color 160ms ease, border-color 160ms ease',
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    (e.currentTarget as HTMLAnchorElement).style.color = '#B5502D';
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = '#B5502D';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    (e.currentTarget as HTMLAnchorElement).style.color = '#1b1c1c';
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = 'transparent';
-                  }
-                }}
+                style={{ position: 'relative' }}
+                onMouseEnter={() => setHoveredLink(link.href)}
+                onMouseLeave={() => setHoveredLink(null)}
               >
-                {link.label}
-              </Link>
+                <Link
+                  href={link.href}
+                  aria-current={isActive ? 'page' : undefined}
+                  style={{
+                    fontFamily: '"DM Sans", sans-serif',
+                    fontSize: '10px',
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    fontWeight: 600,
+                    color: isActive ? '#B5502D' : '#1b1c1c',
+                    textDecoration: 'none',
+                    paddingBottom: '6px',
+                    display: 'block',
+                    transition: 'color 200ms ease',
+                  }}
+                >
+                  {link.label}
+                </Link>
+
+                {showUnderline && (
+                  <motion.svg
+                    layoutId="nav-underline"
+                    style={{
+                      position: 'absolute',
+                      bottom: '-4px',
+                      left: 0,
+                      width: '100%',
+                      height: '6px',
+                    }}
+                    viewBox="0 0 100 6"
+                    preserveAspectRatio="none"
+                  >
+                    <motion.path
+                      d="M 0,3 Q 25,1 50,3 T 100,3"
+                      fill="none"
+                      stroke="#B5502D"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 0.3, ease: 'easeOut' }}
+                    />
+                  </motion.svg>
+                )}
+              </div>
             );
           })}
 

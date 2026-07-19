@@ -19,7 +19,12 @@ export default function SmoothScroll() {
 
       gsap.registerPlugin(ScrollTrigger);
 
-      lenisInstance = new Lenis({ lerp: 0.08, smoothWheel: true });
+      // R1. Scroll Hijacking Fix: duration 1.2, custom easing
+      lenisInstance = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+      });
 
       tickFn = (time: number) => {
         lenisInstance?.raf(time * 1000);
@@ -29,12 +34,20 @@ export default function SmoothScroll() {
       gsap.ticker.lagSmoothing(0);
       lenisInstance.on('scroll', ScrollTrigger.update);
 
+      // ScrollTrigger Optimization: call ScrollTrigger.refresh() on load and resize
       const handleResize = () => ScrollTrigger.refresh();
       window.addEventListener('resize', handleResize);
+      window.addEventListener('load', handleResize);
+
+      // Call initial refresh
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 500);
 
       return () => {
         if (tickFn) gsap.ticker.remove(tickFn);
         window.removeEventListener('resize', handleResize);
+        window.removeEventListener('load', handleResize);
         ScrollTrigger.getAll().forEach((t) => t.kill());
       };
     };
