@@ -249,6 +249,9 @@ export default function HomePage() {
     <>
       <ScrollProgress />
 
+      {/* Flagship Fixed 3D Hero Canvas Overlay - Runs performantly on both desktop and mobile viewports */}
+      <HeroCanvas isMobile={isMobile} />
+
       {/* --- HERO --- */}
       <section
         aria-label="Hero"
@@ -301,6 +304,23 @@ export default function HomePage() {
               pointerEvents: 'auto',
             }}
           >
+            {/* Friendly Greeting in beautiful hand-drawn Caveat font */}
+            <p
+              style={{
+                fontFamily: 'var(--font-sketch)',
+                fontSize: isMobile ? '2.0rem' : '3.2rem',
+                color: '#B5502D',
+                marginBottom: '0.25rem',
+                fontWeight: 500,
+                textAlign: 'center',
+                animation: 'fadeIn 0.8s ease 0.1s both',
+                transform: 'rotate(-2deg)',
+                display: 'inline-block',
+              }}
+            >
+              Hey, I am Divy
+            </p>
+
             {/* Label */}
             <p
               className="label-caps"
@@ -309,8 +329,9 @@ export default function HomePage() {
                 fontSize: '11px',
                 letterSpacing: '0.22em',
                 fontWeight: 700,
-                color: '#B5502D',
-                animation: 'fadeIn 0.5s ease 0.2s both',
+                color: '#1b1c1c',
+                opacity: 0.6,
+                animation: 'fadeIn 0.5s ease 0.25s both',
               }}
             >
               AI ENGINEER
@@ -468,9 +489,6 @@ export default function HomePage() {
                   }}
                 />
 
-                {/* Localized 3D Sculpture Canvas (zIndex 0 behind profile photo) */}
-                <HeroCanvas isMobile={isMobile} />
-
                 {/* Main Circular Profile Profile Photo Glass Container */}
                 <div
                   className="circular-frame"
@@ -547,23 +565,6 @@ export default function HomePage() {
                 </div>
               </div>
             </Magnetic>
-
-            {/* Bolder, highly professional uppercase Swiss-style subtitle */}
-            <p
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: isMobile ? '11px' : '12px',
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                fontWeight: 700,
-                color: '#B5502D',
-                marginTop: '1.75rem',
-                textAlign: 'center',
-                pointerEvents: 'auto',
-              }}
-            >
-              Hey I am Divy
-            </p>
           </div>
         </div>
 

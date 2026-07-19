@@ -16,6 +16,7 @@
 
   --font-display: "Playfair Display", Georgia, serif;
   --font-body:    "DM Sans", system-ui, sans-serif;
+  --font-sketch:  var(--font-sketch), cursive;
 
   --space-page:    5vw;
   --space-section: 10rem;

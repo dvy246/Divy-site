@@ -189,8 +189,21 @@ function FloatingGeometry({
     mouse.current.y += (mouse.current.ty - mouse.current.y) * 0.05;
 
     // Leaning reaction when mouse is near: subtly shift model focus to lean towards cursor
-    const targetLeanX = mouse.current.y * 0.18;
-    const targetLeanY = mouse.current.x * 0.18;
+    const targetLeanX = mouse.current.y * 0.04;
+    const targetLeanY = mouse.current.x * 0.04;
+
+    // Track scroll-based translation from left to right (from 0 to 1.7)
+    const scrollY = typeof window !== 'undefined' ? window.scrollY : 0;
+    const vh = typeof window !== 'undefined' ? window.innerHeight : 800;
+    const scrollFraction = Math.min(1.0, Math.max(0.0, scrollY / (vh * 0.85)));
+
+    // Calculate dynamic targets: moves from 0 (centered) to 1.7 (shifted right)
+    const targetX = THREE.MathUtils.lerp(0, (isMobile ? 0 : 1.7), scrollFraction);
+    const targetY = THREE.MathUtils.lerp(0, (isMobile ? -0.25 : -0.32), scrollFraction);
+
+    // Smoothly interpolate targets to prevent scroll stutter
+    params.x = THREE.MathUtils.lerp(params.x, targetX, 0.08);
+    params.y = THREE.MathUtils.lerp(params.y, targetY, 0.08);
 
     // 1. Inertial rotation decay & drag physics
     if (!prefersReducedMotion.current) {
@@ -451,7 +464,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
     rotationSpeedX: 0.03, // slow, visual luxury museum feel
     rotationSpeedY: 0.05,
     rotationSpeedZ: 0.0,
-    scale: hasScrolledOnLoad ? (isMobile ? 1.05 : 1.25) : 0.001,
+    scale: hasScrolledOnLoad ? (isMobile ? 1.0 : 1.45) : 0.001,
     color: isMobile ? '#ffffff' : '#dfb46c',
 
     roughness: 0.06,
@@ -485,9 +498,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       // Reveal animation emerging from portrait (0.8s delay)
       if (!hasScrolledOnLoad) {
         revealTween = gsap.to(scrollParams.current, {
-          x: 0,
-          y: 0,
-          scale: isMobile ? 1.05 : 1.25,
+          scale: isMobile ? 1.0 : 1.45,
           transmission: 0.88,
           inkWireframeOpacity: 0.15,
           redlineWireframeOpacity: 0.15,
@@ -517,13 +528,13 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
   return (
     <div
       style={{
-        position: 'absolute',
-        top: '-45px',
-        left: '-45px',
-        right: '-45px',
-        bottom: '-45px',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100svh',
         pointerEvents: 'none',
-        zIndex: 0, // sit behind profile image container
+        zIndex: 1, // Behind page content but in front of background grid
       }}
     >
       <Canvas

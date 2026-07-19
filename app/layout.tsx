@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, DM_Sans } from "next/font/google";
+import { Playfair_Display, DM_Sans, Caveat } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -21,6 +21,13 @@ const dmSans = DM_Sans({
   weight: ["300", "400", "500", "600"],
   style: ["normal", "italic"],
   variable: "--font-body",
+  display: "swap",
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-sketch",
   display: "swap",
 });
 
@@ -51,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${dmSans.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${playfair.variable} ${dmSans.variable} ${caveat.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
         {/* Floating Ambient Glow Backgrounds */}
         <div 
