@@ -122,6 +122,8 @@ function SplitText({
             cursor: 'default',
             originX: 0.5,
             originY: 0.5,
+            paddingBottom: '0.12em',
+            overflow: 'visible',
           }}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -302,11 +304,12 @@ export default function HomePage() {
                 fontSize: 'clamp(4.2rem, 10vw, 8.5rem)',
                 fontWeight: 700,
                 fontStyle: 'normal',
-                lineHeight: 0.95,
-                letterSpacing: '0.02em',
+                lineHeight: 1.1,
+                letterSpacing: '0.04em',
                 color: '#0e0f0f',
-                marginBottom: '2.5rem',
-                overflow: 'hidden',
+                marginBottom: '1.8rem',
+                overflow: 'visible',
+                paddingBottom: '0.12em',
                 textAlign: 'center',
               }}
             >

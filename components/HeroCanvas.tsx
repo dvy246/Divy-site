@@ -90,16 +90,16 @@ function AccentElement({
     const winHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
     const scrollOffset = (scrollY / winHeight) * state.viewport.height;
 
-    // 2. Slow floating sine wave drift
+    // 2. Lissajous organic float drift (multi-frequency curves for fluid non-repeating paths)
     const elapsed = state.clock.getElapsedTime() + timeOffset.current;
-    const floatY = Math.sin(elapsed * floatSpeed) * floatAmp;
-    const floatX = Math.cos(elapsed * floatSpeed * 0.8) * floatAmp * 0.5;
+    const floatY = Math.sin(elapsed * floatSpeed) * floatAmp + Math.cos(elapsed * floatSpeed * 0.45) * (floatAmp * 0.4);
+    const floatX = Math.cos(elapsed * floatSpeed * 0.85) * floatAmp + Math.sin(elapsed * floatSpeed * 0.35) * (floatAmp * 0.4);
 
     // 3. Proximity Interactive Reaction (warp & scale when cursor gets close)
     let proximityScale = 1.0;
-    let proximityRoughness = type === 'lens' ? 0.04 : 0.08;
-    let proximityThickness = 0.5;
-    let proximityDistortion = 0.01;
+    let proximityRoughness = type === 'lens' ? 0.01 : 0.02;
+    let proximityThickness = 1.5;
+    let proximityDistortion = 0.12;
 
     if (!isMobile && mouseRef.current) {
       // Projected mouse coordinates at the depth of the element
@@ -114,9 +114,9 @@ function AccentElement({
       if (dist < 2.2) {
         const influence = Math.max(0, 1 - dist / 2.2); // 0 to 1
         proximityScale = 1.0 + influence * 0.28; // scale up by up to 28%
-        proximityRoughness = THREE.MathUtils.lerp(proximityRoughness, 0.01, influence); // polish surface
-        proximityThickness = THREE.MathUtils.lerp(0.5, 0.95, influence); // magnify glass thickness
-        proximityDistortion = THREE.MathUtils.lerp(0.01, 0.08, influence); // warp refractions
+        proximityRoughness = THREE.MathUtils.lerp(proximityRoughness, 0.005, influence); // polish surface completely
+        proximityThickness = THREE.MathUtils.lerp(1.5, 2.2, influence); // magnify glass thickness
+        proximityDistortion = THREE.MathUtils.lerp(0.12, 0.35, influence); // warp refractions strongly
         
         // Add subtle tilt/attraction towards mouse
         meshRef.current.rotation.x += dx * influence * 0.012;
@@ -137,13 +137,20 @@ function AccentElement({
     meshRef.current.rotation.y += delta * rotSpeed[1] * 0.25;
     meshRef.current.rotation.z += delta * rotSpeed[2] * 0.25;
 
-    // 5. Entrance bloom scale + hover scale factor
+    // 5. Entrance bloom scale + hover scale factor + organic wobble (squash/stretch)
     currentScaleFactor.current = THREE.MathUtils.lerp(currentScaleFactor.current, 1.0, 0.04);
     
+    // Phase-shifted sine waves for organic squash/stretch wobble (simulating water surface tension wiggles)
+    const wobbleSpeed = 1.8;
+    const wobbleAmp = 0.07;
+    const wobbleX = 1.0 + Math.sin(elapsed * wobbleSpeed) * wobbleAmp;
+    const wobbleY = 1.0 + Math.cos(elapsed * wobbleSpeed * 1.15) * wobbleAmp;
+    const wobbleZ = 1.0 + Math.sin(elapsed * wobbleSpeed * 0.85 + 1.2) * wobbleAmp;
+
     meshRef.current.scale.set(
-      scale[0] * currentScaleFactor.current * proximityScale,
-      scale[1] * currentScaleFactor.current * proximityScale,
-      scale[2] * currentScaleFactor.current * proximityScale
+      scale[0] * currentScaleFactor.current * proximityScale * wobbleX,
+      scale[1] * currentScaleFactor.current * proximityScale * wobbleY,
+      scale[2] * currentScaleFactor.current * proximityScale * wobbleZ
     );
 
     // Update material properties dynamically on GPU thread
@@ -185,15 +192,18 @@ function AccentElement({
         <MeshTransmissionMaterial
           ref={materialRef}
           color="#faf8f5"
-          roughness={type === 'lens' ? 0.04 : 0.08}
-          transmission={0.97}
-          thickness={0.5}
-          ior={1.22}
-          chromaticAberration={0.002}
+          roughness={type === 'lens' ? 0.01 : 0.02} // Super polished look
+          transmission={1.0} // Fully transparent
+          thickness={1.5} // Thick, gorgeous refraction
+          ior={1.38} // Exact refraction of premium fluid
+          chromaticAberration={0.012} // Color separation at curves
           anisotropicBlur={0.15}
-          distortion={0.01}
-          distortionScale={0.02}
+          distortion={0.12} // Warp of background
+          distortionScale={0.25}
           temporalDistortion={0.0}
+          backside={!isMobile} // Double-sided refraction (desktop only for performance)
+          clearcoat={isMobile ? 0 : 1.0} // Extra reflective coating (desktop only)
+          clearcoatRoughness={0.01}
           samples={isMobile ? 4 : 8}
           transparent
         />
