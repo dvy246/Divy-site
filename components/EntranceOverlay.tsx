@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, Sparkles } from '@react-three/drei';
+import { Float, Sparkles, Environment } from '@react-three/drei';
 import { motion, AnimatePresence } from 'motion/react';
 import * as THREE from 'three';
 
@@ -248,15 +248,18 @@ function OrganicBubbleScene({
         <sphereGeometry args={[1.0, 64, 64]} />
         <meshPhysicalMaterial
           ref={bubbleMaterialRef}
-          color="#D4A853"
-          roughness={0.16}
-          metalness={0.1}
-          reflectivity={0.9}
+          color="#dfb46c"
+          roughness={0.06}
+          metalness={0.05}
+          reflectivity={1.0}
           clearcoat={1.0}
-          clearcoatRoughness={0.05}
-          transmission={0.45}
-          thickness={1.8}
-          emissive="#D4A853"
+          clearcoatRoughness={0.02}
+          transmission={0.88}
+          thickness={2.4}
+          ior={1.68}
+          iridescence={0.85}
+          iridescenceIOR={1.75}
+          emissive="#dfb46c"
           emissiveIntensity={0}
         />
       </mesh>
@@ -269,21 +272,24 @@ function OrganicBubbleScene({
       >
         <sphereGeometry args={[1.0, 32, 32]} />
         <meshPhysicalMaterial
-          color="#D4A853"
-          roughness={0.16}
-          metalness={0.1}
-          reflectivity={0.9}
+          color="#dfb46c"
+          roughness={0.06}
+          metalness={0.05}
+          reflectivity={1.0}
           clearcoat={1.0}
-          clearcoatRoughness={0.05}
-          transmission={0.45}
-          thickness={1.8}
+          clearcoatRoughness={0.02}
+          transmission={0.88}
+          thickness={2.4}
+          ior={1.68}
+          iridescence={0.85}
+          iridescenceIOR={1.75}
         />
       </mesh>
 
-      {/* Translucent Glass Cursor pointer overlap */}
+      {/* Translucent Frosted Glass Cursor pointer overlap */}
       <mesh
         ref={cursorRef}
-        position={[0.15, 0.15, 0.65]}
+        position={[0.15, 0.15, 0.72]}
         rotation={[-0.1, 0.0, 0.15]}
         scale={[0.58, 0.58, 0.58]}
         onPointerOver={() => setHovered(true)}
@@ -294,14 +300,33 @@ function OrganicBubbleScene({
         <meshPhysicalMaterial
           ref={cursorMaterialRef}
           color="#ffffff"
-          transmission={0.92}
-          roughness={0.06}
-          metalness={0.15}
-          thickness={2.0}
+          transmission={0.65}
+          roughness={0.24}
+          metalness={0.1}
+          thickness={3.5}
+          ior={1.5}
           clearcoat={1.0}
-          clearcoatRoughness={0.01}
+          clearcoatRoughness={0.05}
           emissive="#ffffff"
           emissiveIntensity={0}
+        />
+      </mesh>
+
+      {/* Wireframe Outline cursor overlay to make it highly visible and technical */}
+      <mesh
+        position={[0.15, 0.15, 0.725]}
+        rotation={[-0.1, 0.0, 0.15]}
+        scale={[0.585, 0.585, 0.585]}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        onClick={onClick}
+      >
+        <PointerShape />
+        <meshBasicMaterial
+          color="#B5502D"
+          wireframe
+          transparent
+          opacity={0.7}
         />
       </mesh>
     </group>
@@ -411,6 +436,9 @@ export default function EntranceOverlay() {
             <directionalLight position={[5, 5, 4]} intensity={2.5} color="#ffffff" castShadow />
             <pointLight position={[-4, 3, 2]} intensity={1.5} color="#B5502D" />
             <pointLight position={[0, -3, 2]} intensity={1.0} color="#D4A853" />
+            
+            {/* HDRI reflections environment */}
+            <Environment preset="studio" />
 
             <OrganicBubbleScene
               isClickTriggered={isClickTriggered}
