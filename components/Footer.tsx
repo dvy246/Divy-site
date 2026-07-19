@@ -12,6 +12,7 @@ export default function Footer() {
         color: '#f2f0f0',
         position: 'relative',
         overflow: 'hidden',
+        zIndex: 10,
       }}
     >
       {/* Wavy SVG divider at top */}
