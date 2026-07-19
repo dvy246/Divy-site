@@ -159,7 +159,7 @@ function AccentElement({
   });
 
   return (
-    <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.25}>
+    <Float speed={1.8} rotationIntensity={0.15} floatIntensity={0.6}>
       <mesh
         ref={meshRef}
         castShadow={false}
@@ -220,7 +220,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           scale: [0.2, 0.33, 0.2] as [number, number, number], // Stretched teardrop
           parallax: 1.0,
           floatSpeed: 0.9,
-          floatAmp: 0.06,
+          floatAmp: 0.18,
           rotSpeed: [0.1, 0.2, 0.05] as [number, number, number],
         },
         {
@@ -230,7 +230,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           scale: [0.2, 0.33, 0.2] as [number, number, number], // Stretched teardrop
           parallax: 1.02,
           floatSpeed: 1.15,
-          floatAmp: 0.06,
+          floatAmp: 0.18,
           rotSpeed: [-0.08, 0.18, 0.07] as [number, number, number],
         },
       ]
@@ -242,7 +242,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           scale: [0.34, 0.56, 0.34] as [number, number, number], // stretched premium teardrop
           parallax: 1.0,
           floatSpeed: 1.0,
-          floatAmp: 0.08,
+          floatAmp: 0.28,
           rotSpeed: [0.12, 0.22, 0.07] as [number, number, number],
         },
         {
@@ -252,7 +252,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           scale: [0.34, 0.56, 0.34] as [number, number, number], // stretched premium teardrop
           parallax: 1.02,
           floatSpeed: 1.25,
-          floatAmp: 0.08,
+          floatAmp: 0.28,
           rotSpeed: [0.15, -0.25, 0.05] as [number, number, number],
         },
       ];
