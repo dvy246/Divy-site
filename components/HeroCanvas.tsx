@@ -251,16 +251,37 @@ function FloatingGeometry({
       0.08
     );
 
+    // Living Material color and surface properties evolution:
+    // Evolve gold-to-champagne colors dynamically via low-frequency sine oscillations
+    const elapsed = _state.clock.getElapsedTime();
+    let finalColor = new THREE.Color(params.color);
+    if (params.color === '#dfb46c') {
+      const wave = Math.sin(elapsed * 0.05) * 0.5 + 0.5; // slow 125s cycle
+      const baseGold = new THREE.Color('#dfb46c'); // warm gold
+      const champagneIvory = new THREE.Color('#ebd8be'); // champagne ivory
+      const softCopper = new THREE.Color('#d4af37'); // bright gold/copper highlights
+      if (wave < 0.5) {
+        finalColor.lerpColors(baseGold, champagneIvory, wave * 2);
+      } else {
+        finalColor.lerpColors(champagneIvory, softCopper, (wave - 0.5) * 2);
+      }
+    }
+
+    // Microscopic physical material breathing dynamics
+    const livingRoughness = params.roughness + Math.sin(elapsed * 0.12) * 0.012;
+    const livingTransmission = params.transmission + Math.cos(elapsed * 0.08) * 0.03;
+    const livingIridescence = params.iridescence !== undefined ? (params.iridescence + Math.sin(elapsed * 0.1) * 0.06) : 0.8;
+
     // 3. Dynamic Morphing of mesh material parameters directly on the GPU thread (highly performant!)
     if (materialRef.current) {
-      materialRef.current.roughness = THREE.MathUtils.lerp(materialRef.current.roughness, params.roughness, 0.08);
+      materialRef.current.roughness = THREE.MathUtils.lerp(materialRef.current.roughness, livingRoughness, 0.08);
       materialRef.current.metalness = THREE.MathUtils.lerp(materialRef.current.metalness, params.metalness, 0.08);
-      materialRef.current.transmission = THREE.MathUtils.lerp(materialRef.current.transmission, params.transmission, 0.08);
+      materialRef.current.transmission = THREE.MathUtils.lerp(materialRef.current.transmission, livingTransmission, 0.08);
       if (params.color) {
-        materialRef.current.color.lerp(new THREE.Color(params.color), 0.08);
+        materialRef.current.color.lerp(finalColor, 0.08);
       }
       if (params.iridescence !== undefined) {
-        materialRef.current.iridescence = THREE.MathUtils.lerp(materialRef.current.iridescence, params.iridescence, 0.08);
+        materialRef.current.iridescence = THREE.MathUtils.lerp(materialRef.current.iridescence, livingIridescence, 0.08);
       }
     }
 
@@ -418,27 +439,30 @@ function CameraController({ scrollParams }: { scrollParams: React.MutableRefObje
 
 /* === Canvas export === */
 export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean }) {
+  // Check if page was loaded scrolled down to skip entry sequence
+  const hasScrolledOnLoad = typeof window !== 'undefined' && window.scrollY > 50;
+
   // Shared ref holding morphable 3D parameters
   const scrollParams = useRef({
-    // Initial Hero State (Identity)
-    x: isMobile ? 0 : 1.7,
-    y: isMobile ? -0.25 : -0.32,
+    // Initial State: start centered behind portrait with scale 0 if not scrolled
+    x: hasScrolledOnLoad ? (isMobile ? 0 : 1.7) : 0,
+    y: hasScrolledOnLoad ? (isMobile ? -0.25 : -0.32) : 0,
     z: 0,
     rotationSpeedX: 0.08,
     rotationSpeedY: 0.25,
     rotationSpeedZ: 0.0,
-    scale: isMobile ? 0.65 : 0.85,
+    scale: hasScrolledOnLoad ? (isMobile ? 0.65 : 0.85) : 0.001,
     color: isMobile ? '#ffffff' : '#dfb46c',
 
     roughness: 0.06,
     metalness: 0.05,
-    transmission: 0.88,
+    transmission: hasScrolledOnLoad ? 0.88 : 1.0,
     iridescence: 0.5,
 
-    inkWireframeOpacity: 0.1,
-    redlineWireframeOpacity: 0.1,
-    ring1Opacity: 0.2,
-    ring2Opacity: 0.2,
+    inkWireframeOpacity: hasScrolledOnLoad ? 0.1 : 0.0,
+    redlineWireframeOpacity: hasScrolledOnLoad ? 0.1 : 0.0,
+    ring1Opacity: hasScrolledOnLoad ? 0.2 : 0.0,
+    ring2Opacity: hasScrolledOnLoad ? 0.2 : 0.0,
     ring1Speed: 1.0,
     ring2Speed: 1.0,
 
@@ -457,6 +481,29 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       const { default: gsap } = await import('gsap');
       const { ScrollTrigger } = await import('gsap/ScrollTrigger');
       gsap.registerPlugin(ScrollTrigger);
+
+      // Reveal animation emerging from portrait (1.2s delay)
+      if (!hasScrolledOnLoad) {
+        gsap.to(scrollParams.current, {
+          x: isMobile ? 0 : 1.7,
+          y: isMobile ? -0.25 : -0.32,
+          scale: isMobile ? 0.65 : 0.85,
+          transmission: 0.88,
+          inkWireframeOpacity: 0.1,
+          redlineWireframeOpacity: 0.1,
+          ring1Opacity: 0.2,
+          ring2Opacity: 0.2,
+          duration: 2.2,
+          delay: 1.0,
+          ease: 'power3.out',
+          onStart: () => {
+            window.dispatchEvent(new CustomEvent('dy_sculpture_reveal_start'));
+          },
+          onComplete: () => {
+            window.dispatchEvent(new CustomEvent('dy_sculpture_reveal_complete'));
+          }
+        });
+      }
 
       // Define standard layout states
       const state1 = {

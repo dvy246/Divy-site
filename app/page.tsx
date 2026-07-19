@@ -175,6 +175,7 @@ export default function HomePage() {
   const [isMobile, setMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [coords, setCoords]   = useState({ x: 50, y: 50 });
+  const [revealState, setRevealState] = useState<'idle' | 'revealing' | 'complete'>('idle');
   const bioRef    = useRef<HTMLElement>(null);
   const statsRef  = useRef<HTMLDivElement>(null);
 
@@ -198,9 +199,17 @@ export default function HomePage() {
       window.addEventListener('dy_entrance_complete', triggerHero);
     }
 
+    const handleRevealStart = () => setRevealState('revealing');
+    const handleRevealComplete = () => setRevealState('complete');
+
+    window.addEventListener('dy_sculpture_reveal_start', handleRevealStart);
+    window.addEventListener('dy_sculpture_reveal_complete', handleRevealComplete);
+
     return () => {
       window.removeEventListener('resize', check);
       window.removeEventListener('dy_entrance_complete', triggerHero);
+      window.removeEventListener('dy_sculpture_reveal_start', handleRevealStart);
+      window.removeEventListener('dy_sculpture_reveal_complete', handleRevealComplete);
     };
   }, []);
 
@@ -333,7 +342,7 @@ export default function HomePage() {
                 animationDelay={1000}
                 animationDuration={700}
               >
-                <SplitText text="Divy Yadav" delay={0.15} />
+                <SplitText text="DIVY YADAV" delay={0.15} />
               </RoughNotation>
             </h1>
 
@@ -454,13 +463,15 @@ export default function HomePage() {
                     position: 'absolute',
                     inset: 0,
                     border: '1px dashed #B5502D',
-                    opacity: 0.8,
+                    opacity: revealState === 'revealing' ? 1.0 : 0.8,
                     pointerEvents: 'none',
-                    animationDuration: '35s',
+                    animationDuration: revealState === 'revealing' ? '7s' : '35s',
+                    boxShadow: revealState === 'revealing' ? '0 0 30px rgba(181, 80, 45, 0.4)' : 'none',
+                    transition: 'opacity 0.6s ease, box-shadow 0.6s ease',
                   }}
                 />
 
-                {/* Main Circular Profile Photo Glass Container */}
+                {/* Main Circular Profile Profile Photo Glass Container */}
                 <div
                   className="circular-frame"
                   onMouseMove={(e) => {
@@ -489,9 +500,26 @@ export default function HomePage() {
                     style={{
                       objectFit: 'cover',
                       zIndex: 1,
+                      filter: revealState === 'revealing' ? 'blur(6px) contrast(1.15) brightness(1.08)' : 'none',
+                      opacity: revealState === 'revealing' ? 0.78 : 1,
+                      transition: 'filter 2.2s cubic-bezier(0.16,1,0.3,1), opacity 2.2s cubic-bezier(0.16,1,0.3,1)',
                     }}
                   />
                   
+                  {/* Gold/Refraction emerging energy overlay */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'radial-gradient(circle, rgba(223, 180, 108, 0.45) 0%, rgba(181, 80, 45, 0.1) 60%, transparent 100%)',
+                      opacity: revealState === 'revealing' ? 1 : 0,
+                      mixBlendMode: 'color-dodge',
+                      pointerEvents: 'none',
+                      zIndex: 3,
+                      transition: 'opacity 1.5s cubic-bezier(0.16,1,0.3,1)',
+                    }}
+                  />
+
                   {/* Dynamic Mouse-tracking Glass Highlight Overlay */}
                   <div
                     style={{
