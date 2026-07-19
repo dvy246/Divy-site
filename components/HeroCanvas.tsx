@@ -26,33 +26,32 @@ function AnimatedLights({ scrollParams }: { scrollParams: React.MutableRefObject
       spotLightRef.current.intensity = params.spotLightIntensity;
     }
   });
-
   return (
     <>
-      <ambientLight intensity={0.45} color="#FFF8F0" />
+      <ambientLight intensity={0.65} color="#FFF8F0" />
       <pointLight
         ref={pointLightRef}
         position={[6, 6, 6]}
-        intensity={5}
+        intensity={3.5}
         color="#FFE8C0"
         castShadow
         shadow-mapSize={512}
       />
-      <pointLight position={[-4, -2, 4]} intensity={2.5} color="#F5F5DC" />
+      <pointLight position={[-4, -2, 4]} intensity={1.5} color="#F5F5DC" />
       <spotLight
         ref={spotLightRef}
         position={[0, 8, 2]}
         angle={0.35}
         penumbra={1}
-        intensity={4}
+        intensity={2.5}
         color="#ffffff"
         castShadow
       />
-      {/* Accent rim light - Cool studio blue */}
+      {/* Accent rim light - Warm studio terracotta */}
       <pointLight
         position={[-6, 3, -4]}
-        intensity={3.5}
-        color="#80C0FF"
+        intensity={2.0}
+        color="#B5502D"
       />
     </>
   );
@@ -196,14 +195,15 @@ function FloatingGeometry({
     const scrollY = typeof window !== 'undefined' ? window.scrollY : 0;
     const vh = typeof window !== 'undefined' ? window.innerHeight : 800;
     const scrollFraction = Math.min(1.0, Math.max(0.0, scrollY / (vh * 0.85)));
-
-    // Calculate dynamic targets: moves from 0 (centered) to 1.7 (shifted right)
-    const targetX = THREE.MathUtils.lerp(0, (isMobile ? 0 : 1.7), scrollFraction);
-    const targetY = THREE.MathUtils.lerp(0, (isMobile ? -0.25 : -0.32), scrollFraction);
+    // Calculate dynamic targets: off-center on desktop, offset down on mobile to prevent overlapping typography
+    const targetX = THREE.MathUtils.lerp(isMobile ? 0 : 1.45, isMobile ? 0.0 : 2.2, scrollFraction);
+    const targetY = THREE.MathUtils.lerp(isMobile ? -1.25 : -0.1, isMobile ? -1.85 : -0.4, scrollFraction);
+    const targetZ = THREE.MathUtils.lerp(isMobile ? -0.8 : -0.5, isMobile ? -1.5 : -1.3, scrollFraction);
 
     // Smoothly interpolate targets to prevent scroll stutter
     params.x = THREE.MathUtils.lerp(params.x, targetX, 0.08);
     params.y = THREE.MathUtils.lerp(params.y, targetY, 0.08);
+    params.z = THREE.MathUtils.lerp(params.z, targetZ, 0.08);
 
     // 1. Inertial rotation decay & drag physics
     if (!prefersReducedMotion.current) {
@@ -333,16 +333,16 @@ function FloatingGeometry({
           <torusKnotGeometry args={isMobile ? [1, 0.26, 128, 24] : [1, 0.26, 256, 48]} />
           <MeshTransmissionMaterial
             ref={materialRef}
-            color="#ffffff"
-            roughness={0.06}
-            transmission={1.0}
-            thickness={1.3}
-            ior={1.52}
-            chromaticAberration={0.06}
-            anisotropicBlur={0.1}
-            distortion={0.35}
-            distortionScale={0.25}
-            temporalDistortion={0.2}
+            color="#f7ebd3"
+            roughness={0.12}
+            transmission={0.88}
+            thickness={0.8}
+            ior={1.22}
+            chromaticAberration={0.015}
+            anisotropicBlur={0.2}
+            distortion={0.05}
+            distortionScale={0.05}
+            temporalDistortion={0.0}
             samples={isMobile ? 6 : 10}
             transparent
           />
@@ -459,21 +459,20 @@ function CameraController({ scrollParams }: { scrollParams: React.MutableRefObje
 export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean }) {
   // Check if page was loaded scrolled down to skip entry sequence
   const hasScrolledOnLoad = typeof window !== 'undefined' && window.scrollY > 50;
-
   // Shared ref holding morphable 3D parameters
   const scrollParams = useRef({
-    // Initial State: start centered behind portrait with scale 0 if not scrolled
-    x: 0,
-    y: 0,
-    z: 0,
-    rotationSpeedX: 0.015, // extremely slow, premium watch movement feel
-    rotationSpeedY: 0.025,
+    // Initial State: start offset to the right side of the screen
+    x: isMobile ? 0 : 1.45,
+    y: isMobile ? -1.25 : -0.1,
+    z: isMobile ? -0.8 : -0.5,
+    rotationSpeedX: 0.012, // extremely slow, premium watch movement feel
+    rotationSpeedY: 0.018,
     rotationSpeedZ: 0.0,
-    scale: hasScrolledOnLoad ? (isMobile ? 1.25 : 1.65) : 0.001,
-    color: '#ffffff',
+    scale: hasScrolledOnLoad ? (isMobile ? 0.9 : 1.2) : 0.001,
+    color: '#f7ebd3',
 
-    roughness: 0.06,
-    transmission: hasScrolledOnLoad ? 0.95 : 1.0,
+    roughness: 0.12,
+    transmission: hasScrolledOnLoad ? 0.88 : 1.0,
 
     inkWireframeOpacity: hasScrolledOnLoad ? 0.06 : 0.0,
     redlineWireframeOpacity: hasScrolledOnLoad ? 0.06 : 0.0,
@@ -485,8 +484,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
     cameraZ: 4.8,
     cameraY: 0.0,
     cameraX: 0.0,
-    pointLightIntensity: 5.0,
-    spotLightIntensity: 4.0,
+    pointLightIntensity: 3.5,
+    spotLightIntensity: 2.5,
   });
 
   // Setup GSAP entry reveal animation
@@ -501,8 +500,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       // Reveal animation emerging from portrait (0.8s delay)
       if (!hasScrolledOnLoad) {
         revealTween = gsap.to(scrollParams.current, {
-          scale: isMobile ? 1.25 : 1.65,
-          transmission: 0.95,
+          scale: isMobile ? 0.9 : 1.2,
+          transmission: 0.88,
           inkWireframeOpacity: 0.06,
           redlineWireframeOpacity: 0.06,
           ring1Opacity: 0.2,
@@ -562,9 +561,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
         <CameraController scrollParams={scrollParams} />
 
         <AnimatedLights scrollParams={scrollParams} />
-
         {/* Ambient background rim light matching terracotta */}
-        <directionalLight position={[0, 4, -5]} intensity={3.5} color="#B5502D" />
+        <directionalLight position={[0, 4, -5]} intensity={1.2} color="#B5502D" />
 
         {/* Studio HDRI environment for reflections */}
         <Environment preset="studio" />
@@ -573,13 +571,12 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
 
         {/* Cinematic drop contact shadow plane to anchor sculpture in physical space */}
         <ContactShadows
-          position={[isMobile ? 0 : 1.7, -1.8, 0]}
+          position={[isMobile ? 0 : 1.8, -1.8, 0]}
           opacity={0.4}
           scale={6.0}
           blur={2.5}
           far={4.0}
         />
-
         {/* Environmental drifting sparkles representing dust particles in atmospheric space */}
         <Sparkles
           count={isMobile ? 15 : 45}
