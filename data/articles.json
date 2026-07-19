@@ -1,5 +1,16 @@
 [
   {
+    "title": "Kimi K3 Just Beat GPT-5.5 and Opus 4.8 — And It’s Completely Free",
+    "url": "https://medium.com/ai-engineering-simplified/kimi-k3-just-beat-gpt-5-5-and-opus-4-8-and-its-completely-free-461ba5dd7429?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-19",
+    "summary": "The world’s largest open-source AI model is now competitive with Fable 5 while outperforming GPT-5.6 Sol, GPT-5.5, and Opus 4.8 on a major…",
+    "tags": [
+      "Technology",
+      "Artificial Intelligence",
+      "Programming"
+    ]
+  },
+  {
     "title": "7 AI Agent Cost Optimization Strategies That Cut LLM Bills by Up to 90%",
     "url": "https://pub.towardsai.net/7-ai-agent-cost-optimization-strategies-that-cut-llm-bills-by-up-to-90-baa9c8b46a40?source=rss-8cf8d1ee55e0------2",
     "date": "2026-07-18",
@@ -96,17 +107,6 @@
       "Data Science",
       "Artificial Intelligence",
       "Programming"
-    ]
-  },
-  {
-    "title": "Why Your AI Experiments Keep Starting From Scratch (And How Tensorlake Fixes It)",
-    "url": "https://pub.towardsai.net/why-your-ai-experiments-keep-starting-from-scratch-and-how-tensorlake-fixes-it-2e6091edf143?source=rss-8cf8d1ee55e0------2",
-    "date": "2026-07-10",
-    "summary": "Photo from AI How memory checkpoints and sandbox forking let you build once, checkpoint the warm state, and run as many parallel workers as you need. No reinsta…",
-    "tags": [
-      "Technology",
-      "Data Science",
-      "Machine Learning"
     ]
   }
 ]

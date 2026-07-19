@@ -32,26 +32,26 @@ function AnimatedLights({ scrollParams }: { scrollParams: React.MutableRefObject
       <pointLight
         ref={pointLightRef}
         position={[6, 6, 6]}
-        intensity={3.5}
-        color="#FFE8C0"
+        intensity={3.0}
+        color="#FFF4E0"
         castShadow
         shadow-mapSize={512}
       />
-      <pointLight position={[-4, -2, 4]} intensity={1.5} color="#F5F5DC" />
+      <pointLight position={[-4, -2, 4]} intensity={1.2} color="#F5F5DC" />
       <spotLight
         ref={spotLightRef}
         position={[0, 8, 2]}
         angle={0.35}
         penumbra={1}
-        intensity={2.5}
+        intensity={2.0}
         color="#ffffff"
         castShadow
       />
-      {/* Accent rim light - Warm studio terracotta */}
+      {/* Accent rim light - Cool studio rim highlight for premium glass edges */}
       <pointLight
         position={[-6, 3, -4]}
-        intensity={2.0}
-        color="#B5502D"
+        intensity={1.8}
+        color="#D0E0FF"
       />
     </>
   );
@@ -66,15 +66,9 @@ function FloatingGeometry({
   isMobile: boolean;
 }) {
   const groupRef = useRef<THREE.Group>(null);
-  const ringRef = useRef<THREE.Mesh>(null);
-  const ringRef2 = useRef<THREE.Mesh>(null);
 
   // Material refs for dynamic morphing
   const materialRef = useRef<any>(null);
-  const inkWireframeMaterialRef = useRef<any>(null);
-  const redlineWireframeMaterialRef = useRef<any>(null);
-  const ring1MaterialRef = useRef<any>(null);
-  const ring2MaterialRef = useRef<any>(null);
 
   const mouse = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
   const prefersReducedMotion = useRef(false);
@@ -202,17 +196,6 @@ function FloatingGeometry({
         }
       }
       groupRef.current.rotation.z += delta * params.rotationSpeedZ;
-
-      // Rotate engineering orbital rings in opposite directions, reacting to drag velocity
-      const dragFactor = isDragging.current ? 1.8 : 1.0;
-      if (ringRef.current) {
-        ringRef.current.rotation.x += delta * 0.05 * params.ring1Speed * dragFactor + velocity.current.y * 0.8;
-        ringRef.current.rotation.y += delta * 0.08 * params.ring1Speed * dragFactor + velocity.current.x * 0.8;
-      }
-      if (ringRef2.current) {
-        ringRef2.current.rotation.y -= delta * 0.04 * params.ring2Speed * dragFactor + velocity.current.x * 0.6;
-        ringRef2.current.rotation.z += delta * 0.06 * params.ring2Speed * dragFactor + velocity.current.y * 0.6;
-      }
     }
 
     // Smoothly interpolate position and scale (continuous transition choreography)
@@ -259,36 +242,6 @@ function FloatingGeometry({
         materialRef.current.color.lerp(finalColor, 0.08);
       }
     }
-
-    // 4. Dynamic Morphing of wireframe and ring opacities
-    if (inkWireframeMaterialRef.current) {
-      inkWireframeMaterialRef.current.opacity = THREE.MathUtils.lerp(
-        inkWireframeMaterialRef.current.opacity,
-        params.inkWireframeOpacity,
-        0.08
-      );
-    }
-    if (redlineWireframeMaterialRef.current) {
-      redlineWireframeMaterialRef.current.opacity = THREE.MathUtils.lerp(
-        redlineWireframeMaterialRef.current.opacity,
-        params.redlineWireframeOpacity,
-        0.08
-      );
-    }
-    if (ring1MaterialRef.current) {
-      ring1MaterialRef.current.opacity = THREE.MathUtils.lerp(
-        ring1MaterialRef.current.opacity,
-        params.ring1Opacity,
-        0.08
-      );
-    }
-    if (ring2MaterialRef.current) {
-      ring2MaterialRef.current.opacity = THREE.MathUtils.lerp(
-        ring2MaterialRef.current.opacity,
-        params.ring2Opacity,
-        0.08
-      );
-    }
   });
 
   return (
@@ -297,86 +250,24 @@ function FloatingGeometry({
         {/* Core Torus Knot (Refractive Glass Core) */}
         <mesh castShadow>
           {/* Lower geometry details on mobile for performance tuning */}
-          <torusKnotGeometry args={isMobile ? [1, 0.26, 128, 24] : [1, 0.26, 256, 48]} />
+          <torusKnotGeometry args={isMobile ? [1, 0.22, 128, 24] : [1, 0.22, 256, 48]} />
           <MeshTransmissionMaterial
             ref={materialRef}
-            color="#f7ebd3"
-            roughness={0.12}
-            transmission={0.88}
-            thickness={0.8}
-            ior={1.22}
-            chromaticAberration={0.015}
-            anisotropicBlur={0.2}
-            distortion={0.05}
+            color="#faf8f5"
+            roughness={0.06}
+            transmission={0.96}
+            thickness={0.65}
+            ior={1.25}
+            chromaticAberration={0.005}
+            anisotropicBlur={0.25}
+            distortion={0.02}
             distortionScale={0.05}
             temporalDistortion={0.0}
-            samples={isMobile ? 6 : 10}
+            samples={isMobile ? 4 : 8}
             transparent
-          />
-        </mesh>
-
-        {/* 3D Brushed Titanium Inner Framework Wireframe */}
-        <mesh>
-          <torusKnotGeometry args={isMobile ? [1.002, 0.2605, 128, 24] : [1.002, 0.2605, 256, 48]} />
-          <meshStandardMaterial
-            ref={inkWireframeMaterialRef}
-            color="#d8d3cd"
-            wireframe
-            transparent
-            opacity={0.35}
-            metalness={1.0}
-            roughness={0.28}
-          />
-        </mesh>
-
-        {/* 3D Technical Satin Terracotta Wireframe Accent */}
-        <mesh>
-          <torusKnotGeometry args={isMobile ? [1.004, 0.261, 64, 16] : [1.004, 0.261, 128, 24]} />
-          <meshStandardMaterial
-            ref={redlineWireframeMaterialRef}
-            color="#B5502D"
-            wireframe
-            transparent
-            opacity={0.25}
-            metalness={0.9}
-            roughness={0.22}
-          />
-        </mesh>
-
-        {/* Orbiting thin ring 1 (Polished White Ceramic) */}
-        <mesh ref={ringRef}>
-          <torusGeometry args={[1.5, 0.008, 8, isMobile ? 32 : 64]} />
-          <meshPhysicalMaterial
-            ref={ring1MaterialRef}
-            color="#fbf9f9"
-            roughness={0.02}
-            metalness={0.0}
-            reflectivity={1.0}
-            clearcoat={1.0}
-            clearcoatRoughness={0.02}
-            transparent
-            opacity={0.35}
-          />
-        </mesh>
-
-        {/* Orbiting thin ring 2 (Brushed Charcoal Ceramic) */}
-        <mesh ref={ringRef2}>
-          <torusGeometry args={[1.8, 0.005, 6, isMobile ? 24 : 48]} />
-          <meshPhysicalMaterial
-            ref={ring2MaterialRef}
-            color="#1b1c1c"
-            roughness={0.04}
-            metalness={0.0}
-            reflectivity={0.9}
-            clearcoat={0.9}
-            clearcoatRoughness={0.04}
-            transparent
-            opacity={0.25}
           />
         </mesh>
       </Float>
-
-
     </group>
   );
 }
@@ -408,24 +299,17 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
     rotationSpeedX: 0.012, // extremely slow, premium watch movement feel
     rotationSpeedY: 0.018,
     rotationSpeedZ: 0.0,
-    scale: hasScrolledOnLoad ? (isMobile ? 0.9 : 1.2) : 0.001,
-    color: '#f7ebd3',
+    scale: hasScrolledOnLoad ? (isMobile ? 0.55 : 0.85) : 0.001,
+    color: '#faf8f5',
 
-    roughness: 0.12,
-    transmission: hasScrolledOnLoad ? 0.88 : 1.0,
-
-    inkWireframeOpacity: hasScrolledOnLoad ? 0.06 : 0.0,
-    redlineWireframeOpacity: hasScrolledOnLoad ? 0.06 : 0.0,
-    ring1Opacity: hasScrolledOnLoad ? 0.2 : 0.0,
-    ring2Opacity: hasScrolledOnLoad ? 0.15 : 0.0,
-    ring1Speed: 1.0,
-    ring2Speed: 1.0,
+    roughness: 0.06,
+    transmission: hasScrolledOnLoad ? 0.96 : 1.0,
 
     cameraZ: 4.8,
     cameraY: 0.0,
     cameraX: 0.0,
-    pointLightIntensity: 3.5,
-    spotLightIntensity: 2.5,
+    pointLightIntensity: 3.0,
+    spotLightIntensity: 2.0,
   });
 
   // Setup GSAP entry reveal animation
@@ -440,12 +324,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       // Reveal animation emerging from portrait (0.8s delay)
       if (!hasScrolledOnLoad) {
         revealTween = gsap.to(scrollParams.current, {
-          scale: isMobile ? 0.9 : 1.2,
-          transmission: 0.88,
-          inkWireframeOpacity: 0.06,
-          redlineWireframeOpacity: 0.06,
-          ring1Opacity: 0.2,
-          ring2Opacity: 0.15,
+          scale: isMobile ? 0.55 : 0.85,
+          transmission: 0.96,
           duration: 2.2,
           delay: 0.8,
           ease: 'power3.out',
@@ -502,7 +382,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
 
         <AnimatedLights scrollParams={scrollParams} />
         {/* Ambient background rim light matching terracotta */}
-        <directionalLight position={[0, 4, -5]} intensity={1.2} color="#B5502D" />
+        <directionalLight position={[0, 4, -5]} intensity={0.6} color="#B5502D" />
 
         {/* Studio HDRI environment for reflections */}
         <Environment preset="studio" />
