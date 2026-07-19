@@ -223,14 +223,15 @@ function FloatingGeometry({
       }
       groupRef.current.rotation.z += delta * params.rotationSpeedZ;
 
-      // Rotate engineering orbital rings in opposite directions
+      // Rotate engineering orbital rings in opposite directions, reacting to drag velocity
+      const dragFactor = isDragging.current ? 1.8 : 1.0;
       if (ringRef.current) {
-        ringRef.current.rotation.x += delta * 0.2 * params.ring1Speed;
-        ringRef.current.rotation.y += delta * 0.3 * params.ring1Speed;
+        ringRef.current.rotation.x += delta * 0.05 * params.ring1Speed * dragFactor + velocity.current.y * 0.8;
+        ringRef.current.rotation.y += delta * 0.08 * params.ring1Speed * dragFactor + velocity.current.x * 0.8;
       }
       if (ringRef2.current) {
-        ringRef2.current.rotation.y -= delta * 0.15 * params.ring2Speed;
-        ringRef2.current.rotation.z += delta * 0.25 * params.ring2Speed;
+        ringRef2.current.rotation.y -= delta * 0.04 * params.ring2Speed * dragFactor + velocity.current.x * 0.6;
+        ringRef2.current.rotation.z += delta * 0.06 * params.ring2Speed * dragFactor + velocity.current.y * 0.6;
       }
     }
 
@@ -344,25 +345,27 @@ function FloatingGeometry({
 
         {/* Orbiting thin wireframe ring 1 (Terracotta) */}
         <mesh ref={ringRef}>
-          <torusGeometry args={[1.5, 0.012, 8, isMobile ? 32 : 64]} />
-          <meshBasicMaterial
+          <torusGeometry args={[1.5, 0.008, 8, isMobile ? 32 : 64]} />
+          <meshStandardMaterial
             ref={ring1MaterialRef}
             color="#B5502D"
-            opacity={0.3}
+            roughness={0.2}
+            metalness={0.9}
             transparent
-            wireframe
+            opacity={0.35}
           />
         </mesh>
 
         {/* Orbiting thin wireframe ring 2 (Ink) */}
         <mesh ref={ringRef2}>
-          <torusGeometry args={[1.8, 0.008, 6, isMobile ? 24 : 48]} />
-          <meshBasicMaterial
+          <torusGeometry args={[1.8, 0.005, 6, isMobile ? 24 : 48]} />
+          <meshStandardMaterial
             ref={ring2MaterialRef}
             color="#1b1c1c"
-            opacity={0.15}
+            roughness={0.3}
+            metalness={0.8}
             transparent
-            wireframe
+            opacity={0.25}
           />
         </mesh>
       </Float>

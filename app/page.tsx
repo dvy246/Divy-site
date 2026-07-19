@@ -207,24 +207,31 @@ export default function HomePage() {
   /* GSAP scroll triggers for page-specific elements */
   useEffect(() => {
     if (!mounted) return;
+    let ctx: any;
     const init = async () => {
       const { gsap }         = await import('gsap');
       const { ScrollTrigger } = await import('gsap/ScrollTrigger');
       gsap.registerPlugin(ScrollTrigger);
 
-      // Parallax scroll on marquee text strip or background elements if needed
-      gsap.to('.marquee-inner', {
-        xPercent: -15,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.bio-section',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 0.8,
-        }
+      ctx = gsap.context(() => {
+        // Parallax scroll on marquee text strip or background elements if needed
+        gsap.to('.marquee-inner', {
+          xPercent: -15,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.bio-section',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.8,
+          }
+        });
       });
     };
     init();
+
+    return () => {
+      if (ctx) ctx.revert();
+    };
   }, [mounted]);
 
   if (!mounted) return null;

@@ -4,11 +4,12 @@ import { useEffect } from 'react';
 
 export default function SmoothScroll() {
   useEffect(() => {
+    let active = true;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let lenisInstance: any = null;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let tickFn: ((time: number) => void) | null = null;
-    let cleanup: (() => void) | undefined;
+    let handleResize: (() => void) | null = null;
 
     const init = async () => {
       const [{ default: Lenis }, { gsap }, { ScrollTrigger }] = await Promise.all([
@@ -16,6 +17,8 @@ export default function SmoothScroll() {
         import('gsap'),
         import('gsap/ScrollTrigger'),
       ]);
+
+      if (!active) return;
 
       gsap.registerPlugin(ScrollTrigger);
 
@@ -38,28 +41,33 @@ export default function SmoothScroll() {
       lenisInstance.on('scroll', ScrollTrigger.update);
 
       // ScrollTrigger Optimization: call ScrollTrigger.refresh() on load and resize
-      const handleResize = () => ScrollTrigger.refresh();
+      handleResize = () => ScrollTrigger.refresh();
       window.addEventListener('resize', handleResize);
       window.addEventListener('load', handleResize);
 
       // Call initial refresh
       setTimeout(() => {
-        ScrollTrigger.refresh();
+        if (active) ScrollTrigger.refresh();
       }, 500);
-
-      return () => {
-        if (tickFn) gsap.ticker.remove(tickFn);
-        window.removeEventListener('resize', handleResize);
-        window.removeEventListener('load', handleResize);
-        ScrollTrigger.getAll().forEach((t) => t.kill());
-      };
     };
 
-    init().then((fn) => { cleanup = fn; });
+    init();
 
     return () => {
-      cleanup?.();
-      lenisInstance?.destroy();
+      active = false;
+      if (lenisInstance) {
+        lenisInstance.destroy();
+      }
+      import('gsap').then(({ gsap }) => {
+        if (tickFn) gsap.ticker.remove(tickFn);
+      });
+      import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
+        ScrollTrigger.getAll().forEach((t) => t.kill());
+      });
+      if (handleResize) {
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('load', handleResize);
+      }
     };
   }, []);
 

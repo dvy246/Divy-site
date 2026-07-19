@@ -279,31 +279,37 @@ export default function ProjectsPage() {
   useEffect(() => {
     setMounted(true);
     const timer = setTimeout(() => setShow(true), 500);
+    let ctx: any;
 
     const initGSAP = async () => {
       const { gsap } = await import('gsap');
       const { ScrollTrigger } = await import('gsap/ScrollTrigger');
       gsap.registerPlugin(ScrollTrigger);
 
-      gsap.fromTo(
-        '.project-grid-card',
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.08,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.projects-grid',
-            start: 'top 82%',
-          },
-        }
-      );
+      ctx = gsap.context(() => {
+        gsap.fromTo(
+          '.project-grid-card',
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.08,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: '.projects-grid',
+              start: 'top 82%',
+            },
+          }
+        );
+      });
     };
     initGSAP();
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (ctx) ctx.revert();
+    };
   }, []);
 
   const sorted = [...projects].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));

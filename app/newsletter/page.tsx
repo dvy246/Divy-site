@@ -15,31 +15,37 @@ export default function NewsletterPage() {
   useEffect(() => {
     setMounted(true);
     const timer = setTimeout(() => setShow(true), 500);
+    let ctx: any;
 
     const initGSAP = async () => {
       const { gsap } = await import('gsap');
       const { ScrollTrigger } = await import('gsap/ScrollTrigger');
       gsap.registerPlugin(ScrollTrigger);
 
-      gsap.fromTo(
-        '.newsletter-grid-card',
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.newsletter-archive',
-            start: 'top 82%',
-          },
-        }
-      );
+      ctx = gsap.context(() => {
+        gsap.fromTo(
+          '.newsletter-grid-card',
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: '.newsletter-archive',
+              start: 'top 82%',
+            },
+          }
+        );
+      });
     };
     initGSAP();
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (ctx) ctx.revert();
+    };
   }, []);
 
   if (!mounted) return null;
