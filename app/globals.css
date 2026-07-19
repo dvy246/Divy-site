@@ -371,3 +371,9 @@ body::after {
   }
 }
 
+/* Specific override to allow circular clipping for profile pictures */
+.circular-frame,
+.circular-frame * {
+  border-radius: 50% !important;
+}
+

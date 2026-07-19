@@ -174,6 +174,7 @@ export default function HomePage() {
   const [show, setShow]       = useState(false);
   const [isMobile, setMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [coords, setCoords]   = useState({ x: 50, y: 50 });
   const bioRef    = useRef<HTMLElement>(null);
   const statsRef  = useRef<HTMLDivElement>(null);
 
@@ -394,7 +395,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Cleanly framed editorial profile picture */}
+          {/* Circular Glass Lens Profile Portrait */}
           <div
             style={{
               display: 'flex',
@@ -405,27 +406,65 @@ export default function HomePage() {
               pointerEvents: 'none',
             }}
           >
-            <div
-              style={{
-                width: isMobile ? '260px' : '380px',
-                height: isMobile ? '260px' : '380px',
-                border: '1.5px solid #1b1c1c',
-                position: 'relative',
-                backgroundColor: '#e8e5e0',
-                pointerEvents: 'auto',
-              }}
-            >
-              <Image
-                src="/images/profile.jpg"
-                alt="Divy Yadav Portrait"
-                fill
-                priority
-                sizes="(max-width: 768px) 260px, 380px"
-                style={{
-                  objectFit: 'cover',
+            <Magnetic range={45} strength={0.15}>
+              <div
+                className="circular-frame"
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = ((e.clientX - rect.left) / rect.width) * 100;
+                  const y = ((e.clientY - rect.top) / rect.height) * 100;
+                  setCoords({ x, y });
                 }}
-              />
-            </div>
+                onMouseLeave={() => setCoords({ x: 50, y: 50 })}
+                style={{
+                  width: isMobile ? '260px' : '380px',
+                  height: isMobile ? '260px' : '380px',
+                  border: '2px solid #1b1c1c',
+                  position: 'relative',
+                  backgroundColor: '#e8e5e0',
+                  pointerEvents: 'auto',
+                  cursor: 'pointer',
+                  boxShadow: '0 20px 45px rgba(27, 28, 28, 0.12)',
+                  overflow: 'hidden',
+                }}
+              >
+                <Image
+                  src="/images/profile.jpg"
+                  alt="Divy Yadav Portrait"
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 260px, 380px"
+                  style={{
+                    objectFit: 'cover',
+                    zIndex: 1,
+                  }}
+                />
+                
+                {/* Dynamic Mouse-tracking Glass Highlight Overlay */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: `radial-gradient(circle at ${coords.x}% ${coords.y}%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.15) 100%)`,
+                    mixBlendMode: 'overlay',
+                    pointerEvents: 'none',
+                    zIndex: 2,
+                    transition: 'background 0.05s ease-out',
+                  }}
+                />
+
+                {/* Glass Lens Internal Shadow Rim */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    boxShadow: 'inset 0 0 25px rgba(255, 255, 255, 0.35)',
+                    pointerEvents: 'none',
+                    zIndex: 3,
+                  }}
+                />
+              </div>
+            </Magnetic>
           </div>
         </div>
 
