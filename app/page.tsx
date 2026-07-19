@@ -243,7 +243,7 @@ export default function HomePage() {
           minHeight: '100svh',
           display: 'flex',
           alignItems: 'center',
-          padding: isMobile ? '7rem 5vw 4rem' : '8rem 5vw 4rem',
+          padding: isMobile ? '8rem 5vw 5rem' : '11.5rem 5vw 7.5rem',
           position: 'relative',
           overflow: 'hidden',
           zIndex: 10,
@@ -272,7 +272,7 @@ export default function HomePage() {
             alignItems: 'center',
             textAlign: 'center',
             width: '100%',
-            gap: isMobile ? '2.5rem' : '4rem',
+            gap: isMobile ? '2.5rem' : '4.5rem',
             zIndex: 2,
             pointerEvents: 'none',
           }}
@@ -365,7 +365,7 @@ export default function HomePage() {
                 color: '#1b1c1c',
                 fontWeight: 500,
                 maxWidth: '620px',
-                marginBottom: '2.5rem',
+                marginBottom: '3.2rem',
                 animation: 'fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s both',
                 textAlign: 'center',
               }}

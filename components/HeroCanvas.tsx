@@ -48,14 +48,46 @@ function AnimatedLights({ scrollParams }: { scrollParams: React.MutableRefObject
         color="#ffffff"
         castShadow
       />
-      {/* Accent rim light - terracotta */}
+      {/* Accent rim light - Cool studio blue */}
       <pointLight
-        position={[-6, 2, -3]}
-        intensity={2.2}
-        color="#B5502D"
+        position={[-6, 3, -4]}
+        intensity={3.5}
+        color="#80C0FF"
       />
     </>
   );
+}
+
+/* === Procedural high-frequency noise texture for microscopic material imperfections === */
+function useNoiseTexture() {
+  const [texture, setTexture] = useState<THREE.CanvasTexture | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const imgData = ctx.createImageData(128, 128);
+      for (let i = 0; i < imgData.data.length; i += 4) {
+        const val = Math.floor(Math.random() * 85) + 120; // values between 120 and 205 (fine contrast)
+        imgData.data[i] = val;     // R
+        imgData.data[i + 1] = val; // G
+        imgData.data[i + 2] = val; // B
+        imgData.data[i + 3] = 255; // A
+      }
+      ctx.putImageData(imgData, 0, 0);
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(8, 8); // repeat microscopic grain details
+      setTexture(tex);
+    }
+  }, []);
+
+  return texture;
 }
 
 /* === Main geometry + materials with dynamic morphing & responsive scaling === */
@@ -66,6 +98,7 @@ function FloatingGeometry({
   scrollParams: React.MutableRefObject<any>;
   isMobile: boolean;
 }) {
+  const noiseTexture = useNoiseTexture();
   const groupRef = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Mesh>(null);
   const ringRef2 = useRef<THREE.Mesh>(null);
@@ -86,6 +119,7 @@ function FloatingGeometry({
   const pointerY = useRef(0);
   const velocity = useRef({ x: 0, y: 0 });
   const idleTime = useRef(0);
+  const springTime = useRef(0);
 
   const { viewport, gl } = useThree();
 
@@ -128,6 +162,7 @@ function FloatingGeometry({
 
     const onPointerUp = () => {
       isDragging.current = false;
+      springTime.current = 0; // reset spring clock for overshoot on release
     };
 
     window.addEventListener('mousemove', onMouse, { passive: true });
@@ -153,9 +188,15 @@ function FloatingGeometry({
     mouse.current.x += (mouse.current.tx - mouse.current.x) * 0.05;
     mouse.current.y += (mouse.current.ty - mouse.current.y) * 0.05;
 
+    // Leaning reaction when mouse is near: subtly shift model focus to lean towards cursor
+    const targetLeanX = mouse.current.y * 0.18;
+    const targetLeanY = mouse.current.x * 0.18;
+
     // 1. Inertial rotation decay & drag physics
     if (!prefersReducedMotion.current) {
       if (!isDragging.current) {
+        springTime.current += delta;
+
         // Friction damping decay
         velocity.current.x *= 0.94;
         velocity.current.y *= 0.94;
@@ -170,11 +211,14 @@ function FloatingGeometry({
         );
         if (currentSpeed < 0.002) {
           idleTime.current += delta;
-          const targetRestX = Math.sin(idleTime.current * 0.3) * 0.06 + params.rotationSpeedX * idleTime.current;
-          const targetRestY = Math.cos(idleTime.current * 0.25) * 0.06 + params.rotationSpeedY * idleTime.current;
+          const targetRestX = Math.sin(idleTime.current * 0.3) * 0.06 + params.rotationSpeedX * idleTime.current + targetLeanX;
+          const targetRestY = Math.cos(idleTime.current * 0.25) * 0.06 + params.rotationSpeedY * idleTime.current + targetLeanY;
 
-          groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRestX, 0.015);
-          groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRestY, 0.015);
+          // Damped spring overshoot bounce oscillation on release
+          const springOscillate = Math.sin(springTime.current * 6.5) * Math.exp(-springTime.current * 1.6) * 0.25;
+
+          groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRestX, 0.015) + springOscillate * 0.12;
+          groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRestY, 0.015) + springOscillate * 0.16;
         }
       }
       groupRef.current.rotation.z += delta * params.rotationSpeedZ;
@@ -262,6 +306,7 @@ function FloatingGeometry({
             color="#e8e5e0"
             metalness={0.92}
             roughness={0.08}
+            roughnessMap={noiseTexture || undefined}
             reflectivity={1.0}
             clearcoat={1.0}
             clearcoatRoughness={0.02}
@@ -373,8 +418,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
   // Shared ref holding morphable 3D parameters
   const scrollParams = useRef({
     // Initial Hero State (Identity)
-    x: isMobile ? 0 : 1.55,
-    y: isMobile ? -0.25 : -0.28,
+    x: isMobile ? 0 : 1.7,
+    y: isMobile ? -0.25 : -0.32,
     z: 0,
     rotationSpeedX: 0.08,
     rotationSpeedY: 0.25,
@@ -412,8 +457,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
 
       // Define standard layout states
       const state1 = {
-        x: isMobile ? 0 : 1.55,
-        y: isMobile ? -0.25 : -0.28,
+        x: isMobile ? 0 : 1.7,
+        y: isMobile ? -0.25 : -0.32,
         z: 0,
         scale: isMobile ? 0.65 : 0.85,
         color: isMobile ? '#ffffff' : '#dfb46c',
@@ -434,8 +479,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       };
 
       const state2 = {
-        x: isMobile ? 0 : 1.55,
-        y: isMobile ? -0.25 : -0.28,
+        x: isMobile ? 0 : 1.7,
+        y: isMobile ? -0.25 : -0.32,
         z: 0,
         scale: isMobile ? 0.65 : 0.85,
         color: isMobile ? '#ffffff' : '#dfb46c',
@@ -456,8 +501,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       };
 
       const state3 = {
-        x: isMobile ? 0 : 1.55,
-        y: isMobile ? -0.25 : -0.28,
+        x: isMobile ? 0 : 1.7,
+        y: isMobile ? -0.25 : -0.32,
         z: 0,
         scale: isMobile ? 0.75 : 1.1,
         color: '#ffffff', // Turn white behind text layouts
@@ -478,8 +523,8 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       };
 
       const state4 = {
-        x: isMobile ? 0 : 1.55,
-        y: isMobile ? -0.25 : -0.28,
+        x: isMobile ? 0 : 1.7,
+        y: isMobile ? -0.25 : -0.32,
         z: 0,
         scale: isMobile ? 0.6 : 0.8,
         color: '#ffffff', // Turn white behind CTA form
@@ -558,7 +603,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       }}
     >
       <Canvas
-        camera={{ position: [0, 0, 5], fov: 40 }}
+        camera={{ position: [0, 0, 5], fov: 46 }}
         gl={{
           antialias: !isMobile, // Disable antialiasing on mobile for a massive fill-rate performance boost
           alpha: true,
@@ -590,7 +635,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
 
         {/* Cinematic drop contact shadow plane to anchor sculpture in physical space */}
         <ContactShadows
-          position={[isMobile ? 0 : 1.55, -1.8, 0]}
+          position={[isMobile ? 0 : 1.7, -1.8, 0]}
           opacity={0.4}
           scale={6.0}
           blur={2.5}
