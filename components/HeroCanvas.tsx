@@ -104,11 +104,11 @@ function FloatingGeometry({
   const ringRef2 = useRef<THREE.Mesh>(null);
 
   // Material refs for dynamic morphing
-  const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
-  const inkWireframeMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
-  const redlineWireframeMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
-  const ring1MaterialRef = useRef<THREE.MeshBasicMaterial>(null);
-  const ring2MaterialRef = useRef<THREE.MeshBasicMaterial>(null);
+  const materialRef = useRef<any>(null);
+  const inkWireframeMaterialRef = useRef<any>(null);
+  const redlineWireframeMaterialRef = useRef<any>(null);
+  const ring1MaterialRef = useRef<any>(null);
+  const ring2MaterialRef = useRef<any>(null);
 
   const mouse = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
   const prefersReducedMotion = useRef(false);
