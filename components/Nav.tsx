@@ -19,7 +19,19 @@ export default function Nav() {
   const [menuOpen, setMenuOpen]   = useState(false);
   const [visible, setVisible]     = useState(true);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [isMobile, setIsMobile]   = useState(false);
   const lastScrollY = useRef(0);
+
+  /* Resize listener for responsive mobile checks */
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   /* Scroll: show/hide + frosted glass transition */
   useEffect(() => {
@@ -125,12 +137,12 @@ export default function Nav() {
             'border-color 450ms ease, ' +
             'box-shadow 450ms ease',
           backgroundColor: scrolled
-            ? 'rgba(245, 245, 220, 0.82)'
+            ? (isMobile ? 'rgba(245, 245, 220, 0.96)' : 'rgba(245, 245, 220, 0.82)')
             : 'transparent',
-          backdropFilter: scrolled 
+          backdropFilter: scrolled && !isMobile
             ? 'blur(20px) saturate(1.2)' 
             : 'none',
-          WebkitBackdropFilter: scrolled 
+          WebkitBackdropFilter: scrolled && !isMobile
             ? 'blur(20px) saturate(1.2)' 
             : 'none',
           borderTop: scrolled
