@@ -178,14 +178,30 @@ export default function HomePage() {
   const bioRef    = useRef<HTMLElement>(null);
   const statsRef  = useRef<HTMLDivElement>(null);
 
-  /* Hydration + mobile detection */
+  /* Hydration + mobile detection + entrance sync */
   useEffect(() => {
     setMounted(true);
     const check = () => setMobile(window.innerWidth < 768);
     check();
     window.addEventListener('resize', check);
-    const t = setTimeout(() => setShow(true), 900);
-    return () => { clearTimeout(t); window.removeEventListener('resize', check); };
+
+    const triggerHero = () => {
+      setTimeout(() => {
+        setShow(true);
+      }, 300);
+    };
+
+    const entered = sessionStorage.getItem('dy_portfolio_entered');
+    if (entered === 'true') {
+      setShow(true);
+    } else {
+      window.addEventListener('dy_entrance_complete', triggerHero);
+    }
+
+    return () => {
+      window.removeEventListener('resize', check);
+      window.removeEventListener('dy_entrance_complete', triggerHero);
+    };
   }, []);
 
   /* GSAP scroll triggers for page-specific elements */
