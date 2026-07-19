@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "sync-medium": "node scripts/sync-medium.mjs",
+    "build": "npm run sync-medium && next build",
     "start": "next start",
     "lint": "next lint"
   },

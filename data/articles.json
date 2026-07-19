@@ -1,37 +1,112 @@
 [
   {
-    "title": "9 RAG Architectures Every AI Engineer Should Know",
-    "url": "https://medium.com/@yadavdivy296",
-    "date": "2025-12-01",
-    "summary": "A visual breakdown of 9 production RAG architectures — from naive retrieval to multi-vector hybrid search — with diagrams and real implementation patterns.",
-    "tags": ["RAG", "LLMs", "AI Engineering"]
+    "title": "7 AI Agent Cost Optimization Strategies That Cut LLM Bills by Up to 90%",
+    "url": "https://pub.towardsai.net/7-ai-agent-cost-optimization-strategies-that-cut-llm-bills-by-up-to-90-baa9c8b46a40?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-18",
+    "summary": "Fixes that bring an AI agent’s bill down in production",
+    "tags": [
+      "Llm",
+      "Technology",
+      "Artificial Intelligence"
+    ]
   },
   {
-    "title": "Building Stateful Multi-Agent Systems with LangGraph",
-    "url": "https://medium.com/@yadavdivy296",
-    "date": "2026-01-15",
-    "summary": "How to architect persistent state graphs, memory checkpointing, and multi-step tool-calling reliability in LangGraph — from local prototype to Tensorlake deployment.",
-    "tags": ["LangGraph", "Multi-Agent", "AI Engineering"]
+    "title": "An AI Agent Hacked Other AI Agents. Nobody Was Driving.",
+    "url": "https://medium.com/ai-engineering-simplified/an-ai-agent-hacked-other-ai-agents-nobody-was-driving-67533e6dd742?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-18",
+    "summary": "In February 2026, an autonomous bot broke into the software other AI agents run on. OWASP now says the flaw it used can’t be patched. Only…",
+    "tags": [
+      "Software Development",
+      "Programming",
+      "Artificial Intelligence"
+    ]
   },
   {
-    "title": "Qdrant + Sentence Transformers: A Molecular Search Pipeline",
-    "url": "https://medium.com/@yadavdivy296",
-    "date": "2026-02-10",
-    "summary": "How I built a high-dimensional similarity search pipeline for molecular datasets using Qdrant and sentence-transformer embeddings — officially reposted by Qdrant.",
-    "tags": ["Qdrant", "Vector Search", "Embeddings"]
+    "title": "Claude Code vs Codex: I Tested Both. The Results Surprised Me.",
+    "url": "https://pub.towardsai.net/claude-code-vs-codex-i-compared-both-the-results-surprised-me-30ddce30f4b3?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-17",
+    "summary": "Same task, same result, ten times the bill. Here’s exactly where each AI coding agent actually wins, backed by real numbers, not marketing…",
+    "tags": [
+      "Data Science",
+      "Artificial Intelligence",
+      "Programming"
+    ]
   },
   {
-    "title": "MCP Explained: The Standardised Tool Layer for AI Agents",
-    "url": "https://medium.com/@yadavdivy296",
-    "date": "2026-03-05",
-    "summary": "Model Context Protocol demystified — what it is, why it matters for production agentic systems, and how to integrate it with LangChain and Agno.",
-    "tags": ["MCP", "AI Agents", "LangChain"]
+    "title": "The Hidden Reason Your AI Agent Gets Worse During Long Sessions",
+    "url": "https://medium.com/ai-engineering-simplified/the-hidden-reason-your-ai-agent-gets-worse-during-long-sessions-d4bb94fd649c?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-16",
+    "summary": "It’s not the model. There’s a documented failure behind it called context rot, and almost nobody’s fixing the real cause.",
+    "tags": [
+      "Data Science",
+      "Software Development",
+      "Technology"
+    ]
   },
   {
-    "title": "LLM Evaluation in Production: Beyond Benchmark Scores",
-    "url": "https://medium.com/@yadavdivy296",
-    "date": "2026-04-20",
-    "summary": "A practical guide to evaluating LLM applications in real deployments — covering hallucination detection, retrieval quality, and latency trade-offs.",
-    "tags": ["LLM Evaluation", "Production AI", "RAG"]
+    "title": "Master These 6 AI Concepts to Become an AI Engineer ( A Visual Explanation)",
+    "url": "https://medium.com/ai-engineering-simplified/master-these-6-ai-concepts-to-become-an-ai-engineer-a-visual-explanation-c0d156ebac66?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-15",
+    "summary": "Job postings asking for AI skills are up 143% in a single year. The people filling those roles didn’t spend years on advanced math. They…",
+    "tags": [
+      "Data Science",
+      "Artificial Intelligence",
+      "Technology"
+    ]
+  },
+  {
+    "title": "The AI Was Never the Problem. This RAG Experiment Finally Proved It.",
+    "url": "https://medium.com/ai-engineering-simplified/the-ai-was-never-the-problem-this-rag-experiment-finally-proved-it-e1d41004004e?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-14",
+    "summary": "A new study on RAG and GraphRAG systems found that adding FAIR principles and structured knowledge graphs to the same AI model raised…",
+    "tags": [
+      "Machine Learning",
+      "Technology",
+      "Data Science"
+    ]
+  },
+  {
+    "title": "Did Google Just Kill RAG? Here’s What OKF (Open Knowledge Format) Actually Replaces",
+    "url": "https://medium.com/ai-engineering-simplified/did-google-just-kill-rag-heres-what-okf-open-knowledge-format-actually-replaces-38b6a362540a?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-13",
+    "summary": "Google published a new format in June. Within weeks, engineers everywhere were asking if it just ended Retrieval-Augmented Generation.",
+    "tags": [
+      "Data Science",
+      "Software Development",
+      "Programming"
+    ]
+  },
+  {
+    "title": "These 7 Python Libraries Replaced 2,000 Lines of My AI Boilerplate Code",
+    "url": "https://medium.com/ai-engineering-simplified/these-7-python-libraries-replaced-2-000-lines-of-my-ai-boilerplate-code-b3745cb748ea?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-13",
+    "summary": "Retry logic, token counting, structured outputs, tool servers: none of it is the interesting part of building with AI. Here’s what quietly…",
+    "tags": [
+      "Data Science",
+      "Technology",
+      "Programming"
+    ]
+  },
+  {
+    "title": "Your AI Doesn’t Remember You. OpenWiki Brains Was Built to Fix That.",
+    "url": "https://medium.com/ai-engineering-simplified/your-ai-doesnt-remember-you-openwiki-was-built-to-fix-that-ee9dbca91927?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-11",
+    "summary": "Most agent memory only holds onto what you explicitly say. OpenWiki goes out and builds context on its own, from the places you already…",
+    "tags": [
+      "Data Science",
+      "Artificial Intelligence",
+      "Programming"
+    ]
+  },
+  {
+    "title": "Why Your AI Experiments Keep Starting From Scratch (And How Tensorlake Fixes It)",
+    "url": "https://pub.towardsai.net/why-your-ai-experiments-keep-starting-from-scratch-and-how-tensorlake-fixes-it-2e6091edf143?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-10",
+    "summary": "Photo from AI How memory checkpoints and sandbox forking let you build once, checkpoint the warm state, and run as many parallel workers as you need. No reinsta…",
+    "tags": [
+      "Technology",
+      "Data Science",
+      "Machine Learning"
+    ]
   }
 ]
