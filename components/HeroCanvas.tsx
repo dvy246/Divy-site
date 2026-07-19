@@ -211,6 +211,9 @@ function FloatingGeometry({
       materialRef.current.roughness = THREE.MathUtils.lerp(materialRef.current.roughness, params.roughness, 0.08);
       materialRef.current.metalness = THREE.MathUtils.lerp(materialRef.current.metalness, params.metalness, 0.08);
       materialRef.current.transmission = THREE.MathUtils.lerp(materialRef.current.transmission, params.transmission, 0.08);
+      if (params.color) {
+        materialRef.current.color.lerp(new THREE.Color(params.color), 0.08);
+      }
       if (params.iridescence !== undefined) {
         materialRef.current.iridescence = THREE.MathUtils.lerp(materialRef.current.iridescence, params.iridescence, 0.08);
       }
@@ -377,6 +380,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
     rotationSpeedY: 0.35,
     rotationSpeedZ: 0.0,
     scale: 1.0,
+    color: '#ffffff', // Start pure white behind hero text!
 
     roughness: 0.15,
     metalness: 0.15,
@@ -422,6 +426,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
           y: isMobile ? -1.6 : -0.2,
           z: 0,
           scale: isMobile ? 0.65 : 0.85,
+          color: isMobile ? '#ffffff' : '#e8e5e0', // Turn white on mobile since it sits behind text
           roughness: 0.35,
           metalness: 0.65,
           transmission: 0.2,
@@ -444,6 +449,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
           y: isMobile ? -1.5 : -0.4,
           z: -0.5,
           scale: isMobile ? 0.8 : 1.15,
+          color: '#ffffff', // White behind article descriptions / highlights
           roughness: 0.05,
           metalness: 0.95,
           transmission: 0.55,
@@ -467,6 +473,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
           y: isMobile ? -2.2 : -0.8,
           z: -1,
           scale: isMobile ? 0.6 : 0.8,
+          color: '#ffffff', // White behind CTA form and footer links
           roughness: 0.12,
           metalness: 0.9,
           transmission: 0.4,
