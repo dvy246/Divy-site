@@ -185,38 +185,98 @@ export default function HomePage() {
 
   /* GSAP scroll triggers */
   useEffect(() => {
+    if (!mounted) return;
     const init = async () => {
       const { gsap }         = await import('gsap');
       const { ScrollTrigger } = await import('gsap/ScrollTrigger');
       gsap.registerPlugin(ScrollTrigger);
 
-      // Bio section
-      gsap.fromTo('.bio-section', { opacity: 0, y: 50 }, {
-        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
-        scrollTrigger: { trigger: '.bio-section', start: 'top 80%' },
-      });
+      // Bio text swing-in
+      gsap.fromTo('.bio-section > div > div:first-child', 
+        { 
+          opacity: 0, 
+          y: 90, 
+          rotationX: 18, 
+          scale: 0.9, 
+          transformOrigin: 'top center' 
+        }, 
+        {
+          opacity: 1, 
+          y: 0, 
+          rotationX: 0, 
+          scale: 1, 
+          duration: 1.2, 
+          ease: 'power4.out',
+          scrollTrigger: { trigger: '.bio-section', start: 'top 85%' },
+        }
+      );
 
-      // Stats counter pop
-      gsap.fromTo('.stat-item', { opacity: 0, scale: 0.75, y: 20 }, {
-        opacity: 1, scale: 1, y: 0,
-        duration: 0.7, stagger: 0.1, ease: 'back.out(1.4)',
-        scrollTrigger: { trigger: '.stats-grid', start: 'top 82%' },
-      });
+      // Stats counter 3D pop
+      gsap.fromTo('.stat-item', 
+        { 
+          opacity: 0, 
+          y: 60, 
+          rotationX: 22, 
+          scale: 0.85, 
+          transformOrigin: 'top center' 
+        }, 
+        {
+          opacity: 1, 
+          y: 0, 
+          rotationX: 0, 
+          scale: 1, 
+          duration: 0.9, 
+          stagger: 0.12, 
+          ease: 'power4.out',
+          scrollTrigger: { trigger: '.stats-grid', start: 'top 82%' },
+        }
+      );
 
-      // Article cards stagger
-      gsap.fromTo('.article-card-item', { opacity: 0, y: 40 }, {
-        opacity: 1, y: 0, duration: 0.7, stagger: 0.12, ease: 'power3.out',
-        scrollTrigger: { trigger: '.articles-preview', start: 'top 82%' },
-      });
+      // Article cards 3D swing-in stagger
+      gsap.fromTo('.article-card-item', 
+        { 
+          opacity: 0, 
+          y: 100, 
+          rotationX: 25, 
+          rotationY: -8, 
+          scale: 0.9, 
+          transformOrigin: 'top center' 
+        }, 
+        {
+          opacity: 1, 
+          y: 0, 
+          rotationX: 0, 
+          rotationY: 0, 
+          scale: 1, 
+          duration: 1.2, 
+          stagger: 0.16, 
+          ease: 'power4.out',
+          scrollTrigger: { trigger: '.articles-preview', start: 'top 82%' },
+        }
+      );
 
-      // CTA section
-      gsap.fromTo('.cta-section', { opacity: 0, y: 30 }, {
-        opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
-        scrollTrigger: { trigger: '.cta-section', start: 'top 85%' },
-      });
+      // CTA section 3D swing-in
+      gsap.fromTo('.cta-section', 
+        { 
+          opacity: 0, 
+          y: 80, 
+          rotationX: 16, 
+          scale: 0.96, 
+          transformOrigin: 'top center' 
+        }, 
+        {
+          opacity: 1, 
+          y: 0, 
+          rotationX: 0, 
+          scale: 1, 
+          duration: 1.1, 
+          ease: 'power4.out',
+          scrollTrigger: { trigger: '.cta-section', start: 'top 85%' },
+        }
+      );
     };
     init();
-  }, []);
+  }, [mounted]);
 
   if (!mounted) return null;
 
@@ -486,7 +546,7 @@ export default function HomePage() {
       <section
         ref={bioRef}
         className="bio-section"
-        style={{ padding: '7rem 5vw' }}
+        style={{ padding: '7rem 5vw', perspective: '1200px' }}
       >
         <div
           style={{
@@ -612,7 +672,7 @@ export default function HomePage() {
       {/* --- LATEST WRITING --- */}
       <section
         className="articles-preview"
-        style={{ padding: '7rem 5vw' }}
+        style={{ padding: '7rem 5vw', perspective: '1200px' }}
       >
         {/* Section header */}
         <div
@@ -686,6 +746,7 @@ export default function HomePage() {
           gap: '3rem',
           alignItems: 'center',
           borderTop: '1px solid rgba(27,28,28,0.08)',
+          perspective: '1200px',
         }}
       >
         <div>
