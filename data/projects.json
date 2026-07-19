@@ -1,0 +1,47 @@
+[
+  {
+    "title": "Article Generator: Multi-Agent System",
+    "description": "Multi-agent pipeline built with Agno that automates the full article lifecycle — a research agent gathers topic context and sources, a writing agent drafts structured long-form content, and an editing agent refines tone, clarity, and formatting for a developer audience.",
+    "tags": ["Agno", "Python", "LLM APIs", "Prompt Engineering", "Multi-Agent"],
+    "category": "Personal Project",
+    "github": "https://github.com/dvy246",
+    "demo": null,
+    "featured": true
+  },
+  {
+    "title": "Deep Research Agentic AI System",
+    "description": "Agentic system built with LangChain and served via FastAPI, leveraging MCP (Model Context Protocol) for standardised tool integration. Iteratively decomposes complex queries, retrieves and synthesises information across multiple sources, and produces structured research reports with organised findings and source attribution.",
+    "tags": ["LangChain", "FastAPI", "MCP", "Python", "RAG", "LLM APIs", "Embeddings"],
+    "category": "Personal Project",
+    "github": "https://github.com/dvy246",
+    "demo": null,
+    "featured": true
+  },
+  {
+    "title": "Financial Analyst Agent",
+    "description": "AI agent system for financial analysis built with LangChain and served via FastAPI. Processes financial statements, earnings reports, and market data through LLM reasoning to surface key metrics, generate structured analysis summaries, and answer domain-specific financial queries. Built at the intersection of agentic AI architecture and strong finance domain knowledge.",
+    "tags": ["LangChain", "FastAPI", "Python", "RAG", "LLM APIs", "FinTech AI"],
+    "category": "Personal Project",
+    "github": "https://github.com/dvy246",
+    "demo": null,
+    "featured": true
+  },
+  {
+    "title": "Data Science Team: Multi-Agent System",
+    "description": "Team-oriented multi-agent AI system built with Agno, coordinating specialised agents across distinct data science pipeline stages including data analysis, insight generation, and structured reporting. Designed around collaborative agent patterns where each agent owns a dedicated function within the shared workflow.",
+    "tags": ["Agno", "Python", "LLM APIs", "Multi-Agent", "Embeddings"],
+    "category": "Personal Project",
+    "github": "https://github.com/dvy246",
+    "demo": null,
+    "featured": false
+  },
+  {
+    "title": "Agno: Unsplash Tool (Open Source)",
+    "description": "Contributed a native Unsplash image-retrieval tool to the Agno agentic framework, enabling agents to query and return images programmatically via the Unsplash API. PR reviewed and merged to main by Agno maintainers — live for the full community.",
+    "tags": ["Python", "Agno Framework", "API Integration", "Open Source"],
+    "category": "Open Source",
+    "github": "https://github.com/dvy246",
+    "demo": null,
+    "featured": false
+  }
+]

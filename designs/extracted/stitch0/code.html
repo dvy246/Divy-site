@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Divy Yadav - Digital Atelier</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#fbf9f9",
+                        "outline-variant": "#c4c7c7",
+                        "secondary-container": "#e1e1c9",
+                        "on-tertiary-fixed-variant": "#474837",
+                        "surface-container-low": "#f5f3f3",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#1b1d0e",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e3e2e2",
+                        "surface-dim": "#dbdad9",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#e4e4cc",
+                        "on-error": "#ffffff",
+                        "on-background": "#1b1c1c",
+                        "tertiary": "#000000",
+                        "tertiary-fixed-dim": "#c8c8b1",
+                        "tertiary-fixed": "#e4e4cc",
+                        "on-primary-container": "#858383",
+                        "on-tertiary-container": "#848571",
+                        "on-secondary-fixed": "#1b1d0e",
+                        "surface": "#fbf9f9",
+                        "tertiary-container": "#1b1d0e",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-secondary-container": "#636451",
+                        "on-surface": "#1b1c1c",
+                        "on-primary-fixed": "#1c1b1b",
+                        "primary-container": "#1c1b1b",
+                        "on-primary-fixed-variant": "#474746",
+                        "surface-container": "#efeded",
+                        "outline": "#747878",
+                        "surface-variant": "#e3e2e2",
+                        "secondary": "#5e604d",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#c8c8b0",
+                        "inverse-primary": "#c8c6c5",
+                        "surface-tint": "#5f5e5e",
+                        "inverse-on-surface": "#f2f0f0",
+                        "primary": "#000000",
+                        "inverse-surface": "#303031",
+                        "primary-fixed": "#e5e2e1",
+                        "background": "#fbf9f9",
+                        "on-secondary-fixed-variant": "#474836",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e9e8e7",
+                        "sketch-bg": "#F5F5DC"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "5vw",
+                        "gutter": "2rem",
+                        "section-gap": "10rem",
+                        "element-gap": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Playfair Display"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "display": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["64px", { "lineHeight": "120%", "fontWeight": "700" }],
+                        "body-lg": ["20px", { "lineHeight": "160%", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["40px", { "lineHeight": "120%", "fontWeight": "700" }],
+                        "headline-md": ["48px", { "lineHeight": "120%", "fontWeight": "600" }],
+                        "display": ["120px", { "lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "160%", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "100%", "letterSpacing": "0.1em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #F5F5DC;
+            color: #1A1A1A;
+            overflow-x: hidden;
+        }
+        
+        .sketch-hover {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .sketch-hover::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: currentColor;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s cubic-bezier(0.65, 0.05, 0.36, 1);
+            border-radius: 50% 50% 50% 50% / 100% 100% 0% 0%;
+        }
+        
+        .sketch-hover:hover::after, .sketch-active::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        .sketch-active::after {
+            transform: scaleX(1);
+        }
+
+        .hero-title-container {
+            position: relative;
+            z-index: 10;
+            mix-blend-mode: difference;
+        }
+
+        .abstract-sketch {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60vmin;
+            height: 60vmin;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.8;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            33% { transform: translate(-52%, -48%) rotate(2deg); }
+            66% { transform: translate(-48%, -52%) rotate(-1deg); }
+            100% { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+
+        .glass-element {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="font-body-md antialiased min-h-screen flex flex-col selection:bg-primary selection:text-sketch-bg">
+<!-- TopNavBar -->
+<header class="bg-background dark:bg-background full-width top-0 z-50 sticky transition-all duration-300">
+<div class="flex justify-between items-center w-full px-margin-page py-gutter mx-auto">
+<a class="font-headline-md text-headline-md text-primary dark:text-on-background relative z-20 group" href="#">
+                Divy Yadav
+                <span class="absolute -bottom-2 left-0 w-full h-[2px] bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left rounded-[50%] opacity-50"></span>
+</a>
+<nav class="hidden md:flex items-center space-x-8 font-body-md text-body-md uppercase tracking-widest relative z-20">
+<a class="text-primary dark:text-on-background pb-1 sketch-hover sketch-active hover:italic transition-all duration-300" href="#">Work</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant sketch-hover hover:italic transition-all duration-300" href="#">Process</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant sketch-hover hover:italic transition-all duration-300" href="#">About</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant sketch-hover hover:italic transition-all duration-300" href="#">Contact</a>
+<a class="ml-8 px-6 py-2 border border-primary text-primary hover:bg-primary hover:text-sketch-bg transition-colors duration-300 rounded-sm relative overflow-hidden group" href="#">
+<span class="relative z-10">Inquiry</span>
+</a>
+</nav>
+<button class="md:hidden flex items-center justify-center p-2 text-primary z-20">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col relative w-full h-full">
+<!-- Hero Section -->
+<section class="relative min-h-[819px] flex items-center justify-center px-margin-page overflow-hidden">
+<!-- STITCH_THREEJS_START:ANIMATION_5 class="absolute inset-0 w-full h-full bg-transparent -z-10" -->
+<div class="absolute inset-0 w-full h-full bg-transparent -z-10" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_5" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_5');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  
+const scene = new THREE.Scene();
+const containerWidth = container.clientWidth || window.innerWidth;
+const containerHeight = container.clientHeight || window.innerHeight;
+
+const camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 0.1, 1000);
+camera.position.z = 5;
+
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+renderer.setSize(containerWidth, containerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+container.appendChild(renderer.domElement);
+
+// Lighting
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0xffffff, 1);
+pointLight.position.set(5, 5, 5);
+scene.add(pointLight);
+
+// Create a custom geometric object - an abstract "sketch" in 3D
+// Combining a Wireframe Sphere with a solid core
+const group = new THREE.Group();
+
+const geometry = new THREE.IcosahedronGeometry(2, 1);
+const wireframeMaterial = new THREE.MeshPhongMaterial({
+    color: 0x1a1a1a,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.3
+});
+const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
+group.add(wireframeMesh);
+
+const coreGeometry = new THREE.IcosahedronGeometry(0.8, 0);
+const coreMaterial = new THREE.MeshPhongMaterial({
+    color: 0x1a1a1a,
+    shininess: 100,
+    transparent: true,
+    opacity: 0.8
+});
+const coreMesh = new THREE.Mesh(coreGeometry, coreMaterial);
+group.add(coreMesh);
+
+// Add some smaller floating particles/dots
+for (let i = 0; i < 20; i++) {
+    const dotGeo = new THREE.SphereGeometry(0.05, 8, 8);
+    const dotMat = new THREE.MeshBasicMaterial({ color: 0x1a1a1a });
+    const dot = new THREE.Mesh(dotGeo, dotMat);
+    dot.position.set(
+        (Math.random() - 0.5) * 6,
+        (Math.random() - 0.5) * 6,
+        (Math.random() - 0.5) * 6
+    );
+    group.add(dot);
+}
+
+scene.add(group);
+
+let mouseX = 0;
+let mouseY = 0;
+
+window.addEventListener('mousemove', (event) => {
+    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+});
+
+window.addEventListener('resize', () => {
+    const newWidth = container.clientWidth || window.innerWidth;
+    const newHeight = container.clientHeight || window.innerHeight;
+    camera.aspect = newWidth / newHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(newWidth, newHeight);
+});
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    // Subtle floating rotation
+    group.rotation.y += 0.005;
+    group.rotation.x += 0.003;
+
+    // React to mouse
+    group.rotation.y += mouseX * 0.05;
+    group.rotation.x += -mouseY * 0.05;
+
+    // Floating effect
+    group.position.y = Math.sin(Date.now() * 0.001) * 0.2;
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_5 -->
+<!-- Abstract Sketch Background -->
+<div class="abstract-sketch">
+<svg class="w-full h-full stroke-primary fill-none stroke-[0.5]" viewbox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<path class="opacity-50" d="M 40,100 C 40,40 160,40 160,100 C 160,160 40,160 40,100 Z" stroke-dasharray="4 4"></path>
+<path class="opacity-30" d="M 70,50 L 130,150 M 50,130 L 150,70" stroke-width="0.2"></path>
+<rect height="80" stroke-width="0.5" transform="rotate(15 100 100)" width="80" x="60" y="60"></rect>
+<circle cx="100" cy="100" r="20" stroke-width="1"></circle>
+<path d="M 80,100 Q 100,80 120,100 T 160,100" stroke-width="0.8"></path>
+<!-- Hand-drawn style hatchings -->
+<g opacity="0.4" stroke-width="0.3">
+<line x1="65" x2="75" y1="65" y2="75"></line>
+<line x1="68" x2="78" y1="65" y2="75"></line>
+<line x1="71" x2="81" y1="65" y2="75"></line>
+</g>
+</svg>
+</div>
+<!-- Massive Hero Text -->
+<div class="hero-title-container text-center w-full">
+<h1 class="font-display text-display text-primary leading-none tracking-tighter whitespace-nowrap hidden md:block">
+                    Divy Yadav
+                </h1>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary leading-tight tracking-tight block md:hidden mt-20">
+                    Divy<br/>Yadav
+                </h1>
+</div>
+<!-- Scroll Indicator -->
+<div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center opacity-60">
+<span class="font-label-sm text-label-sm uppercase tracking-widest mb-2">Scroll</span>
+<div class="w-[1px] h-12 bg-primary relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-full bg-sketch-bg animate-[scroll_2s_ease-in-out_infinite]"></div>
+</div>
+</div>
+<style>
+                @keyframes scroll {
+                    0% { transform: translateY(-100%); }
+                    100% { transform: translateY(100%); }
+                }
+            </style>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-background dark:bg-background full-width bottom-0 border-t border-outline-variant dark:border-outline-variant mt-section-gap relative z-10">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-page py-element-gap mx-auto gap-6 md:gap-0">
+<div class="font-headline-lg text-headline-lg text-primary dark:text-on-background opacity-20 hover:opacity-100 transition-opacity duration-500">
+                DY
+            </div>
+<nav class="flex space-x-6 font-label-sm text-label-sm uppercase">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:underline decoration-wavy hover:text-primary transition-all duration-300" href="#">Journal</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:underline decoration-wavy hover:text-primary transition-all duration-300" href="#">Archives</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:underline decoration-wavy hover:text-primary transition-all duration-300" href="#">Index</a>
+</nav>
+<div class="font-label-sm text-label-sm uppercase text-on-surface-variant">
+                © 2024 Divy Yadav. Handcrafted for the digital atelier.
+            </div>
+</div>
+</footer>
+<script>
+        // Simple interactive script to make the sketch subtly follow mouse on desktop
+        document.addEventListener('mousemove', (e) => {
+            const sketch = document.querySelector('.abstract-sketch');
+            if (sketch && window.innerWidth > 768) {
+                const x = (e.clientX / window.innerWidth - 0.5) * 20;
+                const y = (e.clientY / window.innerHeight - 0.5) * 20;
+                sketch.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+            }
+        });
+    </script>
+</body></html>

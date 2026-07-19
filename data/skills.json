@@ -1,0 +1,68 @@
+[
+  {
+    "category": "Agentic Frameworks",
+    "skills": [
+      { "name": "LangGraph", "proficiency": "advanced" },
+      { "name": "Agno", "proficiency": "advanced" },
+      { "name": "LangChain", "proficiency": "advanced" },
+      { "name": "MCP (Model Context Protocol)", "proficiency": "advanced" }
+    ]
+  },
+  {
+    "category": "GenAI / LLMs",
+    "skills": [
+      { "name": "RAG Systems", "proficiency": "advanced" },
+      { "name": "AI Agents", "proficiency": "advanced" },
+      { "name": "Prompt Engineering", "proficiency": "advanced" },
+      { "name": "Embeddings", "proficiency": "advanced" },
+      { "name": "LLM APIs", "proficiency": "advanced" }
+    ]
+  },
+  {
+    "category": "Vector Databases",
+    "skills": [
+      { "name": "Qdrant", "proficiency": "advanced" },
+      { "name": "ChromaDB", "proficiency": "intermediate" },
+      { "name": "Pinecone", "proficiency": "intermediate" }
+    ]
+  },
+  {
+    "category": "Languages & Tools",
+    "skills": [
+      { "name": "Python", "proficiency": "advanced" },
+      { "name": "SQL", "proficiency": "intermediate" },
+      { "name": "FastAPI", "proficiency": "advanced" },
+      { "name": "Pandas", "proficiency": "intermediate" },
+      { "name": "NumPy", "proficiency": "intermediate" },
+      { "name": "Tableau", "proficiency": "intermediate" },
+      { "name": "Excel", "proficiency": "intermediate" }
+    ]
+  },
+  {
+    "category": "Cloud / DevOps / Automation",
+    "skills": [
+      { "name": "AWS", "proficiency": "intermediate" },
+      { "name": "Docker", "proficiency": "intermediate" },
+      { "name": "n8n", "proficiency": "advanced" },
+      { "name": "Workflow Automation", "proficiency": "advanced" }
+    ]
+  },
+  {
+    "category": "Domain Expertise",
+    "skills": [
+      { "name": "FinTech AI", "proficiency": null },
+      { "name": "Document Intelligence", "proficiency": null },
+      { "name": "Developer Education", "proficiency": null }
+    ]
+  },
+  {
+    "category": "Technical Writing",
+    "skills": [
+      { "name": "Technical Communication", "proficiency": null },
+      { "name": "Developer Audience Writing", "proficiency": null },
+      { "name": "Systems Thinking", "proficiency": null },
+      { "name": "Consistent Execution", "proficiency": null },
+      { "name": "Self-Directed Building", "proficiency": null }
+    ]
+  }
+]

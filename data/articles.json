@@ -1,0 +1,37 @@
+[
+  {
+    "title": "9 RAG Architectures Every AI Engineer Should Know",
+    "url": "https://medium.com/@divyyadav",
+    "date": "2025-12-01",
+    "summary": "A visual breakdown of 9 production RAG architectures — from naive retrieval to multi-vector hybrid search — with diagrams and real implementation patterns.",
+    "tags": ["RAG", "LLMs", "AI Engineering"]
+  },
+  {
+    "title": "Building Stateful Multi-Agent Systems with LangGraph",
+    "url": "https://medium.com/@divyyadav",
+    "date": "2026-01-15",
+    "summary": "How to architect persistent state graphs, memory checkpointing, and multi-step tool-calling reliability in LangGraph — from local prototype to Tensorlake deployment.",
+    "tags": ["LangGraph", "Multi-Agent", "AI Engineering"]
+  },
+  {
+    "title": "Qdrant + Sentence Transformers: A Molecular Search Pipeline",
+    "url": "https://medium.com/@divyyadav",
+    "date": "2026-02-10",
+    "summary": "How I built a high-dimensional similarity search pipeline for molecular datasets using Qdrant and sentence-transformer embeddings — officially reposted by Qdrant.",
+    "tags": ["Qdrant", "Vector Search", "Embeddings"]
+  },
+  {
+    "title": "MCP Explained: The Standardised Tool Layer for AI Agents",
+    "url": "https://medium.com/@divyyadav",
+    "date": "2026-03-05",
+    "summary": "Model Context Protocol demystified — what it is, why it matters for production agentic systems, and how to integrate it with LangChain and Agno.",
+    "tags": ["MCP", "AI Agents", "LangChain"]
+  },
+  {
+    "title": "LLM Evaluation in Production: Beyond Benchmark Scores",
+    "url": "https://medium.com/@divyyadav",
+    "date": "2026-04-20",
+    "summary": "A practical guide to evaluating LLM applications in real deployments — covering hallucination detection, retrieval quality, and latency trade-offs.",
+    "tags": ["LLM Evaluation", "Production AI", "RAG"]
+  }
+]
