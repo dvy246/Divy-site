@@ -63,10 +63,13 @@ export default function ArticleCard({
           position: 'relative',
           width: '100%',
           height: '100%',
-          transition: 'transform 700ms cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: 'transform 750ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 350ms ease',
           transformStyle: 'preserve-3d',
           transform: hovered ? 'rotateY(180deg)' : 'rotateY(0deg)',
           border: '1px solid #1b1c1c',
+          boxShadow: hovered 
+            ? '0 20px 45px rgba(27,28,28,0.15), 0 0 30px rgba(181,80,45,0.06)' 
+            : '0 4px 15px rgba(27,28,28,0.03)',
         }}
       >
         {/* FRONT SIDE (Beige Card with Sketched Illustration) */}
@@ -82,6 +85,18 @@ export default function ArticleCard({
             overflow: 'hidden',
           }}
         >
+          {/* Glass sheen reflection overlay */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(135deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 70%)',
+              transform: hovered ? 'translateX(100%)' : 'translateX(-100%)',
+              transition: hovered ? 'transform 950ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+              zIndex: 10,
+              pointerEvents: 'none',
+            }}
+          />
           {/* Sketch Illustration */}
           <div
             style={{

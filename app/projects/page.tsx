@@ -5,6 +5,244 @@ import { RoughNotation } from 'react-rough-notation';
 import SketchDivider from '@/components/SketchDivider';
 import projects from '@/data/projects.json';
 
+interface ProjectType {
+  title: string;
+  category: string;
+  description: string;
+  tags: string[];
+  github: string | null;
+  demo: string | null;
+  featured: boolean;
+}
+
+function ProjectCard({ project }: { project: ProjectType }) {
+  const [hovered, setHovered] = useState(false);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const xc = rect.width / 2;
+    const yc = rect.height / 2;
+    // Maximum tilt 10 degrees
+    const tiltX = (yc - y) / (yc / 10);
+    const tiltY = (x - xc) / (xc / 10);
+    setTilt({ x: tiltX, y: tiltY });
+  };
+
+  const handleMouseLeave = () => {
+    setHovered(false);
+    setTilt({ x: 0, y: 0 });
+  };
+
+  return (
+    <article
+      className="project-grid-card"
+      onMouseEnter={() => setHovered(true)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        padding: '2.25rem 2rem',
+        backgroundColor: hovered ? 'rgba(245, 245, 220, 0.75)' : 'rgba(251, 249, 249, 0.45)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        overflow: 'hidden',
+        border: hovered ? '1px solid #B5502D' : '1px solid rgba(27, 28, 28, 0.15)',
+        boxShadow: hovered
+          ? '0 25px 50px rgba(27, 28, 28, 0.14), 0 0 35px rgba(181, 80, 45, 0.08)'
+          : '0 4px 15px rgba(27, 28, 28, 0.02)',
+        transform: hovered
+          ? `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(-5px)`
+          : 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)',
+        transition: hovered
+          ? 'background-color 350ms ease, border-color 350ms ease, box-shadow 350ms ease'
+          : 'all 500ms cubic-bezier(0.16, 1, 0.3, 1)',
+        height: '100%',
+      }}
+    >
+      {/* Glass sheen reflection overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(135deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 70%)',
+          transform: hovered ? 'translateX(100%)' : 'translateX(-100%)',
+          transition: hovered ? 'transform 950ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+          zIndex: 10,
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Featured Badge */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '1.25rem',
+        }}
+      >
+        <span
+          style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '9px',
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            fontWeight: 600,
+            color: project.featured ? '#B5502D' : '#747878',
+            border: project.featured ? '1px solid #B5502D' : '1px solid rgba(27, 28, 28, 0.15)',
+            padding: '2px 8px',
+          }}
+        >
+          {project.featured ? 'Featured' : 'Project'}
+        </span>
+      </div>
+
+      {/* Category */}
+      <p
+        style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: '9px',
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          color: '#747878',
+          fontWeight: 600,
+          marginBottom: '0.75rem',
+        }}
+      >
+        {project.category}
+      </p>
+
+      {/* Title */}
+      <h2
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(1.2rem, 2vw, 1.5rem)',
+          fontWeight: 700,
+          color: '#1b1c1c',
+          lineHeight: 1.25,
+          marginBottom: '1rem',
+        }}
+      >
+        {project.title}
+      </h2>
+
+      {/* Description */}
+      <p
+        style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: '0.9rem',
+          lineHeight: 1.7,
+          color: '#444748',
+          marginBottom: '1.75rem',
+        }}
+      >
+        {project.description}
+      </p>
+
+      {/* Tags */}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '0.35rem',
+          marginBottom: '2rem',
+          marginTop: 'auto',
+        }}
+      >
+        {project.tags.map((tag) => (
+          <span
+            key={tag}
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '10px',
+              letterSpacing: '0.05em',
+              color: '#1b1c1c',
+              border: '1px solid rgba(27, 28, 28, 0.15)',
+              padding: '2px 8px',
+              fontWeight: 500,
+              backgroundColor: '#E8E8D0',
+            }}
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+
+      {/* Action Buttons */}
+      <div style={{ display: 'flex', gap: '0.75rem', zIndex: 20 }}>
+        {project.github !== null && (
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-magnetic"
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '10px',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              fontWeight: 700,
+              color: '#1b1c1c',
+              textDecoration: 'none',
+              border: '1px solid #1b1c1c',
+              padding: '0.6rem 1.4rem',
+              transition: 'background-color 160ms ease, color 160ms ease',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget;
+              el.style.backgroundColor = '#1b1c1c';
+              el.style.color = '#F5F5DC';
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget;
+              el.style.backgroundColor = 'transparent';
+              el.style.color = '#1b1c1c';
+            }}
+          >
+            GitHub
+          </a>
+        )}
+        {project.demo !== null && (
+          <a
+            href={project.demo}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-magnetic"
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '10px',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              fontWeight: 700,
+              color: '#F5F5DC',
+              backgroundColor: '#B5502D',
+              border: '1px solid #B5502D',
+              textDecoration: 'none',
+              padding: '0.6rem 1.4rem',
+              transition: 'background-color 160ms ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#1b1c1c';
+              e.currentTarget.style.borderColor = '#1b1c1c';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#B5502D';
+              e.currentTarget.style.borderColor = '#B5502D';
+            }}
+          >
+            Demo
+          </a>
+        )}
+      </div>
+    </article>
+  );
+}
+
 export default function ProjectsPage() {
   const [show, setShow] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -25,7 +263,7 @@ export default function ProjectsPage() {
           opacity: 1,
           y: 0,
           duration: 0.8,
-          stagger: 0.1,
+          stagger: 0.08,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: '.projects-grid',
@@ -99,188 +337,13 @@ export default function ProjectsPage() {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 360px), 1fr))',
-            gap: '1px',
-            backgroundColor: '#1b1c1c',
-            border: '1px solid #1b1c1c',
+            gap: '2.5rem',
           }}
         >
           {sorted.map((project) => (
-            <article
-              key={project.title}
-              className="project-grid-card"
-              style={{
-                padding: '2.25rem 2rem',
-                backgroundColor: '#fbf9f9',
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                transition: 'background-color 300ms cubic-bezier(0.16,1,0.3,1)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#F5F5DC';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#fbf9f9';
-              }}
-            >
-              {/* Featured Badge */}
-              {project.featured && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-body)',
-                      fontSize: '9px',
-                      letterSpacing: '0.15em',
-                      textTransform: 'uppercase',
-                      fontWeight: 600,
-                      color: '#B5502D',
-                      border: '1px solid #B5502D',
-                      padding: '2px 8px',
-                    }}
-                  >
-                    Featured
-                  </span>
-                </div>
-              )}
-
-              {/* Category */}
-              <p
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '9px',
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase',
-                  color: '#747878',
-                  fontWeight: 600,
-                  marginBottom: '0.75rem',
-                }}
-              >
-                {project.category}
-              </p>
-
-              {/* Title */}
-              <h2
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(1.2rem, 2vw, 1.5rem)',
-                  fontWeight: 700,
-                  color: '#1b1c1c',
-                  lineHeight: 1.25,
-                  marginBottom: '1rem',
-                }}
-              >
-                {project.title}
-              </h2>
-
-              {/* Description */}
-              <p
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.9rem',
-                  lineHeight: 1.7,
-                  color: '#444748',
-                  marginBottom: '1.75rem',
-                }}
-              >
-                {project.description}
-              </p>
-
-              {/* Tags */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: '0.35rem',
-                  marginBottom: '2rem',
-                  marginTop: 'auto',
-                }}
-              >
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    style={{
-                      fontFamily: 'var(--font-body)',
-                      fontSize: '10px',
-                      letterSpacing: '0.05em',
-                      color: '#1b1c1c',
-                      border: '1px solid rgba(27,28,28,0.15)',
-                      padding: '2px 8px',
-                      fontWeight: 500,
-                      backgroundColor: '#E8E8D0',
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                {project.github !== null && (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-magnetic"
-                    style={{
-                      fontFamily: 'var(--font-body)',
-                      fontSize: '10px',
-                      letterSpacing: '0.15em',
-                      textTransform: 'uppercase',
-                      fontWeight: 700,
-                      color: '#1b1c1c',
-                      textDecoration: 'none',
-                      border: '1px solid #1b1c1c',
-                      padding: '0.6rem 1.4rem',
-                      transition: 'background-color 160ms ease, color 160ms ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      const el = e.currentTarget;
-                      el.style.backgroundColor = '#1b1c1c';
-                      el.style.color = '#F5F5DC';
-                    }}
-                    onMouseLeave={(e) => {
-                      const el = e.currentTarget;
-                      el.style.backgroundColor = 'transparent';
-                      el.style.color = '#1b1c1c';
-                    }}
-                  >
-                    GitHub
-                  </a>
-                )}
-                {project.demo !== null && (
-                  <a
-                    href={project.demo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-magnetic"
-                    style={{
-                      fontFamily: 'var(--font-body)',
-                      fontSize: '10px',
-                      letterSpacing: '0.15em',
-                      textTransform: 'uppercase',
-                      fontWeight: 700,
-                      color: '#F5F5DC',
-                      backgroundColor: '#B5502D',
-                      border: '1px solid #B5502D',
-                      textDecoration: 'none',
-                      padding: '0.6rem 1.4rem',
-                      transition: 'background-color 160ms ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#1b1c1c';
-                      e.currentTarget.style.borderColor = '#1b1c1c';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#B5502D';
-                      e.currentTarget.style.borderColor = '#B5502D';
-                    }}
-                  >
-                    Demo
-                  </a>
-                )}
-              </div>
-            </article>
+            <div key={project.title} className="project-grid-wrapper">
+              <ProjectCard project={project} />
+            </div>
           ))}
         </div>
       </section>

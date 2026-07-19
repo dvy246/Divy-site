@@ -328,3 +328,46 @@ body::after {
 }
 .footer-link:hover { color: rgba(242, 240, 240, 0.9); }
 .footer-link:hover::after { width: 100%; }
+
+/* ==========================================================
+   AMBIENT BACKGROUND GLOW ANIMATIONS
+   ========================================================== */
+@keyframes floatGlow1 {
+  0% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(45px, -75px) scale(1.15) rotate(120deg);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.9) rotate(240deg);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1) rotate(360deg);
+  }
+}
+
+@keyframes floatGlow2 {
+  0% {
+    transform: translate(0px, 0px) scale(1.05) rotate(360deg);
+  }
+  50% {
+    transform: translate(-60px, 60px) scale(0.85) rotate(180deg);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1.05) rotate(0deg);
+  }
+}
+
+@keyframes floatGlow3 {
+  0% {
+    transform: translate(0px, 0px) scale(0.9) rotate(0deg);
+  }
+  50% {
+    transform: translate(80px, 40px) scale(1.2) rotate(180deg);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(0.9) rotate(360deg);
+  }
+}
+

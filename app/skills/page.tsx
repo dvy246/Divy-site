@@ -15,6 +15,7 @@ function SkillCategory({
   index: number;
 }) {
   const [show, setShow] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ function SkillCategory({
           observer.disconnect();
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.15 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -34,15 +35,37 @@ function SkillCategory({
   return (
     <div
       ref={ref}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         padding: '2.5rem 2rem',
-        backgroundColor: '#fbf9f9',
-        border: '1px solid #1b1c1c',
+        backgroundColor: hovered ? 'rgba(245, 245, 220, 0.75)' : 'rgba(251, 249, 249, 0.45)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        border: hovered ? '1px solid #B5502D' : '1px solid rgba(27, 28, 28, 0.15)',
+        boxShadow: hovered
+          ? '0 20px 45px rgba(27, 28, 28, 0.12), 0 0 30px rgba(181, 80, 45, 0.05)'
+          : '0 4px 15px rgba(27, 28, 28, 0.02)',
+        position: 'relative',
+        overflow: 'hidden',
         opacity: show ? 1 : 0,
-        transform: show ? 'translateY(0)' : 'translateY(30px)',
-        transition: 'opacity 800ms cubic-bezier(0.16,1,0.3,1), transform 800ms cubic-bezier(0.16,1,0.3,1)',
+        transform: show ? 'translateY(0)' : 'translateY(35px)',
+        transition: 'opacity 800ms cubic-bezier(0.16, 1, 0.3, 1), transform 800ms cubic-bezier(0.16, 1, 0.3, 1), background-color 350ms ease, border-color 350ms ease, box-shadow 350ms ease',
       }}
     >
+      {/* Sheen reflection overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(135deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 70%)',
+          transform: hovered ? 'translateX(100%)' : 'translateX(-100%)',
+          transition: hovered ? 'transform 950ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+          zIndex: 10,
+          pointerEvents: 'none',
+        }}
+      />
+
       <h2
         style={{
           fontFamily: 'var(--font-display)',

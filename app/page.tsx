@@ -153,7 +153,7 @@ function SplitText({
           }}
           whileHover={{
             scale: 1.25,
-            rotate: 8,
+            rotate: 0,
             color: '#B5502D',
             transition: { type: 'spring', stiffness: 450, damping: 10 }
           }}
@@ -253,15 +253,25 @@ export default function HomePage() {
 
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '58fr 42fr',
-            gap: isMobile ? '3rem' : '5rem',
-            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
+            textAlign: 'center',
+            width: '100%',
+            gap: isMobile ? '2.5rem' : '4rem',
+            zIndex: 2,
           }}
         >
-          {/* LEFT: editorial text */}
-          <div>
+          {/* EDITORIAL TEXT */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              width: '100%',
+              maxWidth: '800px',
+            }}
+          >
             {/* Label */}
             <p
               className="label-caps"
@@ -279,12 +289,13 @@ export default function HomePage() {
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(3.5rem, 9vw, 9rem)',
                 fontWeight: 700,
-                fontStyle: 'italic',
+                fontStyle: 'normal',
                 lineHeight: 1.0,
-                letterSpacing: '-0.03em',
+                letterSpacing: '0.02em',
                 color: '#1b1c1c',
                 marginBottom: '1.75rem',
                 overflow: 'hidden',
+                textAlign: 'center',
               }}
             >
               <RoughNotation
@@ -306,6 +317,7 @@ export default function HomePage() {
                 flexWrap: 'wrap',
                 gap: '0.5rem',
                 marginBottom: '2.5rem',
+                justifyContent: 'center',
               }}
             >
               {TAGLINE.map((word, idx) => (
@@ -331,9 +343,10 @@ export default function HomePage() {
                 fontSize: 'clamp(0.9rem, 1.4vw, 1.05rem)',
                 lineHeight: 1.8,
                 color: '#444748',
-                maxWidth: '500px',
+                maxWidth: '600px',
                 marginBottom: '2.5rem',
                 animation: 'fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s both',
+                textAlign: 'center',
               }}
             >
               {BIO}
@@ -346,6 +359,7 @@ export default function HomePage() {
                 gap: '1.75rem',
                 flexWrap: 'wrap',
                 animation: 'fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 1.05s both',
+                justifyContent: 'center',
               }}
             >
               {SOCIAL_LINKS.map((link) => (
@@ -378,14 +392,23 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* RIGHT: 3D or fallback */}
-          <div
+          {/* 3D or fallback */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.75, rotate: -6 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{
+              type: 'spring',
+              stiffness: 75,
+              damping: 16,
+              delay: 0.65,
+            }}
             style={{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               minHeight: isMobile ? '280px' : '520px',
-              animation: 'fadeIn 1s ease 0.5s both',
+              width: '100%',
+              maxWidth: '800px',
             }}
           >
             {isMobile ? (
@@ -401,7 +424,7 @@ export default function HomePage() {
                 <HeroCanvas />
               </div>
             )}
-          </div>
+          </motion.div>
         </div>
 
         {/* Scroll indicator */}
@@ -410,10 +433,12 @@ export default function HomePage() {
           style={{
             position: 'absolute',
             bottom: '2.5rem',
-            left: '5vw',
+            left: '50%',
+            transform: 'translateX(-50%)',
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            gap: '1rem',
+            gap: '0.5rem',
             animation: 'fadeIn 1s ease 1.5s both',
           }}
         >
@@ -432,7 +457,7 @@ export default function HomePage() {
           <div
             style={{
               width: '1px',
-              height: '50px',
+              height: '30px',
               position: 'relative',
               backgroundColor: 'rgba(27,28,28,0.15)',
               overflow: 'hidden',

@@ -41,6 +41,66 @@ export default function Nav() {
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
+  const renderLink = (link: typeof NAV_LINKS[0]) => {
+    const isActive = pathname === link.href ||
+      (link.href !== '/' && pathname.startsWith(link.href));
+    const showUnderline = hoveredLink === link.href || (!hoveredLink && isActive);
+
+    return (
+      <div
+        key={link.href}
+        style={{ position: 'relative' }}
+        onMouseEnter={() => setHoveredLink(link.href)}
+        onMouseLeave={() => setHoveredLink(null)}
+      >
+        <Link
+          href={link.href}
+          aria-current={isActive ? 'page' : undefined}
+          style={{
+            fontFamily: '"DM Sans", sans-serif',
+            fontSize: '10px',
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            fontWeight: 600,
+            color: isActive ? '#B5502D' : '#1b1c1c',
+            textDecoration: 'none',
+            paddingBottom: '6px',
+            display: 'block',
+            transition: 'color 200ms ease',
+          }}
+        >
+          {link.label}
+        </Link>
+
+        {showUnderline && (
+          <motion.svg
+            layoutId="nav-underline"
+            style={{
+              position: 'absolute',
+              bottom: '-4px',
+              left: 0,
+              width: '100%',
+              height: '6px',
+            }}
+            viewBox="0 0 100 6"
+            preserveAspectRatio="none"
+          >
+            <motion.path
+              d="M 0,3 Q 25,1 50,3 T 100,3"
+              fill="none"
+              stroke="#B5502D"
+              strokeWidth="2"
+              strokeLinecap="round"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+            />
+          </motion.svg>
+        )}
+      </div>
+    );
+  };
+
   return (
     <>
       {/* ── Nav bar ───────────────────────────────────── */}
@@ -53,176 +113,166 @@ export default function Nav() {
           left: 0,
           right: 0,
           zIndex: 1000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
           padding: '1.1rem 5vw',
           transition:
             'background 400ms cubic-bezier(0.16,1,0.3,1), ' +
             'transform 350ms cubic-bezier(0.16,1,0.3,1), ' +
             'border-color 400ms ease',
           backgroundColor: scrolled
-            ? 'rgba(245,245,220,0.88)'
+            ? 'rgba(245, 245, 220, 0.75)'
             : 'transparent',
-          backdropFilter: scrolled ? 'blur(12px) saturate(1.4)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(12px) saturate(1.4)' : 'none',
+          backdropFilter: scrolled ? 'blur(20px) saturate(1.35)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(1.35)' : 'none',
           borderBottom: scrolled
-            ? '1px solid rgba(27,28,28,0.1)'
+            ? '1px solid rgba(27, 28, 28, 0.08)'
             : '1px solid transparent',
+          boxShadow: scrolled
+            ? '0 10px 30px rgba(27, 28, 28, 0.04), 0 1px 0 rgba(27, 28, 28, 0.02)'
+            : 'none',
           transform: visible ? 'translateY(0)' : 'translateY(-100%)',
         }}
       >
-        {/* Monogram */}
-        <Link
-          href="/"
-          aria-label="Divy Yadav — home"
-          style={{
-            fontFamily: '"Playfair Display", Georgia, serif',
-            fontSize: '26px',
-            fontWeight: 700,
-            color: '#1b1c1c',
-            textDecoration: 'none',
-            letterSpacing: '-0.02em',
-            lineHeight: 1,
-            transition: 'color 200ms ease',
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.color = '#B5502D';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.color = '#1b1c1c';
-          }}
-        >
-          DY
-        </Link>
-
-        {/* Desktop links */}
+        {/* DESKTOP SPLIT NAV LAYOUT */}
         <div
-          className="desktop-nav"
-          style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}
+          className="desktop-nav-split"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+          }}
         >
-          {NAV_LINKS.map((link) => {
-            const isActive = pathname === link.href ||
-              (link.href !== '/' && pathname.startsWith(link.href));
-            const showUnderline = hoveredLink === link.href || (!hoveredLink && isActive);
+          {/* Left group of links */}
+          <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center', width: '38%' }}>
+            {NAV_LINKS.slice(0, 2).map((link) => renderLink(link))}
+          </div>
 
-            return (
-              <div
-                key={link.href}
-                style={{ position: 'relative' }}
-                onMouseEnter={() => setHoveredLink(link.href)}
-                onMouseLeave={() => setHoveredLink(null)}
-              >
-                <Link
-                  href={link.href}
-                  aria-current={isActive ? 'page' : undefined}
-                  style={{
-                    fontFamily: '"DM Sans", sans-serif',
-                    fontSize: '10px',
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    fontWeight: 600,
-                    color: isActive ? '#B5502D' : '#1b1c1c',
-                    textDecoration: 'none',
-                    paddingBottom: '6px',
-                    display: 'block',
-                    transition: 'color 200ms ease',
-                  }}
-                >
-                  {link.label}
-                </Link>
+          {/* Center: Monogram */}
+          <div style={{ display: 'flex', justifyContent: 'center', width: '24%' }}>
+            <Link
+              href="/"
+              aria-label="Divy Yadav — home"
+              style={{
+                fontFamily: '"Playfair Display", Georgia, serif',
+                fontSize: '26px',
+                fontWeight: 700,
+                color: '#1b1c1c',
+                textDecoration: 'none',
+                letterSpacing: '-0.02em',
+                lineHeight: 1,
+                transition: 'color 200ms ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = '#B5502D';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = '#1b1c1c';
+              }}
+            >
+              DY
+            </Link>
+          </div>
 
-                {showUnderline && (
-                  <motion.svg
-                    layoutId="nav-underline"
-                    style={{
-                      position: 'absolute',
-                      bottom: '-4px',
-                      left: 0,
-                      width: '100%',
-                      height: '6px',
-                    }}
-                    viewBox="0 0 100 6"
-                    preserveAspectRatio="none"
-                  >
-                    <motion.path
-                      d="M 0,3 Q 25,1 50,3 T 100,3"
-                      fill="none"
-                      stroke="#B5502D"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 0.3, ease: 'easeOut' }}
-                    />
-                  </motion.svg>
-                )}
-              </div>
-            );
-          })}
-
-          {/* CTA button */}
-          <a
-            href="https://aiengsimplified.beehiiv.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              fontFamily: '"DM Sans", sans-serif',
-              fontSize: '10px',
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              color: '#F5F5DC',
-              backgroundColor: '#1b1c1c',
-              textDecoration: 'none',
-              padding: '0.55rem 1.1rem',
-              transition: 'background-color 160ms ease',
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#B5502D';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1b1c1c';
-            }}
-          >
-            Newsletter
-          </a>
+          {/* Right group of links + CTA button */}
+          <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center', justifyContent: 'flex-end', width: '38%' }}>
+            {NAV_LINKS.slice(2).map((link) => renderLink(link))}
+            {/* CTA button */}
+            <a
+              href="https://aiengsimplified.beehiiv.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: '"DM Sans", sans-serif',
+                fontSize: '10px',
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                fontWeight: 700,
+                color: '#F5F5DC',
+                backgroundColor: '#1b1c1c',
+                textDecoration: 'none',
+                padding: '0.55rem 1.1rem',
+                transition: 'background-color 160ms ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#B5502D';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1b1c1c';
+              }}
+            >
+              Newsletter
+            </a>
+          </div>
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((v) => !v)}
-          className="mobile-hamburger"
+        {/* MOBILE NAV LAYOUT */}
+        <div
+          className="mobile-nav"
           style={{
             display: 'none',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '0.25rem',
-            flexDirection: 'column',
-            gap: '5px',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
           }}
         >
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              style={{
-                display: 'block',
-                width: '22px',
-                height: '1.5px',
-                backgroundColor: '#1b1c1c',
-                transition: 'transform 200ms ease, opacity 200ms ease',
-                transform:
-                  i === 0 && menuOpen ? 'translateY(6.5px) rotate(45deg)' :
-                  i === 2 && menuOpen ? 'translateY(-6.5px) rotate(-45deg)' :
-                  'none',
-                opacity: i === 1 && menuOpen ? 0 : 1,
-              }}
-            />
-          ))}
-        </button>
+          <Link
+            href="/"
+            aria-label="Divy Yadav — home"
+            style={{
+              fontFamily: '"Playfair Display", Georgia, serif',
+              fontSize: '26px',
+              fontWeight: 700,
+              color: '#1b1c1c',
+              textDecoration: 'none',
+              letterSpacing: '-0.02em',
+              lineHeight: 1,
+              transition: 'color 200ms ease',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.color = '#B5502D';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.color = '#1b1c1c';
+            }}
+          >
+            DY
+          </Link>
+
+          {/* Mobile hamburger */}
+          <button
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+            className="mobile-hamburger"
+            style={{
+              display: 'flex',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0.25rem',
+              flexDirection: 'column',
+              gap: '5px',
+            }}
+          >
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                style={{
+                  display: 'block',
+                  width: '22px',
+                  height: '1.5px',
+                  backgroundColor: '#1b1c1c',
+                  transition: 'transform 200ms ease, opacity 200ms ease',
+                  transform:
+                    i === 0 && menuOpen ? 'translateY(6.5px) rotate(45deg)' :
+                    i === 2 && menuOpen ? 'translateY(-6.5px) rotate(-45deg)' :
+                    'none',
+                  opacity: i === 1 && menuOpen ? 0 : 1,
+                }}
+              />
+            ))}
+          </button>
+        </div>
       </nav>
 
       {/* ── Mobile fullscreen menu ─────────────────────── */}
@@ -235,14 +285,12 @@ export default function Nav() {
           inset: 0,
           zIndex: 999,
           backgroundColor: '#F5F5DC',
-          display: 'flex',
+          display: menuOpen ? 'flex' : 'none',
           flexDirection: 'column',
-          justifyContent: 'center',
           alignItems: 'center',
-          gap: '2.5rem',
-          opacity: menuOpen ? 1 : 0,
-          pointerEvents: menuOpen ? 'auto' : 'none',
-          transition: 'opacity 350ms cubic-bezier(0.16,1,0.3,1)',
+          justifyContent: 'center',
+          gap: '2rem',
+          padding: '2rem',
         }}
       >
         {NAV_LINKS.map((link, idx) => (
@@ -251,7 +299,7 @@ export default function Nav() {
             href={link.href}
             style={{
               fontFamily: '"Playfair Display", Georgia, serif',
-              fontSize: 'clamp(2rem, 8vw, 3rem)',
+              fontSize: '2rem',
               fontWeight: 700,
               fontStyle: pathname === link.href ? 'italic' : 'normal',
               color: pathname === link.href ? '#B5502D' : '#1b1c1c',
@@ -292,8 +340,8 @@ export default function Nav() {
       {/* Responsive CSS */}
       <style>{`
         @media (max-width: 768px) {
-          .desktop-nav { display: none !important; }
-          .mobile-hamburger { display: flex !important; }
+          .desktop-nav-split { display: none !important; }
+          .mobile-nav { display: flex !important; }
         }
       `}</style>
     </>

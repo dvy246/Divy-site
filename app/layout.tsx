@@ -52,6 +52,53 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${dmSans.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
+        {/* Floating Ambient Glow Backgrounds */}
+        <div 
+          style={{
+            position: 'fixed',
+            top: '15%',
+            left: '5%',
+            width: 'min(500px, 80vw)',
+            height: 'min(500px, 80vw)',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(181, 80, 45, 0.05) 0%, rgba(245, 245, 220, 0) 70%)',
+            zIndex: -2,
+            pointerEvents: 'none',
+            filter: 'blur(60px)',
+            animation: 'floatGlow1 24s infinite alternate ease-in-out',
+          }}
+        />
+        <div 
+          style={{
+            position: 'fixed',
+            bottom: '10%',
+            right: '2%',
+            width: 'min(600px, 90vw)',
+            height: 'min(600px, 90vw)',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(232, 232, 208, 0.5) 0%, rgba(245, 245, 220, 0) 75%)',
+            zIndex: -2,
+            pointerEvents: 'none',
+            filter: 'blur(70px)',
+            animation: 'floatGlow2 28s infinite alternate ease-in-out',
+          }}
+        />
+        <div 
+          style={{
+            position: 'fixed',
+            top: '55%',
+            left: '45%',
+            width: 'min(400px, 60vw)',
+            height: 'min(400px, 60vw)',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(212, 168, 83, 0.04) 0%, rgba(245, 245, 220, 0) 70%)',
+            zIndex: -2,
+            pointerEvents: 'none',
+            filter: 'blur(50px)',
+            animation: 'floatGlow3 20s infinite alternate ease-in-out',
+          }}
+        />
+
         <CustomCursor />
         <SmoothScroll />
         <BackgroundGrid />
