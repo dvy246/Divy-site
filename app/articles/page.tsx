@@ -5,6 +5,8 @@ import { RoughNotation } from 'react-rough-notation';
 import { motion, AnimatePresence } from 'framer-motion';
 import ArticleCard from '@/components/ArticleCard';
 import SketchDivider from '@/components/SketchDivider';
+import ScrollReveal3D from '@/components/ScrollReveal3D';
+import Magnetic from '@/components/Magnetic';
 import articles from '@/data/articles.json';
 
 export default function ArticlesPage() {
@@ -125,40 +127,42 @@ export default function ArticlesPage() {
           {categories.map((cat) => {
             const isActive = selectedCategory === cat;
             return (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '0.35rem 0.8rem',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '11px',
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  fontWeight: 600,
-                  color: isActive ? '#B5502D' : '#444748',
-                  position: 'relative',
-                  transition: 'color 200ms ease',
-                }}
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="active-filter-pill"
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      border: '1px solid #B5502D',
-                      borderRadius: '20px',
-                      zIndex: -1,
-                      backgroundColor: 'rgba(181, 80, 45, 0.04)',
-                    }}
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
-                )}
-                {cat}
-              </button>
+              <Magnetic key={cat} range={24} strength={0.2}>
+                <button
+                  onClick={() => setSelectedCategory(cat)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '0.35rem 0.8rem',
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '11px',
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    fontWeight: 600,
+                    color: isActive ? '#B5502D' : '#444748',
+                    position: 'relative',
+                    transition: 'color 200ms ease',
+                    display: 'block',
+                  }}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-filter-pill"
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        border: '1px solid #B5502D',
+                        borderRadius: '20px',
+                        zIndex: -1,
+                        backgroundColor: 'rgba(181, 80, 45, 0.04)',
+                      }}
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  {cat}
+                </button>
+              </Magnetic>
             );
           })}
         </div>
@@ -181,7 +185,7 @@ export default function ArticlesPage() {
           }}
         >
           <AnimatePresence mode="popLayout">
-            {filteredArticles.map((article) => (
+            {filteredArticles.map((article, idx) => (
               <motion.div
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -192,7 +196,9 @@ export default function ArticlesPage() {
                 className="article-grid-card"
                 style={{ overflow: 'visible' }}
               >
-                <ArticleCard {...article} />
+                <ScrollReveal3D delay={Math.min(idx, 4) * 0.05}>
+                  <ArticleCard {...article} />
+                </ScrollReveal3D>
               </motion.div>
             ))}
           </AnimatePresence>

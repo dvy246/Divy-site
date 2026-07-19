@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import Magnetic from '@/components/Magnetic';
 
 const NAV_LINKS = [
   { label: 'Writing',    href: '/articles' },
@@ -47,57 +48,58 @@ export default function Nav() {
     const showUnderline = hoveredLink === link.href || (!hoveredLink && isActive);
 
     return (
-      <div
-        key={link.href}
-        style={{ position: 'relative' }}
-        onMouseEnter={() => setHoveredLink(link.href)}
-        onMouseLeave={() => setHoveredLink(null)}
-      >
-        <Link
-          href={link.href}
-          aria-current={isActive ? 'page' : undefined}
-          style={{
-            fontFamily: '"DM Sans", sans-serif',
-            fontSize: '10px',
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            fontWeight: 600,
-            color: isActive ? '#B5502D' : '#1b1c1c',
-            textDecoration: 'none',
-            paddingBottom: '6px',
-            display: 'block',
-            transition: 'color 200ms ease',
-          }}
+      <Magnetic range={36} strength={0.3} key={link.href}>
+        <div
+          style={{ position: 'relative' }}
+          onMouseEnter={() => setHoveredLink(link.href)}
+          onMouseLeave={() => setHoveredLink(null)}
         >
-          {link.label}
-        </Link>
-
-        {showUnderline && (
-          <motion.svg
-            layoutId="nav-underline"
+          <Link
+            href={link.href}
+            aria-current={isActive ? 'page' : undefined}
             style={{
-              position: 'absolute',
-              bottom: '-4px',
-              left: 0,
-              width: '100%',
-              height: '6px',
+              fontFamily: '"DM Sans", sans-serif',
+              fontSize: '10px',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              fontWeight: 600,
+              color: isActive ? '#B5502D' : '#1b1c1c',
+              textDecoration: 'none',
+              paddingBottom: '6px',
+              display: 'block',
+              transition: 'color 200ms ease',
             }}
-            viewBox="0 0 100 6"
-            preserveAspectRatio="none"
           >
-            <motion.path
-              d="M 0,3 Q 25,1 50,3 T 100,3"
-              fill="none"
-              stroke="#B5502D"
-              strokeWidth="2"
-              strokeLinecap="round"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-            />
-          </motion.svg>
-        )}
-      </div>
+            {link.label}
+          </Link>
+
+          {showUnderline && (
+            <motion.svg
+              layoutId="nav-underline"
+              style={{
+                position: 'absolute',
+                bottom: '-4px',
+                left: 0,
+                width: '100%',
+                height: '6px',
+              }}
+              viewBox="0 0 100 6"
+              preserveAspectRatio="none"
+            >
+              <motion.path
+                d="M 0,3 Q 25,1 50,3 T 100,3"
+                fill="none"
+                stroke="#B5502D"
+                strokeWidth="2"
+                strokeLinecap="round"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              />
+            </motion.svg>
+          )}
+        </div>
+      </Magnetic>
     );
   };
 
@@ -149,59 +151,65 @@ export default function Nav() {
 
           {/* Center: Monogram */}
           <div style={{ display: 'flex', justifyContent: 'center', width: '24%' }}>
-            <Link
-              href="/"
-              aria-label="Divy Yadav — home"
-              style={{
-                fontFamily: '"Playfair Display", Georgia, serif',
-                fontSize: '26px',
-                fontWeight: 700,
-                color: '#1b1c1c',
-                textDecoration: 'none',
-                letterSpacing: '-0.02em',
-                lineHeight: 1,
-                transition: 'color 200ms ease',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.color = '#B5502D';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.color = '#1b1c1c';
-              }}
-            >
-              DY
-            </Link>
+            <Magnetic range={45} strength={0.35}>
+              <Link
+                href="/"
+                aria-label="Divy Yadav — home"
+                style={{
+                  fontFamily: '"Playfair Display", Georgia, serif',
+                  fontSize: '26px',
+                  fontWeight: 700,
+                  color: '#1b1c1c',
+                  textDecoration: 'none',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1,
+                  transition: 'color 200ms ease',
+                  display: 'block',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.color = '#B5502D';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.color = '#1b1c1c';
+                }}
+              >
+                DY
+              </Link>
+            </Magnetic>
           </div>
 
           {/* Right group of links + CTA button */}
           <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center', justifyContent: 'flex-end', width: '38%' }}>
             {NAV_LINKS.slice(2).map((link) => renderLink(link))}
             {/* CTA button */}
-            <a
-              href="https://aiengsimplified.beehiiv.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontFamily: '"DM Sans", sans-serif',
-                fontSize: '10px',
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                fontWeight: 700,
-                color: '#F5F5DC',
-                backgroundColor: '#1b1c1c',
-                textDecoration: 'none',
-                padding: '0.55rem 1.1rem',
-                transition: 'background-color 160ms ease',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#B5502D';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1b1c1c';
-              }}
-            >
-              Newsletter
-            </a>
+            <Magnetic range={40} strength={0.3}>
+              <a
+                href="https://aiengsimplified.beehiiv.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontFamily: '"DM Sans", sans-serif',
+                  fontSize: '10px',
+                  letterSpacing: '0.18em',
+                  textTransform: 'uppercase',
+                  fontWeight: 700,
+                  color: '#F5F5DC',
+                  backgroundColor: '#1b1c1c',
+                  textDecoration: 'none',
+                  padding: '0.55rem 1.1rem',
+                  transition: 'background-color 160ms ease',
+                  display: 'block',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#B5502D';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1b1c1c';
+                }}
+              >
+                Newsletter
+              </a>
+            </Magnetic>
           </div>
         </div>
 

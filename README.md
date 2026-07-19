@@ -1,6 +1,6 @@
 # Divy Yadav — Creative Portfolio & Atelier
 
-An Awwwards-level, premium, highly interactive personal portfolio website for **Divy Yadav** — AI Engineer, Technical Writer, and Solopreneur. Styled as an editorial magazine crossed with a creative technologist's sketchbook, featuring warm beige backgrounds, hand-drawn vector elements, and physics-based 3D interactions.
+A premium, highly interactive personal portfolio website for **Divy Yadav** — AI Engineer, Technical Writer, and Solopreneur. Styled as an editorial magazine crossed with a creative technologist's sketchbook, featuring warm beige backgrounds, hand-drawn vector elements, and physics-based 3D interactions.
 
 Live Production URL: [personal-website-ten-mauve-32.vercel.app](https://personal-website-ten-mauve-32.vercel.app)
 

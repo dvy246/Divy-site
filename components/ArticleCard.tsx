@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 export interface ArticleCardProps {
   title: string;
@@ -47,28 +48,71 @@ export default function ArticleCard({
   const isExternal = url.startsWith('http');
   const imageUrl = getCardIllustration(title);
 
+  // Mouse hover springs for tilt effect
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springConfig = { stiffness: 140, damping: 18, mass: 0.35 };
+  const springX = useSpring(mouseX, springConfig);
+  const springY = useSpring(mouseY, springConfig);
+
+  // Map mouse movement to subtle 3D rotation angles (max 6.5 degrees)
+  const rotateX = useTransform(springY, [-0.5, 0.5], [6.5, -6.5]);
+  const rotateY = useTransform(springX, [-0.5, 0.5], [-6.5, 6.5]);
+
+  // Dynamic light sheen position tracking cursor
+  const sheenBg = useTransform(
+    [springX, springY],
+    ([mx, my]) => `radial-gradient(circle at ${(mx as number + 0.5) * 100}% ${(my as number + 0.5) * 100}%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 55%)`
+  );
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const xVal = (e.clientX - rect.left) / width - 0.5;
+    const yVal = (e.clientY - rect.top) / height - 0.5;
+    mouseX.set(xVal);
+    mouseY.set(yVal);
+  };
+
+  const handleMouseEnter = () => {
+    setHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setHovered(false);
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
   const cardContent = (
-    <div
+    <motion.div
       style={{
-        perspective: '1000px',
         width: '100%',
         height: '380px',
         cursor: 'pointer',
+        perspective: '1200px',
+        rotateX: rotateX,
+        rotateY: rotateY,
+        transformStyle: 'preserve-3d',
+        willChange: 'transform',
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      data-cursor="read"
     >
       <div
         style={{
           position: 'relative',
           width: '100%',
           height: '100%',
-          transition: 'transform 750ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 350ms ease',
+          transition: 'transform 800ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 350ms ease',
           transformStyle: 'preserve-3d',
           transform: hovered ? 'rotateY(180deg)' : 'rotateY(0deg)',
           border: '1px solid #1b1c1c',
           boxShadow: hovered 
-            ? '0 20px 45px rgba(27,28,28,0.15), 0 0 30px rgba(181,80,45,0.06)' 
+            ? '0 22px 48px rgba(27,28,28,0.14), 0 0 35px rgba(181,80,45,0.06)' 
             : '0 4px 15px rgba(27,28,28,0.03)',
         }}
       >
@@ -83,18 +127,19 @@ export default function ArticleCard({
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
+            transform: 'translateZ(0px)', // hardware acceleration standard
           }}
         >
-          {/* Glass sheen reflection overlay */}
-          <div
+          {/* Glass sheen reflection overlay (mouse-tracking) */}
+          <motion.div
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(135deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 70%)',
-              transform: hovered ? 'translateX(100%)' : 'translateX(-100%)',
-              transition: hovered ? 'transform 950ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+              background: sheenBg,
               zIndex: 10,
               pointerEvents: 'none',
+              opacity: hovered ? 1 : 0,
+              transition: 'opacity 250ms ease',
             }}
           />
           {/* Sketch Illustration */}
@@ -209,7 +254,7 @@ export default function ArticleCard({
             color: '#F5F5DC',
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
+            transform: 'rotateY(180deg) translateZ(1px)', // pushes plane out
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -292,7 +337,7 @@ export default function ArticleCard({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 
   if (isExternal) {

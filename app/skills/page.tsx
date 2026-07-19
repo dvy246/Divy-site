@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RoughNotation } from 'react-rough-notation';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import SketchDivider from '@/components/SketchDivider';
+import ScrollReveal3D from '@/components/ScrollReveal3D';
 import skills from '@/data/skills.json';
 
 function SkillCategory({
@@ -14,29 +16,56 @@ function SkillCategory({
   skillList: { name: string; proficiency: string | null }[];
   index: number;
 }) {
-  const [show, setShow] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [showAnnotation, setShowAnnotation] = useState(false);
+
+  // Mouse hover springs for tilt effect
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springConfig = { stiffness: 140, damping: 18, mass: 0.35 };
+  const springX = useSpring(mouseX, springConfig);
+  const springY = useSpring(mouseY, springConfig);
+
+  // Map mouse coordinates to subtle rotation angles (max 5 degrees)
+  const rotateX = useTransform(springY, [-0.5, 0.5], [5, -5]);
+  const rotateY = useTransform(springX, [-0.5, 0.5], [-5, 5]);
+
+  // Dynamic light sheen position tracking cursor
+  const sheenBg = useTransform(
+    [springX, springY],
+    ([mx, my]) => `radial-gradient(circle at ${(mx as number + 0.5) * 100}% ${(my as number + 0.5) * 100}%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 55%)`
+  );
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => setShow(true), index * 80);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
+    const t = setTimeout(() => setShowAnnotation(true), 600 + index * 80);
+    return () => clearTimeout(t);
   }, [index]);
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const xVal = (e.clientX - rect.left) / width - 0.5;
+    const yVal = (e.clientY - rect.top) / height - 0.5;
+    mouseX.set(xVal);
+    mouseY.set(yVal);
+  };
+
+  const handleMouseEnter = () => {
+    setHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setHovered(false);
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
   return (
-    <div
-      ref={ref}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       style={{
         padding: '2.5rem 2rem',
         backgroundColor: hovered ? 'rgba(245, 245, 220, 0.75)' : 'rgba(251, 249, 249, 0.45)',
@@ -46,23 +75,27 @@ function SkillCategory({
         boxShadow: hovered
           ? '0 20px 45px rgba(27, 28, 28, 0.12), 0 0 30px rgba(181, 80, 45, 0.05)'
           : '0 4px 15px rgba(27, 28, 28, 0.02)',
+        rotateX: rotateX,
+        rotateY: rotateY,
+        perspective: '1200px',
+        transformStyle: 'preserve-3d',
+        willChange: 'transform',
         position: 'relative',
         overflow: 'hidden',
-        opacity: show ? 1 : 0,
-        transform: show ? 'translateY(0)' : 'translateY(35px)',
-        transition: 'opacity 800ms cubic-bezier(0.16, 1, 0.3, 1), transform 800ms cubic-bezier(0.16, 1, 0.3, 1), background-color 350ms ease, border-color 350ms ease, box-shadow 350ms ease',
+        transition: 'background-color 350ms ease, border-color 350ms ease, box-shadow 350ms ease',
+        height: '100%',
       }}
     >
-      {/* Sheen reflection overlay */}
-      <div
+      {/* Sheen reflection overlay (mouse-tracking) */}
+      <motion.div
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(135deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 70%)',
-          transform: hovered ? 'translateX(100%)' : 'translateX(-100%)',
-          transition: hovered ? 'transform 950ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+          background: sheenBg,
           zIndex: 10,
           pointerEvents: 'none',
+          opacity: hovered ? 1 : 0,
+          transition: 'opacity 250ms ease',
         }}
       />
 
@@ -79,7 +112,7 @@ function SkillCategory({
         <RoughNotation
           type="underline"
           color="#B5502D"
-          show={show}
+          show={showAnnotation}
           strokeWidth={2}
           animationDuration={400}
           animationDelay={index * 80}
@@ -111,7 +144,7 @@ function SkillCategory({
           </span>
         ))}
       </p>
-    </div>
+    </motion.div>
   );
 }
 
@@ -175,21 +208,25 @@ export default function SkillsPage() {
       <SketchDivider />
 
       {/* Skills sections */}
-      <section style={{ padding: '5rem 5vw 8rem' }}>
+      <section style={{ padding: '5rem 5vw 8rem', overflow: 'visible' }}>
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 380px), 1fr))',
             gap: '2rem',
+            overflow: 'visible',
           }}
         >
           {skills.map((group, i) => (
-            <SkillCategory
-              key={group.category}
-              category={group.category}
-              skillList={group.skills}
-              index={i}
-            />
+            <div key={group.category} style={{ overflow: 'visible' }}>
+              <ScrollReveal3D delay={i * 0.06}>
+                <SkillCategory
+                  category={group.category}
+                  skillList={group.skills}
+                  index={i}
+                />
+              </ScrollReveal3D>
+            </div>
           ))}
         </div>
 

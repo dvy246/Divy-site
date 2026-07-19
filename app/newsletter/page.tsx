@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { RoughNotation } from 'react-rough-notation';
 import ArticleCard from '@/components/ArticleCard';
 import SketchDivider from '@/components/SketchDivider';
+import ScrollReveal3D from '@/components/ScrollReveal3D';
+import Magnetic from '@/components/Magnetic';
 import newsletters from '@/data/newsletters.json';
 
 export default function NewsletterPage() {
@@ -91,33 +93,35 @@ export default function NewsletterPage() {
 
         {/* Subscribe CTA */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.75rem' }}>
-          <a
-            href="https://aiengsimplified.beehiiv.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-magnetic"
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '11px',
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              color: '#F5F5DC',
-              backgroundColor: '#B5502D',
-              textDecoration: 'none',
-              padding: '1.1rem 2.5rem',
-              display: 'inline-block',
-              transition: 'background-color 180ms ease',
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1b1c1c';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#B5502D';
-            }}
-          >
-            Subscribe on Beehiiv →
-          </a>
+          <Magnetic range={45} strength={0.35}>
+            <a
+              href="https://aiengsimplified.beehiiv.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-magnetic"
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '11px',
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                fontWeight: 700,
+                color: '#F5F5DC',
+                backgroundColor: '#B5502D',
+                textDecoration: 'none',
+                padding: '1.1rem 2.5rem',
+                display: 'inline-block',
+                transition: 'background-color 180ms ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1b1c1c';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#B5502D';
+              }}
+            >
+              Subscribe on Beehiiv →
+            </a>
+          </Magnetic>
           <span
             style={{
               fontFamily: 'var(--font-body)',
@@ -137,7 +141,7 @@ export default function NewsletterPage() {
       {/* Archive */}
       <section
         className="newsletter-archive"
-        style={{ padding: '5rem 5vw 8rem' }}
+        style={{ padding: '5rem 5vw 8rem', overflow: 'visible' }}
       >
         <h2
           style={{
@@ -158,9 +162,11 @@ export default function NewsletterPage() {
             overflow: 'visible',
           }}
         >
-          {newsletters.map((issue) => (
+          {newsletters.map((issue, idx) => (
             <div key={issue.title} className="newsletter-grid-card" style={{ overflow: 'visible' }}>
-              <ArticleCard {...issue} />
+              <ScrollReveal3D delay={idx * 0.05}>
+                <ArticleCard {...issue} />
+              </ScrollReveal3D>
             </div>
           ))}
         </div>

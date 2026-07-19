@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { RoughNotation } from 'react-rough-notation';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import SketchDivider from '@/components/SketchDivider';
+import ScrollReveal3D from '@/components/ScrollReveal3D';
+import Magnetic from '@/components/Magnetic';
 import projects from '@/data/projects.json';
 
 interface ProjectType {
@@ -17,31 +20,51 @@ interface ProjectType {
 
 function ProjectCard({ project }: { project: ProjectType }) {
   const [hovered, setHovered] = useState(false);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  // Mouse hover springs for tilt effect
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springConfig = { stiffness: 140, damping: 18, mass: 0.35 };
+  const springX = useSpring(mouseX, springConfig);
+  const springY = useSpring(mouseY, springConfig);
+
+  // Map mouse coordinates to subtle rotation angles (max 6 degrees)
+  const rotateX = useTransform(springY, [-0.5, 0.5], [6, -6]);
+  const rotateY = useTransform(springX, [-0.5, 0.5], [-6, 6]);
+
+  // Dynamic light sheen position tracking cursor
+  const sheenBg = useTransform(
+    [springX, springY],
+    ([mx, my]) => `radial-gradient(circle at ${(mx as number + 0.5) * 100}% ${(my as number + 0.5) * 100}%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 55%)`
+  );
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const xc = rect.width / 2;
-    const yc = rect.height / 2;
-    // Maximum tilt 10 degrees
-    const tiltX = (yc - y) / (yc / 10);
-    const tiltY = (x - xc) / (xc / 10);
-    setTilt({ x: tiltX, y: tiltY });
+    const width = rect.width;
+    const height = rect.height;
+    const xVal = (e.clientX - rect.left) / width - 0.5;
+    const yVal = (e.clientY - rect.top) / height - 0.5;
+    mouseX.set(xVal);
+    mouseY.set(yVal);
+  };
+
+  const handleMouseEnter = () => {
+    setHovered(true);
   };
 
   const handleMouseLeave = () => {
     setHovered(false);
-    setTilt({ x: 0, y: 0 });
+    mouseX.set(0);
+    mouseY.set(0);
   };
 
   return (
-    <article
+    <motion.article
       className="project-grid-card"
-      onMouseEnter={() => setHovered(true)}
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      data-cursor="view"
       style={{
         padding: '2.25rem 2rem',
         backgroundColor: hovered ? 'rgba(245, 245, 220, 0.75)' : 'rgba(251, 249, 249, 0.45)',
@@ -55,25 +78,25 @@ function ProjectCard({ project }: { project: ProjectType }) {
         boxShadow: hovered
           ? '0 25px 50px rgba(27, 28, 28, 0.14), 0 0 35px rgba(181, 80, 45, 0.08)'
           : '0 4px 15px rgba(27, 28, 28, 0.02)',
-        transform: hovered
-          ? `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(-5px)`
-          : 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)',
-        transition: hovered
-          ? 'background-color 350ms ease, border-color 350ms ease, box-shadow 350ms ease'
-          : 'all 500ms cubic-bezier(0.16, 1, 0.3, 1)',
+        rotateX: rotateX,
+        rotateY: rotateY,
+        perspective: '1200px',
+        transformStyle: 'preserve-3d',
+        willChange: 'transform',
+        transition: 'background-color 350ms ease, border-color 350ms ease, box-shadow 350ms ease',
         height: '100%',
       }}
     >
-      {/* Glass sheen reflection overlay */}
-      <div
+      {/* Glass sheen reflection overlay (mouse-tracking) */}
+      <motion.div
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(135deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 70%)',
-          transform: hovered ? 'translateX(100%)' : 'translateX(-100%)',
-          transition: hovered ? 'transform 950ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+          background: sheenBg,
           zIndex: 10,
           pointerEvents: 'none',
+          opacity: hovered ? 1 : 0,
+          transition: 'opacity 250ms ease',
         }}
       />
 
@@ -176,70 +199,76 @@ function ProjectCard({ project }: { project: ProjectType }) {
       {/* Action Buttons */}
       <div style={{ display: 'flex', gap: '0.75rem', zIndex: 20 }}>
         {project.github !== null && (
-          <a
-            href={project.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-magnetic"
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '10px',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              color: '#1b1c1c',
-              textDecoration: 'none',
-              border: '1px solid #1b1c1c',
-              padding: '0.6rem 1.4rem',
-              transition: 'background-color 160ms ease, color 160ms ease',
-            }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget;
-              el.style.backgroundColor = '#1b1c1c';
-              el.style.color = '#F5F5DC';
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget;
-              el.style.backgroundColor = 'transparent';
-              el.style.color = '#1b1c1c';
-            }}
-          >
-            GitHub
-          </a>
+          <Magnetic range={36} strength={0.3}>
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-magnetic"
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '10px',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                fontWeight: 700,
+                color: '#1b1c1c',
+                textDecoration: 'none',
+                border: '1px solid #1b1c1c',
+                padding: '0.6rem 1.4rem',
+                transition: 'background-color 160ms ease, color 160ms ease',
+                display: 'block',
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget;
+                el.style.backgroundColor = '#1b1c1c';
+                el.style.color = '#F5F5DC';
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget;
+                el.style.backgroundColor = 'transparent';
+                el.style.color = '#1b1c1c';
+              }}
+            >
+              GitHub
+            </a>
+          </Magnetic>
         )}
         {project.demo !== null && (
-          <a
-            href={project.demo}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-magnetic"
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '10px',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              color: '#F5F5DC',
-              backgroundColor: '#B5502D',
-              border: '1px solid #B5502D',
-              textDecoration: 'none',
-              padding: '0.6rem 1.4rem',
-              transition: 'background-color 160ms ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#1b1c1c';
-              e.currentTarget.style.borderColor = '#1b1c1c';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#B5502D';
-              e.currentTarget.style.borderColor = '#B5502D';
-            }}
-          >
-            Demo
-          </a>
+          <Magnetic range={36} strength={0.3}>
+            <a
+              href={project.demo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-magnetic"
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '10px',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                fontWeight: 700,
+                color: '#F5F5DC',
+                backgroundColor: '#B5502D',
+                border: '1px solid #B5502D',
+                textDecoration: 'none',
+                padding: '0.6rem 1.4rem',
+                transition: 'background-color 160ms ease',
+                display: 'block',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#1b1c1c';
+                e.currentTarget.style.borderColor = '#1b1c1c';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#B5502D';
+                e.currentTarget.style.borderColor = '#B5502D';
+              }}
+            >
+              Demo
+            </a>
+          </Magnetic>
         )}
       </div>
-    </article>
+    </motion.article>
   );
 }
 
@@ -331,18 +360,21 @@ export default function ProjectsPage() {
       {/* Projects grid */}
       <section
         className="projects-grid"
-        style={{ padding: '5rem 5vw 8rem' }}
+        style={{ padding: '5rem 5vw 8rem', overflow: 'visible' }}
       >
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 360px), 1fr))',
             gap: '2.5rem',
+            overflow: 'visible',
           }}
         >
-          {sorted.map((project) => (
-            <div key={project.title} className="project-grid-wrapper">
-              <ProjectCard project={project} />
+          {sorted.map((project, idx) => (
+            <div key={project.title} className="project-grid-wrapper" style={{ overflow: 'visible' }}>
+              <ScrollReveal3D delay={idx * 0.06}>
+                <ProjectCard project={project} />
+              </ScrollReveal3D>
             </div>
           ))}
         </div>
