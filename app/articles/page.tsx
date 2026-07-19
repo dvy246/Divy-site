@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { RoughNotation } from 'react-rough-notation';
+import { motion, AnimatePresence } from 'framer-motion';
 import ArticleCard from '@/components/ArticleCard';
 import SketchDivider from '@/components/SketchDivider';
 import articles from '@/data/articles.json';
@@ -9,6 +10,7 @@ import articles from '@/data/articles.json';
 export default function ArticlesPage() {
   const [show, setShow] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   useEffect(() => {
     setMounted(true);
@@ -26,7 +28,7 @@ export default function ArticlesPage() {
           opacity: 1,
           y: 0,
           duration: 0.8,
-          stagger: 0.1,
+          stagger: 0.08,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: '.articles-grid',
@@ -39,6 +41,17 @@ export default function ArticlesPage() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Dynamically extract all unique tags from articles
+  const categories = [
+    'All',
+    ...Array.from(new Set(articles.flatMap((a) => a.tags || []))).sort()
+  ];
+
+  // Filter articles based on selection
+  const filteredArticles = selectedCategory === 'All'
+    ? articles
+    : articles.filter((a) => (a.tags || []).includes(selectedCategory));
 
   if (!mounted) return null;
 
@@ -85,6 +98,70 @@ export default function ArticlesPage() {
           Technical deep-dives on RAG, multi-agent systems, vector databases,
           and production AI engineering. Written for engineers who build.
         </p>
+
+        {/* Category Filter Bar */}
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '0.75rem 1.25rem',
+            marginTop: '3.5rem',
+            alignItems: 'center',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '10px',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: '#747878',
+              fontWeight: 700,
+              marginRight: '0.5rem',
+            }}
+          >
+            Filter by:
+          </span>
+          {categories.map((cat) => {
+            const isActive = selectedCategory === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.35rem 0.8rem',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '11px',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                  color: isActive ? '#B5502D' : '#444748',
+                  position: 'relative',
+                  transition: 'color 200ms ease',
+                }}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="active-filter-pill"
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      border: '1px solid #B5502D',
+                      borderRadius: '20px',
+                      zIndex: -1,
+                      backgroundColor: 'rgba(181, 80, 45, 0.04)',
+                    }}
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+                {cat}
+              </button>
+            );
+          })}
+        </div>
       </header>
 
       <SketchDivider />
@@ -92,9 +169,10 @@ export default function ArticlesPage() {
       {/* Articles grid */}
       <section
         className="articles-grid"
-        style={{ padding: '5rem 5vw 8rem' }}
+        style={{ padding: '5rem 5vw 8rem', overflow: 'visible' }}
       >
-        <div
+        <motion.div
+          layout
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))',
@@ -102,12 +180,23 @@ export default function ArticlesPage() {
             overflow: 'visible',
           }}
         >
-          {articles.map((article) => (
-            <div key={article.title} className="article-grid-card" style={{ overflow: 'visible' }}>
-              <ArticleCard {...article} />
-            </div>
-          ))}
-        </div>
+          <AnimatePresence mode="popLayout">
+            {filteredArticles.map((article) => (
+              <motion.div
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                key={article.title}
+                className="article-grid-card"
+                style={{ overflow: 'visible' }}
+              >
+                <ArticleCard {...article} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       </section>
     </div>
   );
