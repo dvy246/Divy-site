@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, Environment, Sparkles, OrbitControls } from '@react-three/drei';
+import { Float, Environment, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 
 /* === Animated lights coordinated with scroll === */
@@ -80,7 +80,14 @@ function FloatingGeometry({
   const mouse = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
   const prefersReducedMotion = useRef(false);
 
-  const { viewport } = useThree();
+  // Drag inertia & momentum refs
+  const isDragging = useRef(false);
+  const pointerX = useRef(0);
+  const pointerY = useRef(0);
+  const velocity = useRef({ x: 0, y: 0 });
+  const idleTime = useRef(0);
+
+  const { viewport, gl } = useThree();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -93,11 +100,50 @@ function FloatingGeometry({
       mouse.current.ty = -(e.clientY / window.innerHeight - 0.5) * 2;
     };
 
+    const dom = gl.domElement;
+
+    const onPointerDown = (e: PointerEvent) => {
+      isDragging.current = true;
+      pointerX.current = e.clientX;
+      pointerY.current = e.clientY;
+      velocity.current = { x: 0, y: 0 };
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (!isDragging.current) return;
+      const dx = e.clientX - pointerX.current;
+      const dy = e.clientY - pointerY.current;
+      pointerX.current = e.clientX;
+      pointerY.current = e.clientY;
+
+      // Track drag velocities with momentum coefficients
+      velocity.current.x = dx * 0.006;
+      velocity.current.y = dy * 0.006;
+
+      if (groupRef.current) {
+        groupRef.current.rotation.y += velocity.current.x;
+        groupRef.current.rotation.x += velocity.current.y;
+      }
+    };
+
+    const onPointerUp = () => {
+      isDragging.current = false;
+    };
+
     window.addEventListener('mousemove', onMouse, { passive: true });
+    dom.addEventListener('pointerdown', onPointerDown, { passive: true });
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('pointerup', onPointerUp, { passive: true });
+    window.addEventListener('pointercancel', onPointerUp, { passive: true });
+
     return () => {
       window.removeEventListener('mousemove', onMouse);
+      dom.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
     };
-  }, []);
+  }, [gl]);
 
   useFrame((_state, delta) => {
     if (!groupRef.current) return;
@@ -107,11 +153,30 @@ function FloatingGeometry({
     mouse.current.x += (mouse.current.tx - mouse.current.x) * 0.05;
     mouse.current.y += (mouse.current.ty - mouse.current.y) * 0.05;
 
-    // 1. Dynamic Morphing of rotation and positions
+    // 1. Inertial rotation decay & drag physics
     if (!prefersReducedMotion.current) {
-      // Rotation combining base scroll rotation speed + cursor interactive offset
-      groupRef.current.rotation.x += delta * params.rotationSpeedX + mouse.current.y * 0.0006;
-      groupRef.current.rotation.y += delta * params.rotationSpeedY + mouse.current.x * 0.0006;
+      if (!isDragging.current) {
+        // Friction damping decay
+        velocity.current.x *= 0.94;
+        velocity.current.y *= 0.94;
+
+        // Apply spin velocity
+        groupRef.current.rotation.y += velocity.current.x;
+        groupRef.current.rotation.x += velocity.current.y;
+
+        // Spring pull stabilization back to rest state when spin slows down
+        const currentSpeed = Math.sqrt(
+          velocity.current.x * velocity.current.x + velocity.current.y * velocity.current.y
+        );
+        if (currentSpeed < 0.002) {
+          idleTime.current += delta;
+          const targetRestX = Math.sin(idleTime.current * 0.3) * 0.06 + params.rotationSpeedX * idleTime.current;
+          const targetRestY = Math.cos(idleTime.current * 0.25) * 0.06 + params.rotationSpeedY * idleTime.current;
+
+          groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRestX, 0.015);
+          groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRestY, 0.015);
+        }
+      }
       groupRef.current.rotation.z += delta * params.rotationSpeedZ;
 
       // Rotate engineering orbital rings in opposite directions
@@ -468,14 +533,6 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
         <Environment preset="studio" />
 
         <FloatingGeometry scrollParams={scrollParams} isMobile={isMobile} />
-
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          enableRotate
-          rotateSpeed={isMobile ? 0.35 : 0.2}
-          autoRotate={false}
-        />
       </Canvas>
     </div>
   );

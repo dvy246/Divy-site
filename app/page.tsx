@@ -399,10 +399,11 @@ export default function HomePage() {
           <div
             style={{
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
               width: '100%',
-              minHeight: isMobile ? '280px' : '520px',
+              minHeight: isMobile ? '320px' : '560px',
               pointerEvents: 'none',
             }}
           >
@@ -465,6 +466,21 @@ export default function HomePage() {
                 />
               </div>
             </Magnetic>
+
+            {/* Editorial greeting text */}
+            <p
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: isMobile ? '1.15rem' : '1.35rem',
+                fontStyle: 'italic',
+                color: '#B5502D',
+                marginTop: '1.5rem',
+                textAlign: 'center',
+                pointerEvents: 'auto',
+              }}
+            >
+              Hey I am Divy
+            </p>
           </div>
         </div>
 
