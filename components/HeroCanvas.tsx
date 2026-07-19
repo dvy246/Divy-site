@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, Environment, MeshTransmissionMaterial } from '@react-three/drei';
+import { Float, Environment, ContactShadows, MeshTransmissionMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 /* === Animated lights coordinated with clock === */
@@ -49,6 +49,26 @@ function AnimatedLights() {
   );
 }
 
+/* === Background Set Dressing (Terracotta Graphic Disk) === */
+function SetDressing({ baseX, baseY, baseZ, isMobile }: { baseX: number; baseY: number; baseZ: number; isMobile: boolean }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (!meshRef.current) return;
+    // Slow organic drift matching the drop but out of phase
+    const elapsed = state.clock.getElapsedTime();
+    meshRef.current.position.x = baseX - 0.2 + Math.sin(elapsed * 0.4) * 0.06;
+    meshRef.current.position.y = baseY - 0.2 + Math.cos(elapsed * 0.5) * 0.06;
+  });
+
+  return (
+    <mesh ref={meshRef} position={[baseX - 0.2, baseY - 0.2, baseZ - 1.2]} scale={isMobile ? 0.8 : 1.25}>
+      <ringGeometry args={[0, 0.75, 64]} />
+      <meshBasicMaterial color="#B5502D" transparent opacity={0.14} depthWrite={false} />
+    </mesh>
+  );
+}
+
 interface AccentProps {
   baseX: number;
   baseY: number;
@@ -62,7 +82,7 @@ interface AccentProps {
   mouseRef: React.MutableRefObject<{ x: number; y: number; tx: number; ty: number }>;
 }
 
-/* === Individual Accent Element Component (Organic Glass Drop) === */
+/* === Individual Accent Element Component (Faceted Glass Gem) === */
 function AccentElement({
   baseX,
   baseY,
@@ -97,7 +117,6 @@ function AccentElement({
     let proximityScale = 1.0;
     let proximityRoughness = 0.02;
     let proximityThickness = isMobile ? 0.7 : 1.5;
-    let proximityDistortion = isMobile ? 0.04 : 0.12;
 
     if (!isMobile && mouseRef.current) {
       // Projected mouse coordinates at the depth of the element
@@ -111,10 +130,9 @@ function AccentElement({
       // Reaction radius of 2.2 units in 3D space
       if (dist < 2.2) {
         const influence = Math.max(0, 1 - dist / 2.2); // 0 to 1
-        proximityScale = 1.0 + influence * 0.28; // scale up by up to 28%
-        proximityRoughness = THREE.MathUtils.lerp(proximityRoughness, 0.005, influence); // polish surface completely
+        proximityScale = 1.0 + influence * 0.22; // scale up by up to 22%
+        proximityRoughness = THREE.MathUtils.lerp(proximityRoughness, 0.002, influence); // polish surface completely
         proximityThickness = THREE.MathUtils.lerp(1.5, 2.2, influence); // magnify glass thickness
-        proximityDistortion = THREE.MathUtils.lerp(0.12, 0.35, influence); // warp refractions strongly
         
         // Add subtle tilt/attraction towards mouse
         meshRef.current.rotation.x += dx * influence * 0.012;
@@ -135,27 +153,19 @@ function AccentElement({
     meshRef.current.rotation.y += delta * rotSpeed[1] * 0.25;
     meshRef.current.rotation.z += delta * rotSpeed[2] * 0.25;
 
-    // 5. Entrance bloom scale + hover scale factor + organic wobble (squash/stretch)
+    // 5. Entrance bloom scale + hover scale factor
     currentScaleFactor.current = THREE.MathUtils.lerp(currentScaleFactor.current, 1.0, 0.04);
     
-    // Phase-shifted sine waves for organic squash/stretch wobble (simulating water surface tension wiggles)
-    const wobbleSpeed = 1.2;
-    const wobbleAmp = 0.07;
-    const wobbleX = 1.0 + Math.sin(elapsed * wobbleSpeed) * wobbleAmp;
-    const wobbleY = 1.0 + Math.cos(elapsed * wobbleSpeed * 1.15) * wobbleAmp;
-    const wobbleZ = 1.0 + Math.sin(elapsed * wobbleSpeed * 0.85 + 1.2) * wobbleAmp;
-
     meshRef.current.scale.set(
-      scale[0] * currentScaleFactor.current * proximityScale * wobbleX,
-      scale[1] * currentScaleFactor.current * proximityScale * wobbleY,
-      scale[2] * currentScaleFactor.current * proximityScale * wobbleZ
+      scale[0] * currentScaleFactor.current * proximityScale,
+      scale[1] * currentScaleFactor.current * proximityScale,
+      scale[2] * currentScaleFactor.current * proximityScale
     );
 
     // Update material properties dynamically on GPU thread
     if (materialRef.current) {
       materialRef.current.roughness = THREE.MathUtils.lerp(materialRef.current.roughness, proximityRoughness, 0.08);
       materialRef.current.thickness = THREE.MathUtils.lerp(materialRef.current.thickness, proximityThickness, 0.08);
-      materialRef.current.distortion = THREE.MathUtils.lerp(materialRef.current.distortion, proximityDistortion, 0.08);
     }
   });
 
@@ -165,24 +175,24 @@ function AccentElement({
         ref={meshRef}
         castShadow={false}
       >
-        <sphereGeometry args={[1, 32, 32]} />
+        <icosahedronGeometry args={[1, 0]} />
         <MeshTransmissionMaterial
           ref={materialRef}
           color="#FFFBF2"
           roughness={0.02} // Super polished look
           transmission={0.93} // Blend refraction and diffuse champagne-warm background tint
           thickness={isMobile ? 0.7 : 1.5} // Thinner on mobile for faster render passes
-          ior={1.38} // Exact refraction of premium fluid
-          chromaticAberration={isMobile ? 0.004 : 0.012} // Color separation at curves
+          ior={1.45} // Higher refraction index for crystal/gem facets
+          chromaticAberration={isMobile ? 0.005 : 0.03} // Gorgeous color separation at sharp facets
           anisotropicBlur={isMobile ? 0.0 : 0.15}
-          distortion={isMobile ? 0.04 : 0.12} // Warp of background
-          distortionScale={isMobile ? 0.1 : 0.25}
+          distortion={0.0} // Clean geometric facets, no organic liquid distortion
+          distortionScale={0.0}
           temporalDistortion={0.0}
           backside={!isMobile} // Double-sided refraction (desktop only for performance)
           clearcoat={isMobile ? 0 : 1.0} // Extra reflective coating (desktop only)
           clearcoatRoughness={0.01}
           resolution={isMobile ? 128 : 512} // Substantially reduces mobile GPU buffer width for 60 FPS
-          samples={isMobile ? 2 : 8} // Fewer light sample taps on mobile
+          samples={isMobile ? 2 : 6} // Fewer light sample taps on mobile (faceted needs fewer samples anyway)
           transparent
         />
       </mesh>
@@ -193,7 +203,6 @@ function AccentElement({
 /* === Main geometry + materials with dynamic morphing & responsive scaling === */
 function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
   const { viewport } = useThree();
-  const cursorMeshRef = useRef<THREE.Mesh>(null);
   const mouse = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
 
   useEffect(() => {
@@ -210,145 +219,95 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
     };
   }, []);
 
-  useFrame((state, delta) => {
-    // Cursor follower animation
-    if (cursorMeshRef.current && !isMobile) {
-      mouse.current.x += (mouse.current.tx - mouse.current.x) * 0.05;
-      mouse.current.y += (mouse.current.ty - mouse.current.y) * 0.05;
-
-      const targetX = mouse.current.x * state.viewport.width * 0.5;
-      const targetY = mouse.current.y * state.viewport.height * 0.5;
-
-      cursorMeshRef.current.position.x = THREE.MathUtils.lerp(cursorMeshRef.current.position.x, targetX, 0.08);
-      cursorMeshRef.current.position.y = THREE.MathUtils.lerp(cursorMeshRef.current.position.y, targetY, 0.08);
-      cursorMeshRef.current.position.z = THREE.MathUtils.lerp(cursorMeshRef.current.position.z, 1.2, 0.08);
-
-      cursorMeshRef.current.rotation.x += delta * 0.15;
-      cursorMeshRef.current.rotation.y += delta * 0.1;
-    }
-  });
-
-  // Accents list config
   const vWidth = viewport.width;
-  const vHeight = viewport.height;
 
-  // On mobile, render only 2 primary elements to keep performance high and typography clear
-  const accentsList = isMobile
-    ? [
-        {
-          baseX: -vWidth * 0.38,
-          baseY: 1.8,
-          baseZ: 0.5,
-          scale: [0.08, 0.15, 0.08] as [number, number, number], // Stretched tear-drop
-          parallax: 1.0,
-          floatSpeed: 1.0,
-          floatAmp: 0.06,
-          rotSpeed: [0.1, 0.2, 0.05] as [number, number, number],
-        },
-        {
-          baseX: vWidth * 0.38,
-          baseY: -1.8,
-          baseZ: 0.8,
-          scale: [0.16, 0.11, 0.16] as [number, number, number], // Squashed fluid drop
-          parallax: 1.05,
-          floatSpeed: 0.8,
-          floatAmp: 0.08,
-          rotSpeed: [-0.08, 0.15, 0.1] as [number, number, number],
-        },
-      ]
-    : [
-        {
-          baseX: -vWidth * 0.32,
-          baseY: 1.4,
-          baseZ: 0.5,
-          scale: [0.18, 0.32, 0.18] as [number, number, number], // Drop 1: Tear-drop shape
-          parallax: 1.0,
-          floatSpeed: 1.2,
-          floatAmp: 0.08,
-          rotSpeed: [0.15, 0.25, 0.05] as [number, number, number],
-        },
-        {
-          baseX: vWidth * 0.3,
-          baseY: -1.2,
-          baseZ: 0.8,
-          scale: [0.32, 0.22, 0.32] as [number, number, number], // Drop 2: Squashed bead shape
-          parallax: 1.05,
-          floatSpeed: 0.95,
-          floatAmp: 0.1,
-          rotSpeed: [-0.1, 0.18, 0.12] as [number, number, number],
-        },
-        {
-          baseX: -vWidth * 0.34,
-          baseY: -vHeight * 1.0 + 0.3,
-          baseZ: -0.2,
-          scale: [0.28, 0.28, 0.28] as [number, number, number], // Drop 3: Circular bubble shape
-          parallax: 0.95,
-          floatSpeed: 1.1,
-          floatAmp: 0.07,
-          rotSpeed: [0.08, -0.15, 0.22] as [number, number, number],
-        },
-        {
-          baseX: vWidth * 0.32,
-          baseY: -vHeight * 2.0 - 0.2,
-          baseZ: 0.3,
-          scale: [0.2, 0.35, 0.2] as [number, number, number], // Drop 4: Large fluid drop
-          parallax: 1.0,
-          floatSpeed: 1.3,
-          floatAmp: 0.09,
-          rotSpeed: [0.2, 0.1, -0.15] as [number, number, number],
-        },
-        {
-          baseX: -vWidth * 0.28,
-          baseY: -vHeight * 3.0,
-          baseZ: 0.1,
-          scale: [0.25, 0.21, 0.27] as [number, number, number], // Drop 5: Organic pebble shape
-          parallax: 0.9,
-          floatSpeed: 0.8,
-          floatAmp: 0.12,
-          rotSpeed: [-0.12, 0.22, 0.18] as [number, number, number],
-        },
-      ];
+  // Position exactly one gemstone to frame "Divy Yadav" — anchored near the letter "a" in "Yadav"
+  // (slightly to the right of center horizontally)
+  const dropConfig = isMobile
+    ? {
+        baseX: vWidth * 0.1, // slightly off-center next to Yadav on mobile
+        baseY: -0.15,
+        baseZ: 0.5,
+        scale: [0.28, 0.46, 0.28] as [number, number, number],
+        parallax: 1.0,
+        floatSpeed: 1.0,
+        floatAmp: 0.06,
+        rotSpeed: [0.1, 0.2, 0.05] as [number, number, number],
+      }
+    : {
+        baseX: vWidth * 0.08, // aligned near the "a" in "Yadav"
+        baseY: -0.15,
+        baseZ: 0.5,
+        scale: [0.45, 0.72, 0.45] as [number, number, number], // larger premium signature crystal
+        parallax: 1.0,
+        floatSpeed: 1.2,
+        floatAmp: 0.08,
+        rotSpeed: [0.15, 0.25, 0.05] as [number, number, number],
+      };
 
   return (
     <group>
-      {accentsList.map((item, idx) => (
-        <AccentElement
-          key={idx}
-          baseX={item.baseX}
-          baseY={item.baseY}
-          baseZ={item.baseZ}
-          scale={item.scale}
-          parallax={item.parallax}
-          floatSpeed={item.floatSpeed}
-          floatAmp={item.floatAmp}
-          rotSpeed={item.rotSpeed}
-          isMobile={isMobile}
-          mouseRef={mouse}
-        />
-      ))}
+      {/* 1. Backdrop Grid inside canvas to refract */}
+      <gridHelper 
+        args={[20, 20, '#e2d6c1', '#e2d6c1']} 
+        position={[0, 0, -1.5]} 
+        rotation={[Math.PI / 2, 0, 0]} 
+      />
 
-      {/* Tiny Glass Follower Droplet near the cursor (Desktop only) */}
-      {!isMobile && (
-        <mesh ref={cursorMeshRef}>
-          <sphereGeometry args={[0.07, 24, 24]} />
-          <MeshTransmissionMaterial
-            color="#faf8f5"
-            roughness={0.03}
-            transmission={0.98}
-            thickness={0.2}
-            ior={1.2}
-            chromaticAberration={0.001}
-            samples={4}
-            transparent
-          />
-        </mesh>
-      )}
+      {/* 2. Soft terracotta graphic disk behind the gem so it refracts a gorgeous terracotta shape */}
+      <SetDressing
+        baseX={dropConfig.baseX}
+        baseY={dropConfig.baseY}
+        baseZ={dropConfig.baseZ}
+        isMobile={isMobile}
+      />
+
+      {/* 3. Signature liquid crystal gem */}
+      <AccentElement
+        baseX={dropConfig.baseX}
+        baseY={dropConfig.baseY}
+        baseZ={dropConfig.baseZ}
+        scale={dropConfig.scale}
+        parallax={dropConfig.parallax}
+        floatSpeed={dropConfig.floatSpeed}
+        floatAmp={dropConfig.floatAmp}
+        rotSpeed={dropConfig.rotSpeed}
+        isMobile={isMobile}
+        mouseRef={mouse}
+      />
+
+      {/* 4. Soft Contact Shadows below the crystal space */}
+      <ContactShadows
+        position={[dropConfig.baseX, dropConfig.baseY - 1.8, dropConfig.baseZ - 1.0]}
+        opacity={isMobile ? 0.25 : 0.45}
+        scale={isMobile ? 3.5 : 5.5}
+        blur={isMobile ? 1.8 : 2.5}
+        far={3.0}
+      />
     </group>
   );
 }
 
-/* === Canvas export === */
+/* === Canvas export with visibility-gating === */
 export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isInView, setIsInView] = useState(true);
+
+  // IntersectionObserver to completely unmount Canvas when scrolled past
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { rootMargin: '200px 0px 200px 0px', threshold: 0.01 }
+    );
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
   // Setup entrance event dispatchers for portrait animations
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -361,6 +320,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
 
   return (
     <div
+      ref={containerRef}
       style={{
         position: 'fixed',
         top: 0,
@@ -371,33 +331,35 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
         zIndex: 1, // Behind page content but in front of background grid
       }}
     >
-      <Canvas
-        camera={{ position: [0, 0, 5], fov: 46 }}
-        gl={{
-          antialias: !isMobile, // Disable antialiasing on mobile for a massive performance boost
-          alpha: true,
-          powerPreference: 'high-performance',
-          toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.25,
-        }}
-        dpr={isMobile ? 1.0 : [1, 1.5]}
-        shadows={false} // Disable heavy dynamic shadows for premium performance
-        style={{
-          background: 'transparent',
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'none', // Allow all click events to pass through
-        }}
-      >
-        <AnimatedLights />
-        {/* Ambient background rim light matching terracotta */}
-        <directionalLight position={[0, 4, -5]} intensity={0.65} color="#B5502D" />
+      {isInView && (
+        <Canvas
+          camera={{ position: [0, 0, 5], fov: 46 }}
+          gl={{
+            antialias: !isMobile, // Disable antialiasing on mobile for a massive performance boost
+            alpha: true,
+            powerPreference: 'high-performance',
+            toneMapping: THREE.ACESFilmicToneMapping,
+            toneMappingExposure: 1.25,
+          }}
+          dpr={isMobile ? 1.0 : [1, 1.5]}
+          shadows={false} // Disable heavy dynamic shadows for premium performance
+          style={{
+            background: 'transparent',
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none', // Allow all click events to pass through
+          }}
+        >
+          <AnimatedLights />
+          {/* Ambient background rim light matching terracotta */}
+          <directionalLight position={[0, 4, -5]} intensity={0.65} color="#B5502D" />
 
-        {/* Studio HDRI environment for reflections */}
-        <Environment preset="sunset" />
+          {/* Studio HDRI environment for reflections */}
+          <Environment preset="sunset" />
 
-        <FloatingGeometry isMobile={isMobile} />
-      </Canvas>
+          <FloatingGeometry isMobile={isMobile} />
+        </Canvas>
+      )}
     </div>
   );
 }

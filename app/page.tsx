@@ -12,7 +12,9 @@ import ScrollReveal3D from '@/components/ScrollReveal3D';
 import Magnetic from '@/components/Magnetic';
 import { BIO } from '@/lib/bio';
 import articles from '@/data/articles.json';
-
+const HeroCanvas = dynamic(() => import('@/components/HeroCanvas'), {
+  ssr: false,
+});
 
 /* === Constants === */
 const MARQUEE_ITEMS = [
@@ -166,16 +168,17 @@ export default function HomePage() {
       setShow(true);
     }, 300);
 
-    // Trigger portrait blur reveal sequence directly on mount
-    setRevealState('revealing');
-    const revealTimer = setTimeout(() => {
-      setRevealState('complete');
-    }, 1500);
+    const handleRevealStart = () => setRevealState('revealing');
+    const handleRevealComplete = () => setRevealState('complete');
+
+    window.addEventListener('dy_sculpture_reveal_start', handleRevealStart);
+    window.addEventListener('dy_sculpture_reveal_complete', handleRevealComplete);
 
     return () => {
       window.removeEventListener('resize', check);
       clearTimeout(triggerTimer);
-      clearTimeout(revealTimer);
+      window.removeEventListener('dy_sculpture_reveal_start', handleRevealStart);
+      window.removeEventListener('dy_sculpture_reveal_complete', handleRevealComplete);
     };
   }, []);
 
@@ -214,9 +217,8 @@ export default function HomePage() {
   return (
     <>
       <ScrollProgress />
-
-
-
+      {/* Faceted 3D Glass Crystal Element - Visibility Gated */}
+      <HeroCanvas isMobile={isMobile} />
       {/* --- HERO --- */}
       <section
         aria-label="Hero"
