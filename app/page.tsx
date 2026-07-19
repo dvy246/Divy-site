@@ -304,23 +304,6 @@ export default function HomePage() {
               pointerEvents: 'auto',
             }}
           >
-            {/* Friendly Greeting in beautiful hand-drawn Caveat font */}
-            <p
-              style={{
-                fontFamily: 'var(--font-sketch)',
-                fontSize: isMobile ? '2.0rem' : '3.2rem',
-                color: '#B5502D',
-                marginBottom: '0.25rem',
-                fontWeight: 500,
-                textAlign: 'center',
-                animation: 'fadeIn 0.8s ease 0.1s both',
-                transform: 'rotate(-2deg)',
-                display: 'inline-block',
-              }}
-            >
-              Hey, I am Divy
-            </p>
-
             {/* Label */}
             <p
               className="label-caps"
@@ -329,8 +312,7 @@ export default function HomePage() {
                 fontSize: '11px',
                 letterSpacing: '0.22em',
                 fontWeight: 700,
-                color: '#1b1c1c',
-                opacity: 0.6,
+                color: '#B5502D',
                 animation: 'fadeIn 0.5s ease 0.25s both',
               }}
             >
@@ -360,7 +342,7 @@ export default function HomePage() {
                 animationDelay={1000}
                 animationDuration={700}
               >
-                <SplitText text="DIVY YADAV" delay={0.15} />
+                <SplitText text="Divy Yadav" delay={0.15} />
               </RoughNotation>
             </h1>
 
@@ -565,6 +547,22 @@ export default function HomePage() {
                 </div>
               </div>
             </Magnetic>
+
+            {/* Hand-sketched Subtitle greeting placed cleanly under the photo container */}
+            <p
+              style={{
+                fontFamily: 'var(--font-sketch)',
+                fontSize: isMobile ? '1.8rem' : '2.4rem',
+                color: '#B5502D',
+                marginTop: '1.75rem',
+                textAlign: 'center',
+                pointerEvents: 'auto',
+                transform: 'rotate(-1.5deg)',
+                animation: 'fadeIn 0.8s ease 1.2s both',
+              }}
+            >
+              Hey, I am Divy
+            </p>
           </div>
         </div>
 
