@@ -301,7 +301,7 @@ export default function HomePage() {
             <h1
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(4.2rem, 10vw, 8.5rem)',
+                fontSize: 'clamp(2.4rem, 9vw, 8.5rem)',
                 fontWeight: 700,
                 fontStyle: 'normal',
                 lineHeight: 1.1,
@@ -311,6 +311,7 @@ export default function HomePage() {
                 overflow: 'visible',
                 paddingBottom: '0.12em',
                 textAlign: 'center',
+                whiteSpace: 'nowrap',
               }}
             >
               <RoughNotation
