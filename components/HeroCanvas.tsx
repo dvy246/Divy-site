@@ -50,7 +50,6 @@ function AnimatedLights() {
 }
 
 interface AccentProps {
-  type: 'droplet' | 'disc' | 'lens' | 'capsule' | 'pebble';
   baseX: number;
   baseY: number;
   baseZ: number;
@@ -63,9 +62,8 @@ interface AccentProps {
   mouseRef: React.MutableRefObject<{ x: number; y: number; tx: number; ty: number }>;
 }
 
-/* === Individual Accent Element Component === */
+/* === Individual Accent Element Component (Organic Glass Drop) === */
 function AccentElement({
-  type,
   baseX,
   baseY,
   baseZ,
@@ -97,7 +95,7 @@ function AccentElement({
 
     // 3. Proximity Interactive Reaction (warp & scale when cursor gets close)
     let proximityScale = 1.0;
-    let proximityRoughness = type === 'lens' ? 0.01 : 0.02;
+    let proximityRoughness = 0.02;
     let proximityThickness = isMobile ? 0.7 : 1.5;
     let proximityDistortion = isMobile ? 0.04 : 0.12;
 
@@ -161,38 +159,17 @@ function AccentElement({
     }
   });
 
-  const renderGeometry = () => {
-    switch (type) {
-      case 'droplet':
-        return <sphereGeometry args={[1, 32, 32]} />;
-      case 'disc':
-        return <cylinderGeometry args={[1, 1, 1, 32]} />;
-      case 'lens':
-        return <sphereGeometry args={[1, 32, 32]} />;
-      case 'capsule':
-        return <capsuleGeometry args={[0.15, 0.42, 8, 16]} />;
-      case 'pebble':
-        return <sphereGeometry args={[1, 32, 32]} />;
-      default:
-        return <sphereGeometry args={[1, 16, 16]} />;
-    }
-  };
-
-  // Cylinder needs a default rotation to face the camera flat
-  const rotationOffset: [number, number, number] = type === 'disc' ? [Math.PI / 2, 0, 0] : [0, 0, 0];
-
   return (
     <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.25}>
       <mesh
         ref={meshRef}
         castShadow={false}
-        rotation={rotationOffset}
       >
-        {renderGeometry()}
+        <sphereGeometry args={[1, 32, 32]} />
         <MeshTransmissionMaterial
           ref={materialRef}
           color="#FFFBF2"
-          roughness={type === 'lens' ? 0.01 : 0.02} // Super polished look
+          roughness={0.02} // Super polished look
           transmission={0.93} // Blend refraction and diffuse champagne-warm background tint
           thickness={isMobile ? 0.7 : 1.5} // Thinner on mobile for faster render passes
           ior={1.38} // Exact refraction of premium fluid
@@ -259,22 +236,20 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
   const accentsList = isMobile
     ? [
         {
-          type: 'droplet' as const,
           baseX: -vWidth * 0.38,
           baseY: 1.8,
           baseZ: 0.5,
-          scale: [0.08, 0.15, 0.08] as [number, number, number],
+          scale: [0.08, 0.15, 0.08] as [number, number, number], // Stretched tear-drop
           parallax: 1.0,
           floatSpeed: 1.0,
           floatAmp: 0.06,
           rotSpeed: [0.1, 0.2, 0.05] as [number, number, number],
         },
         {
-          type: 'disc' as const,
           baseX: vWidth * 0.38,
           baseY: -1.8,
           baseZ: 0.8,
-          scale: [0.16, 0.16, 0.03] as [number, number, number],
+          scale: [0.16, 0.11, 0.16] as [number, number, number], // Squashed fluid drop
           parallax: 1.05,
           floatSpeed: 0.8,
           floatAmp: 0.08,
@@ -283,55 +258,50 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
       ]
     : [
         {
-          type: 'droplet' as const,
           baseX: -vWidth * 0.32,
           baseY: 1.4,
           baseZ: 0.5,
-          scale: [0.18, 0.32, 0.18] as [number, number, number],
+          scale: [0.18, 0.32, 0.18] as [number, number, number], // Drop 1: Tear-drop shape
           parallax: 1.0,
           floatSpeed: 1.2,
           floatAmp: 0.08,
           rotSpeed: [0.15, 0.25, 0.05] as [number, number, number],
         },
         {
-          type: 'disc' as const,
           baseX: vWidth * 0.3,
           baseY: -1.2,
           baseZ: 0.8,
-          scale: [0.35, 0.35, 0.06] as [number, number, number],
+          scale: [0.32, 0.22, 0.32] as [number, number, number], // Drop 2: Squashed bead shape
           parallax: 1.05,
           floatSpeed: 0.95,
           floatAmp: 0.1,
           rotSpeed: [-0.1, 0.18, 0.12] as [number, number, number],
         },
         {
-          type: 'lens' as const,
           baseX: -vWidth * 0.34,
           baseY: -vHeight * 1.0 + 0.3,
           baseZ: -0.2,
-          scale: [0.32, 0.32, 0.08] as [number, number, number],
+          scale: [0.28, 0.28, 0.28] as [number, number, number], // Drop 3: Circular bubble shape
           parallax: 0.95,
           floatSpeed: 1.1,
           floatAmp: 0.07,
           rotSpeed: [0.08, -0.15, 0.22] as [number, number, number],
         },
         {
-          type: 'capsule' as const,
           baseX: vWidth * 0.32,
           baseY: -vHeight * 2.0 - 0.2,
           baseZ: 0.3,
-          scale: [1, 1, 1] as [number, number, number],
+          scale: [0.2, 0.35, 0.2] as [number, number, number], // Drop 4: Large fluid drop
           parallax: 1.0,
           floatSpeed: 1.3,
           floatAmp: 0.09,
           rotSpeed: [0.2, 0.1, -0.15] as [number, number, number],
         },
         {
-          type: 'pebble' as const,
           baseX: -vWidth * 0.28,
           baseY: -vHeight * 3.0,
           baseZ: 0.1,
-          scale: [0.25, 0.22, 0.28] as [number, number, number],
+          scale: [0.25, 0.21, 0.27] as [number, number, number], // Drop 5: Organic pebble shape
           parallax: 0.9,
           floatSpeed: 0.8,
           floatAmp: 0.12,
@@ -344,7 +314,6 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
       {accentsList.map((item, idx) => (
         <AccentElement
           key={idx}
-          type={item.type}
           baseX={item.baseX}
           baseY={item.baseY}
           baseZ={item.baseZ}
