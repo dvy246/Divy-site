@@ -373,28 +373,28 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
   // Shared ref holding morphable 3D parameters
   const scrollParams = useRef({
     // Initial Hero State (Identity)
-    x: 0,
-    y: isMobile ? -1.2 : -1.0,
+    x: isMobile ? 0 : 1.4,
+    y: isMobile ? -0.25 : 0,
     z: 0,
     rotationSpeedX: 0.08,
-    rotationSpeedY: 0.35,
+    rotationSpeedY: 0.25,
     rotationSpeedZ: 0.0,
-    scale: 1.0,
-    color: '#ffffff', // Start pure white behind hero text!
+    scale: isMobile ? 0.65 : 0.85,
+    color: isMobile ? '#ffffff' : '#dfb46c',
 
-    roughness: 0.15,
-    metalness: 0.15,
-    transmission: 0.85,
-    iridescence: 0.4,
+    roughness: 0.06,
+    metalness: 0.05,
+    transmission: 0.88,
+    iridescence: 0.5,
 
-    inkWireframeOpacity: 0.15,
+    inkWireframeOpacity: 0.1,
     redlineWireframeOpacity: 0.1,
-    ring1Opacity: 0.3,
-    ring2Opacity: 0.15,
+    ring1Opacity: 0.2,
+    ring2Opacity: 0.2,
     ring1Speed: 1.0,
     ring2Speed: 1.0,
 
-    cameraZ: 5.0,
+    cameraZ: 4.8,
     cameraY: 0.0,
     cameraX: 0.0,
     pointLightIntensity: 5.0,
@@ -410,86 +410,130 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
       const { ScrollTrigger } = await import('gsap/ScrollTrigger');
       gsap.registerPlugin(ScrollTrigger);
 
+      // Define standard layout states
+      const state1 = {
+        x: isMobile ? 0 : 1.4,
+        y: isMobile ? -0.25 : 0,
+        z: 0,
+        scale: isMobile ? 0.65 : 0.85,
+        color: isMobile ? '#ffffff' : '#dfb46c',
+        roughness: 0.06,
+        metalness: 0.05,
+        transmission: 0.88,
+        inkWireframeOpacity: 0.1,
+        redlineWireframeOpacity: 0.1,
+        ring1Opacity: 0.2,
+        ring2Opacity: 0.2,
+        ring1Speed: 1.0,
+        ring2Speed: 1.0,
+        rotationSpeedX: 0.08,
+        rotationSpeedY: 0.25,
+        cameraZ: 4.8,
+        pointLightIntensity: 5.0,
+        spotLightIntensity: 4.0,
+      };
+
+      const state2 = {
+        x: isMobile ? 0 : 1.4,
+        y: isMobile ? -0.25 : 0,
+        z: 0,
+        scale: isMobile ? 0.65 : 0.85,
+        color: isMobile ? '#ffffff' : '#dfb46c',
+        roughness: 0.06,
+        metalness: 0.05,
+        transmission: 0.88,
+        inkWireframeOpacity: 0.75, // Showcase blueprint wires for craft
+        redlineWireframeOpacity: 0.65,
+        ring1Opacity: 0.8,
+        ring2Opacity: 0.6,
+        ring1Speed: 2.2,
+        ring2Speed: 1.8,
+        rotationSpeedX: 0.18,
+        rotationSpeedY: 0.65,
+        cameraZ: 4.8,
+        pointLightIntensity: 6.5,
+        spotLightIntensity: 5.5,
+      };
+
+      const state3 = {
+        x: isMobile ? 0 : 1.4,
+        y: isMobile ? -0.25 : 0,
+        z: 0,
+        scale: isMobile ? 0.75 : 1.1,
+        color: '#ffffff', // Turn white behind text layouts
+        roughness: 0.06,
+        metalness: 0.05,
+        transmission: 0.88,
+        inkWireframeOpacity: 0.2,
+        redlineWireframeOpacity: 0.1,
+        ring1Opacity: 0.2,
+        ring2Opacity: 0.1,
+        ring1Speed: 0.8,
+        ring2Speed: 0.6,
+        rotationSpeedX: 0.08,
+        rotationSpeedY: 0.25,
+        cameraZ: 4.8,
+        pointLightIntensity: 8.0,
+        spotLightIntensity: 7.0,
+      };
+
+      const state4 = {
+        x: isMobile ? 0 : 1.4,
+        y: isMobile ? -0.25 : 0,
+        z: 0,
+        scale: isMobile ? 0.6 : 0.8,
+        color: '#ffffff', // Turn white behind CTA form
+        roughness: 0.06,
+        metalness: 0.05,
+        transmission: 0.88,
+        inkWireframeOpacity: 0.1,
+        redlineWireframeOpacity: 0.1,
+        ring1Opacity: 0.15,
+        ring2Opacity: 0.1,
+        ring1Speed: 0.8,
+        ring2Speed: 0.8,
+        rotationSpeedX: 0.08,
+        rotationSpeedY: 0.2,
+        cameraZ: 4.8,
+        pointLightIntensity: 5.0,
+        spotLightIntensity: 4.0,
+      };
+
       ctx = gsap.context(() => {
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: '#main-content',
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 1.0, // Scrub scroll updates smoothly
+        // Trigger 1: Transition into About section (bio-section)
+        ScrollTrigger.create({
+          trigger: '.bio-section',
+          start: 'top 65%',
+          onEnter: () => {
+            gsap.to(scrollParams.current, { ...state2, duration: 1.1, ease: 'power2.out' });
+          },
+          onLeaveBack: () => {
+            gsap.to(scrollParams.current, { ...state1, duration: 1.1, ease: 'power2.out' });
           },
         });
 
-        // 1. Identity -> Craft (Hero section to About section)
-        tl.to(scrollParams.current, {
-          x: isMobile ? 0 : 1.8,
-          y: isMobile ? -1.6 : -0.2,
-          z: 0,
-          scale: isMobile ? 0.65 : 0.85,
-          color: isMobile ? '#ffffff' : '#e8e5e0', // Turn white on mobile since it sits behind text
-          roughness: 0.35,
-          metalness: 0.65,
-          transmission: 0.2,
-          inkWireframeOpacity: 0.75,
-          redlineWireframeOpacity: 0.65,
-          ring1Opacity: 0.8,
-          ring2Opacity: 0.6,
-          ring1Speed: 2.2,
-          ring2Speed: 1.8,
-          rotationSpeedX: 0.18,
-          rotationSpeedY: 0.65,
-          cameraZ: 4.8,
-          pointLightIntensity: 6.5,
-          spotLightIntensity: 5.5,
-          duration: 1.0,
-        })
-        // 2. Craft -> Future Vision (About section to Articles/Newsletter section)
-        .to(scrollParams.current, {
-          x: isMobile ? 0 : -1.8,
-          y: isMobile ? -1.5 : -0.4,
-          z: -0.5,
-          scale: isMobile ? 0.8 : 1.15,
-          color: '#ffffff', // White behind article descriptions / highlights
-          roughness: 0.05,
-          metalness: 0.95,
-          transmission: 0.55,
-          iridescence: 1.0,
-          inkWireframeOpacity: 0.25,
-          redlineWireframeOpacity: 0.15,
-          ring1Opacity: 0.2,
-          ring2Opacity: 0.1,
-          ring1Speed: 0.6,
-          ring2Speed: 0.5,
-          rotationSpeedX: 0.05,
-          rotationSpeedY: 0.18,
-          cameraZ: 5.2,
-          pointLightIntensity: 8.0,
-          spotLightIntensity: 7.0,
-          duration: 1.0,
-        })
-        // 3. Future Vision -> CTA & Footer
-        .to(scrollParams.current, {
-          x: 0,
-          y: isMobile ? -2.2 : -0.8,
-          z: -1,
-          scale: isMobile ? 0.6 : 0.8,
-          color: '#ffffff', // White behind CTA form and footer links
-          roughness: 0.12,
-          metalness: 0.9,
-          transmission: 0.4,
-          iridescence: 0.8,
-          inkWireframeOpacity: 0.12,
-          redlineWireframeOpacity: 0.1,
-          ring1Opacity: 0.15,
-          ring2Opacity: 0.1,
-          ring1Speed: 0.8,
-          ring2Speed: 0.8,
-          rotationSpeedX: 0.08,
-          rotationSpeedY: 0.3,
-          cameraZ: 5.5,
-          pointLightIntensity: 5.0,
-          spotLightIntensity: 4.0,
-          duration: 1.0,
+        // Trigger 2: Transition into Articles preview
+        ScrollTrigger.create({
+          trigger: '.articles-preview',
+          start: 'top 65%',
+          onEnter: () => {
+            gsap.to(scrollParams.current, { ...state3, duration: 1.1, ease: 'power2.out' });
+          },
+          onLeaveBack: () => {
+            gsap.to(scrollParams.current, { ...state2, duration: 1.1, ease: 'power2.out' });
+          },
+        });
+
+        // Trigger 3: Transition into CTA / Footer
+        ScrollTrigger.create({
+          trigger: '.cta-section',
+          start: 'top 65%',
+          onEnter: () => {
+            gsap.to(scrollParams.current, { ...state4, duration: 1.1, ease: 'power2.out' });
+          },
+          onLeaveBack: () => {
+            gsap.to(scrollParams.current, { ...state3, duration: 1.1, ease: 'power2.out' });
+          },
         });
       });
     };

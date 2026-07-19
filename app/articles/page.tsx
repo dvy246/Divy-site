@@ -5,7 +5,6 @@ import { RoughNotation } from 'react-rough-notation';
 import { motion, AnimatePresence } from 'framer-motion';
 import ArticleCard from '@/components/ArticleCard';
 import SketchDivider from '@/components/SketchDivider';
-import ScrollReveal3D from '@/components/ScrollReveal3D';
 import Magnetic from '@/components/Magnetic';
 import articles from '@/data/articles.json';
 
@@ -17,30 +16,6 @@ export default function ArticlesPage() {
   useEffect(() => {
     setMounted(true);
     const timer = setTimeout(() => setShow(true), 500);
-
-    const initGSAP = async () => {
-      const { gsap } = await import('gsap');
-      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
-      gsap.registerPlugin(ScrollTrigger);
-
-      gsap.fromTo(
-        '.article-grid-card',
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.08,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.articles-grid',
-            start: 'top 82%',
-          },
-        }
-      );
-    };
-    initGSAP();
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -54,6 +29,39 @@ export default function ArticlesPage() {
   const filteredArticles = selectedCategory === 'All'
     ? articles
     : articles.filter((a) => (a.tags || []).includes(selectedCategory));
+
+  // Framer Motion staggered grid layout variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: 'spring' as const,
+        stiffness: 100,
+        damping: 15,
+      },
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.9,
+      y: 20,
+      transition: {
+        duration: 0.22,
+      },
+    },
+  };
 
   if (!mounted) return null;
 
@@ -176,7 +184,9 @@ export default function ArticlesPage() {
         style={{ padding: '5rem 5vw 8rem', overflow: 'visible' }}
       >
         <motion.div
-          layout
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))',
@@ -185,20 +195,18 @@ export default function ArticlesPage() {
           }}
         >
           <AnimatePresence mode="popLayout">
-            {filteredArticles.map((article, idx) => (
+            {filteredArticles.map((article) => (
               <motion.div
                 layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                variants={cardVariants}
+                initial="hidden"
+                animate="show"
+                exit="exit"
                 key={article.title}
                 className="article-grid-card"
                 style={{ overflow: 'visible' }}
               >
-                <ScrollReveal3D delay={Math.min(idx, 4) * 0.05}>
-                  <ArticleCard {...article} />
-                </ScrollReveal3D>
+                <ArticleCard {...article} />
               </motion.div>
             ))}
           </AnimatePresence>
