@@ -163,7 +163,7 @@ export default function Nav() {
 
           {/* CTA button */}
           <a
-            href="https://aiengineering.beehiiv.com"
+            href="https://aiengsimplified.beehiiv.com/"
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -266,7 +266,7 @@ export default function Nav() {
         ))}
 
         <a
-          href="https://aiengineering.beehiiv.com"
+          href="https://aiengsimplified.beehiiv.com/"
           target="_blank"
           rel="noopener noreferrer"
           style={{

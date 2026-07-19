@@ -1,28 +1,28 @@
 [
   {
     "title": "AI Engineering Simplified — Issue #1: RAG from Scratch",
-    "url": "https://aiengineering.beehiiv.com",
+    "url": "https://aiengsimplified.beehiiv.com/",
     "date": "2026-01-08",
     "summary": "The first issue: building a production RAG pipeline from scratch — chunking strategies, embedding choices, retrieval evaluation, and the mistakes to avoid.",
     "tags": ["RAG", "AI Engineering"]
   },
   {
     "title": "Issue #2: Agentic AI Design Patterns",
-    "url": "https://aiengineering.beehiiv.com",
+    "url": "https://aiengsimplified.beehiiv.com/",
     "date": "2026-01-22",
     "summary": "Multi-agent coordination patterns, tool-calling reliability, and when to use orchestrator-executor vs. parallel fan-out architectures.",
     "tags": ["Agents", "Design Patterns"]
   },
   {
     "title": "Issue #3: LLM Deployment — From Prototype to Production",
-    "url": "https://aiengineering.beehiiv.com",
+    "url": "https://aiengsimplified.beehiiv.com/",
     "date": "2026-02-05",
     "summary": "What changes when you move an LLM app from a notebook to production — latency budgets, retries, streaming, and observability that actually works.",
     "tags": ["Deployment", "Production AI"]
   },
   {
     "title": "Issue #4: Vector Databases Compared",
-    "url": "https://aiengineering.beehiiv.com",
+    "url": "https://aiengsimplified.beehiiv.com/",
     "date": "2026-02-19",
     "summary": "Qdrant vs. ChromaDB vs. Pinecone — a practical comparison based on real production use cases, not benchmarks designed to favor the vendor.",
     "tags": ["Vector Databases", "Qdrant", "Pinecone"]

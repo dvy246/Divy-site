@@ -113,9 +113,12 @@ export default function Footer() {
             >
               {[
                 { label: 'GitHub', href: 'https://github.com/dvy246' },
-                { label: 'LinkedIn', href: 'https://linkedin.com/in/divyyadav' },
-                { label: 'Medium', href: 'https://medium.com/@divyyadav' },
-                { label: 'Email', href: 'mailto:divyy2703@gmail.com' },
+                { label: 'LinkedIn', href: 'https://www.linkedin.com/divyyadav' },
+                { label: 'Medium', href: 'https://medium.com/@yadavdivy296' },
+                { label: 'Substack', href: 'https://substack.com/@divy1111' },
+                { label: 'YouTube', href: 'https://www.youtube.com/@techbydivy/shorts' },
+                { label: 'Newsletter', href: 'https://aiengsimplified.beehiiv.com/' },
+                { label: 'Email', href: 'mailto:yadavdivy77@gmail.com' },
               ].map((link) => (
                 <a
                   key={link.label}

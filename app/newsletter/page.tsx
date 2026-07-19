@@ -92,7 +92,7 @@ export default function NewsletterPage() {
         {/* Subscribe CTA */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.75rem' }}>
           <a
-            href="https://aiengineering.beehiiv.com"
+            href="https://aiengsimplified.beehiiv.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-magnetic"

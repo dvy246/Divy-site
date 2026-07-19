@@ -48,9 +48,11 @@ const MARQUEE_ITEMS = [
 
 const SOCIAL_LINKS = [
   { label: 'GitHub',     href: 'https://github.com/dvy246' },
-  { label: 'Medium',     href: 'https://medium.com/@divyyadav' },
-  { label: 'LinkedIn',   href: 'https://linkedin.com/in/divyyadav' },
-  { label: 'Newsletter', href: 'https://aiengineering.beehiiv.com' },
+  { label: 'LinkedIn',   href: 'https://www.linkedin.com/divyyadav' },
+  { label: 'Medium',     href: 'https://medium.com/@yadavdivy296' },
+  { label: 'Substack',   href: 'https://substack.com/@divy1111' },
+  { label: 'YouTube',    href: 'https://www.youtube.com/@techbydivy/shorts' },
+  { label: 'Newsletter', href: 'https://aiengsimplified.beehiiv.com/' },
 ];
 
 const STATS = [
@@ -695,7 +697,7 @@ export default function HomePage() {
         </div>
 
         <a
-          href="https://aiengineering.beehiiv.com"
+          href="https://aiengsimplified.beehiiv.com/"
           target="_blank"
           rel="noopener noreferrer"
           className="btn-magnetic"
