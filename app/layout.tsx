@@ -6,7 +6,6 @@ import Footer from "@/components/Footer";
 import CustomCursor from "@/components/CustomCursor";
 import SmoothScroll from "@/components/SmoothScroll";
 import BackgroundGrid from "@/components/BackgroundGrid";
-import EntranceOverlay from "@/components/EntranceOverlay";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -107,7 +106,6 @@ export default function RootLayout({
           }}
         />
 
-        <EntranceOverlay />
         <CustomCursor />
         <SmoothScroll />
         <BackgroundGrid />

@@ -12,10 +12,7 @@ import ScrollReveal3D from '@/components/ScrollReveal3D';
 import Magnetic from '@/components/Magnetic';
 import { BIO } from '@/lib/bio';
 import articles from '@/data/articles.json';
-/* === Dynamic 3D import === */
-const HeroCanvas = dynamic(() => import('@/components/HeroCanvas'), {
-  ssr: false,
-});
+
 
 /* === Constants === */
 const MARQUEE_ITEMS = [
@@ -154,59 +151,33 @@ export default function HomePage() {
   const [mounted, setMounted] = useState(false);
   const [coords, setCoords]   = useState({ x: 50, y: 50 });
   const [revealState, setRevealState] = useState<'idle' | 'revealing' | 'complete'>('idle');
-  const [heroVisible, setHeroVisible] = useState(true);
-  const heroRef   = useRef<HTMLElement>(null);
   const bioRef    = useRef<HTMLElement>(null);
   const statsRef  = useRef<HTMLDivElement>(null);
 
-  /* Hydration + mobile detection + entrance sync */
+  /* Hydration + mobile detection + entrance sequence trigger */
   useEffect(() => {
     setMounted(true);
     const check = () => setMobile(window.innerWidth < 768);
     check();
     window.addEventListener('resize', check);
 
-    const triggerHero = () => {
-      setTimeout(() => {
-        setShow(true);
-      }, 300);
-    };
-
-    const entered = sessionStorage.getItem('dy_portfolio_entered');
-    if (entered === 'true') {
+    // Reveal main typography heading automatically on mount
+    const triggerTimer = setTimeout(() => {
       setShow(true);
-    } else {
-      window.addEventListener('dy_entrance_complete', triggerHero);
-    }
+    }, 300);
 
-    const handleRevealStart = () => setRevealState('revealing');
-    const handleRevealComplete = () => setRevealState('complete');
-
-    window.addEventListener('dy_sculpture_reveal_start', handleRevealStart);
-    window.addEventListener('dy_sculpture_reveal_complete', handleRevealComplete);
+    // Trigger portrait blur reveal sequence directly on mount
+    setRevealState('revealing');
+    const revealTimer = setTimeout(() => {
+      setRevealState('complete');
+    }, 1500);
 
     return () => {
       window.removeEventListener('resize', check);
-      window.removeEventListener('dy_entrance_complete', triggerHero);
-      window.removeEventListener('dy_sculpture_reveal_start', handleRevealStart);
-      window.removeEventListener('dy_sculpture_reveal_complete', handleRevealComplete);
+      clearTimeout(triggerTimer);
+      clearTimeout(revealTimer);
     };
   }, []);
-
-  /* Visibility Gating for Hero Canvas Render Loop */
-  useEffect(() => {
-    if (!mounted || typeof window === 'undefined' || !heroRef.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setHeroVisible(entry.isIntersecting);
-      },
-      {
-        rootMargin: '100px 0px 400px 0px', // start loading early / keep active slightly past viewport
-      }
-    );
-    observer.observe(heroRef.current);
-    return () => observer.disconnect();
-  }, [mounted]);
 
   /* GSAP scroll triggers for page-specific elements */
   useEffect(() => {
@@ -244,12 +215,10 @@ export default function HomePage() {
     <>
       <ScrollProgress />
 
-      {/* Flagship Fixed 3D Hero Canvas Overlay - Runs performantly on both desktop and mobile viewports */}
-      {heroVisible && <HeroCanvas isMobile={isMobile} />}
+
 
       {/* --- HERO --- */}
       <section
-        ref={heroRef}
         aria-label="Hero"
         style={{
           minHeight: '100svh',

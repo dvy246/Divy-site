@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, Environment, ContactShadows, MeshTransmissionMaterial } from '@react-three/drei';
+import { Float, Environment, MeshTransmissionMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 /* === Animated lights coordinated with clock === */
@@ -190,26 +190,6 @@ function AccentElement({
   );
 }
 
-/* === Background Set Dressing (Terracotta Graphic Disk) === */
-function SetDressing({ baseX, baseY, baseZ, isMobile }: { baseX: number; baseY: number; baseZ: number; isMobile: boolean }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    // Slow organic drift matching the drop but out of phase
-    const elapsed = state.clock.getElapsedTime();
-    meshRef.current.position.x = baseX - 0.2 + Math.sin(elapsed * 0.4) * 0.06;
-    meshRef.current.position.y = baseY - 0.2 + Math.cos(elapsed * 0.5) * 0.06;
-  });
-
-  return (
-    <mesh ref={meshRef} position={[baseX - 0.2, baseY - 0.2, baseZ - 1.2]} scale={isMobile ? 0.8 : 1.25}>
-      <ringGeometry args={[0, 0.75, 64]} />
-      <meshBasicMaterial color="#B5502D" transparent opacity={0.14} depthWrite={false} />
-    </mesh>
-  );
-}
-
 /* === Main geometry + materials with dynamic morphing & responsive scaling === */
 function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
   const { viewport } = useThree();
@@ -248,64 +228,104 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
     }
   });
 
+  // Accents list config
   const vWidth = viewport.width;
+  const vHeight = viewport.height;
 
-  // Position Drop 1 to frame "Divy Yadav" — anchored near the letter "a" in "Yadav"
-  // (slightly to the right of center horizontally)
-  const dropConfig = isMobile
-    ? {
-        baseX: 0, // centered behind name on mobile
-        baseY: 0,
-        baseZ: 0.5,
-        scale: [0.28, 0.46, 0.28] as [number, number, number],
-        parallax: 1.0,
-        floatSpeed: 1.0,
-        floatAmp: 0.06,
-        rotSpeed: [0.1, 0.2, 0.05] as [number, number, number],
-      }
-    : {
-        baseX: vWidth * 0.08, // aligned near the "a" in "Yadav"
-        baseY: -0.15,
-        baseZ: 0.5,
-        scale: [0.45, 0.72, 0.45] as [number, number, number], // larger premium signature droplet
-        parallax: 1.0,
-        floatSpeed: 1.2,
-        floatAmp: 0.08,
-        rotSpeed: [0.15, 0.25, 0.05] as [number, number, number],
-      };
+  // On mobile, render only 2 primary elements to keep performance high and typography clear
+  const accentsList = isMobile
+    ? [
+        {
+          baseX: -vWidth * 0.38,
+          baseY: 1.8,
+          baseZ: 0.5,
+          scale: [0.08, 0.15, 0.08] as [number, number, number], // Stretched tear-drop
+          parallax: 1.0,
+          floatSpeed: 1.0,
+          floatAmp: 0.06,
+          rotSpeed: [0.1, 0.2, 0.05] as [number, number, number],
+        },
+        {
+          baseX: vWidth * 0.38,
+          baseY: -1.8,
+          baseZ: 0.8,
+          scale: [0.16, 0.11, 0.16] as [number, number, number], // Squashed fluid drop
+          parallax: 1.05,
+          floatSpeed: 0.8,
+          floatAmp: 0.08,
+          rotSpeed: [-0.08, 0.15, 0.1] as [number, number, number],
+        },
+      ]
+    : [
+        {
+          baseX: -vWidth * 0.32,
+          baseY: 1.4,
+          baseZ: 0.5,
+          scale: [0.18, 0.32, 0.18] as [number, number, number], // Drop 1: Tear-drop shape
+          parallax: 1.0,
+          floatSpeed: 1.2,
+          floatAmp: 0.08,
+          rotSpeed: [0.15, 0.25, 0.05] as [number, number, number],
+        },
+        {
+          baseX: vWidth * 0.3,
+          baseY: -1.2,
+          baseZ: 0.8,
+          scale: [0.32, 0.22, 0.32] as [number, number, number], // Drop 2: Squashed bead shape
+          parallax: 1.05,
+          floatSpeed: 0.95,
+          floatAmp: 0.1,
+          rotSpeed: [-0.1, 0.18, 0.12] as [number, number, number],
+        },
+        {
+          baseX: -vWidth * 0.34,
+          baseY: -vHeight * 1.0 + 0.3,
+          baseZ: -0.2,
+          scale: [0.28, 0.28, 0.28] as [number, number, number], // Drop 3: Circular bubble shape
+          parallax: 0.95,
+          floatSpeed: 1.1,
+          floatAmp: 0.07,
+          rotSpeed: [0.08, -0.15, 0.22] as [number, number, number],
+        },
+        {
+          baseX: vWidth * 0.32,
+          baseY: -vHeight * 2.0 - 0.2,
+          baseZ: 0.3,
+          scale: [0.2, 0.35, 0.2] as [number, number, number], // Drop 4: Large fluid drop
+          parallax: 1.0,
+          floatSpeed: 1.3,
+          floatAmp: 0.09,
+          rotSpeed: [0.2, 0.1, -0.15] as [number, number, number],
+        },
+        {
+          baseX: -vWidth * 0.28,
+          baseY: -vHeight * 3.0,
+          baseZ: 0.1,
+          scale: [0.25, 0.21, 0.27] as [number, number, number], // Drop 5: Organic pebble shape
+          parallax: 0.9,
+          floatSpeed: 0.8,
+          floatAmp: 0.12,
+          rotSpeed: [-0.12, 0.22, 0.18] as [number, number, number],
+        },
+      ];
 
   return (
     <group>
-      {/* Soft terracotta graphic disk behind the drop so it refracts a gorgeous terracotta shape */}
-      <SetDressing
-        baseX={dropConfig.baseX}
-        baseY={dropConfig.baseY}
-        baseZ={dropConfig.baseZ}
-        isMobile={isMobile}
-      />
-
-      {/* Signature liquid drop */}
-      <AccentElement
-        baseX={dropConfig.baseX}
-        baseY={dropConfig.baseY}
-        baseZ={dropConfig.baseZ}
-        scale={dropConfig.scale}
-        parallax={dropConfig.parallax}
-        floatSpeed={dropConfig.floatSpeed}
-        floatAmp={dropConfig.floatAmp}
-        rotSpeed={dropConfig.rotSpeed}
-        isMobile={isMobile}
-        mouseRef={mouse}
-      />
-
-      {/* Soft Contact Shadows below the droplet space */}
-      <ContactShadows
-        position={[dropConfig.baseX, dropConfig.baseY - 1.8, dropConfig.baseZ - 1.0]}
-        opacity={isMobile ? 0.25 : 0.45}
-        scale={isMobile ? 3.5 : 5.5}
-        blur={isMobile ? 1.8 : 2.5}
-        far={3.0}
-      />
+      {accentsList.map((item, idx) => (
+        <AccentElement
+          key={idx}
+          baseX={item.baseX}
+          baseY={item.baseY}
+          baseZ={item.baseZ}
+          scale={item.scale}
+          parallax={item.parallax}
+          floatSpeed={item.floatSpeed}
+          floatAmp={item.floatAmp}
+          rotSpeed={item.rotSpeed}
+          isMobile={isMobile}
+          mouseRef={mouse}
+        />
+      ))}
 
       {/* Tiny Glass Follower Droplet near the cursor (Desktop only) */}
       {!isMobile && (
