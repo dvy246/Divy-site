@@ -19,11 +19,13 @@ const HeroCanvas = dynamic(() => import('@/components/HeroCanvas'), {
   loading: () => (
     <div
       style={{
-        width: '100%',
-        height: '520px',
+        position: 'fixed',
+        inset: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#F5F5DC',
+        zIndex: 999,
       }}
     >
       <div
@@ -50,7 +52,7 @@ const MARQUEE_ITEMS = [
 
 const SOCIAL_LINKS = [
   { label: 'GitHub',     href: 'https://github.com/dvy246' },
-  { label: 'LinkedIn',   href: 'https://www.linkedin.com/divyyadav' },
+  { label: 'LinkedIn',   href: 'https://www.linkedin.com/in/divyyadav/' },
   { label: 'Medium',     href: 'https://medium.com/@yadavdivy296' },
   { label: 'Substack',   href: 'https://substack.com/@divy1111' },
   { label: 'YouTube',    href: 'https://www.youtube.com/@techbydivy/shorts' },
@@ -214,6 +216,9 @@ export default function HomePage() {
     <>
       <ScrollProgress />
 
+      {/* Flagship Fixed 3D Hero Canvas Overlay - Runs performantly on both desktop and mobile viewports */}
+      <HeroCanvas isMobile={isMobile} />
+
       {/* --- HERO --- */}
       <section
         aria-label="Hero"
@@ -224,6 +229,8 @@ export default function HomePage() {
           padding: isMobile ? '7rem 5vw 4rem' : '8rem 5vw 4rem',
           position: 'relative',
           overflow: 'hidden',
+          zIndex: 10,
+          pointerEvents: 'none',
         }}
       >
         {/* Background editorial line */}
@@ -250,6 +257,7 @@ export default function HomePage() {
             width: '100%',
             gap: isMobile ? '2.5rem' : '4rem',
             zIndex: 2,
+            pointerEvents: 'none',
           }}
         >
           {/* EDITORIAL TEXT */}
@@ -260,6 +268,7 @@ export default function HomePage() {
               alignItems: 'center',
               width: '100%',
               maxWidth: '800px',
+              pointerEvents: 'auto',
             }}
           >
             {/* Label */}
@@ -385,16 +394,8 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* 3D or fallback */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.75, rotate: -6 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{
-              type: 'spring',
-              stiffness: 75,
-              damping: 16,
-              delay: 0.65,
-            }}
+          {/* 3D placeholder layout spacer - pointerEvents: none lets OrbitControls interaction fall through */}
+          <div
             style={{
               display: 'flex',
               justifyContent: 'center',
@@ -402,22 +403,9 @@ export default function HomePage() {
               minHeight: isMobile ? '280px' : '520px',
               width: '100%',
               maxWidth: '800px',
+              pointerEvents: 'none',
             }}
-          >
-            {isMobile ? (
-              <Image
-                src="/hero-fallback.svg"
-                alt="Hand-drawn geometric illustration"
-                width={260}
-                height={260}
-                priority
-              />
-            ) : (
-              <div style={{ width: '100%', height: '520px' }}>
-                <HeroCanvas />
-              </div>
-            )}
-          </motion.div>
+          />
         </div>
 
         {/* Scroll indicator */}
@@ -479,7 +467,14 @@ export default function HomePage() {
       <section
         ref={bioRef}
         className="bio-section"
-        style={{ padding: '7rem 5vw', perspective: '1200px', overflow: 'visible' }}
+        style={{
+          padding: '7rem 5vw',
+          perspective: '1200px',
+          overflow: 'visible',
+          position: 'relative',
+          zIndex: 10,
+          pointerEvents: 'none',
+        }}
       >
         <ScrollReveal3D>
           <div
@@ -488,6 +483,7 @@ export default function HomePage() {
               gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
               gap: '5rem',
               alignItems: 'start',
+              pointerEvents: 'auto',
             }}
           >
             {/* Left text */}
@@ -610,7 +606,14 @@ export default function HomePage() {
       {/* --- LATEST WRITING --- */}
       <section
         className="articles-preview"
-        style={{ padding: '7rem 5vw', perspective: '1200px', overflow: 'visible' }}
+        style={{
+          padding: '7rem 5vw',
+          perspective: '1200px',
+          overflow: 'visible',
+          position: 'relative',
+          zIndex: 10,
+          pointerEvents: 'none',
+        }}
       >
         {/* Section header */}
         <div
@@ -621,6 +624,7 @@ export default function HomePage() {
             flexWrap: 'wrap',
             gap: '1rem',
             marginBottom: '3.5rem',
+            pointerEvents: 'auto',
           }}
         >
           <div>
@@ -665,6 +669,7 @@ export default function HomePage() {
             gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
             gap: '2.5rem',
             overflow: 'visible',
+            pointerEvents: 'auto',
           }}
         >
           {articles.slice(0, 2).map((article, idx) => (
@@ -687,6 +692,9 @@ export default function HomePage() {
           borderTop: '1px solid rgba(27,28,28,0.08)',
           perspective: '1200px',
           overflow: 'visible',
+          position: 'relative',
+          zIndex: 10,
+          pointerEvents: 'none',
         }}
       >
         <ScrollReveal3D>
@@ -696,6 +704,7 @@ export default function HomePage() {
               gridTemplateColumns: isMobile ? '1fr' : '1fr auto',
               gap: '3rem',
               alignItems: 'center',
+              pointerEvents: 'auto',
             }}
           >
             <div>

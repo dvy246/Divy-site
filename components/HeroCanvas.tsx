@@ -1,25 +1,29 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useRef, useEffect, useState } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Float, Environment, Sparkles, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-/* === Animated lights to generate shifting reflections === */
-function AnimatedLights() {
+/* === Animated lights coordinated with scroll === */
+function AnimatedLights({ scrollParams }: { scrollParams: React.MutableRefObject<any> }) {
   const pointLightRef = useRef<THREE.PointLight>(null);
   const spotLightRef = useRef<THREE.SpotLight>(null);
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
+    const params = scrollParams.current;
+
     if (pointLightRef.current) {
-      // Orbit in a circle on X-Z plane
+      // Orbit in a circle on X-Z plane with shifting heights
       pointLightRef.current.position.x = 6 * Math.sin(t * 0.45);
       pointLightRef.current.position.z = 6 * Math.cos(t * 0.45);
       pointLightRef.current.position.y = 4 + 2 * Math.sin(t * 0.25);
+      pointLightRef.current.intensity = params.pointLightIntensity;
     }
     if (spotLightRef.current) {
       spotLightRef.current.position.x = 3 * Math.cos(t * 0.15);
+      spotLightRef.current.intensity = params.spotLightIntensity;
     }
   });
 
@@ -32,7 +36,7 @@ function AnimatedLights() {
         intensity={5}
         color="#FFE8C0"
         castShadow
-        shadow-mapSize={1024}
+        shadow-mapSize={512}
       />
       <pointLight position={[-4, -2, 4]} intensity={2.5} color="#F5F5DC" />
       <spotLight
@@ -54,15 +58,29 @@ function AnimatedLights() {
   );
 }
 
-/* === Main geometry + material === */
-function FloatingGeometry() {
+/* === Main geometry + materials with dynamic morphing & responsive scaling === */
+function FloatingGeometry({
+  scrollParams,
+  isMobile,
+}: {
+  scrollParams: React.MutableRefObject<any>;
+  isMobile: boolean;
+}) {
   const groupRef = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Mesh>(null);
   const ringRef2 = useRef<THREE.Mesh>(null);
-  
+
+  // Material refs for dynamic morphing
+  const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
+  const inkWireframeMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
+  const redlineWireframeMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
+  const ring1MaterialRef = useRef<THREE.MeshBasicMaterial>(null);
+  const ring2MaterialRef = useRef<THREE.MeshBasicMaterial>(null);
+
   const mouse = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
-  const scrollY = useRef(0);
   const prefersReducedMotion = useRef(false);
+
+  const { viewport } = useThree();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -74,53 +92,94 @@ function FloatingGeometry() {
       mouse.current.tx = (e.clientX / window.innerWidth - 0.5) * 2;
       mouse.current.ty = -(e.clientY / window.innerHeight - 0.5) * 2;
     };
-    const onScroll = () => { scrollY.current = window.scrollY; };
 
     window.addEventListener('mousemove', onMouse, { passive: true });
-    window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
       window.removeEventListener('mousemove', onMouse);
-      window.removeEventListener('scroll', onScroll);
     };
   }, []);
 
   useFrame((_state, delta) => {
     if (!groupRef.current) return;
+    const params = scrollParams.current;
 
-    // Smooth mouse lerp
+    // Smooth mouse parallax lerp
     mouse.current.x += (mouse.current.tx - mouse.current.x) * 0.05;
     mouse.current.y += (mouse.current.ty - mouse.current.y) * 0.05;
 
+    // 1. Dynamic Morphing of rotation and positions
     if (!prefersReducedMotion.current) {
-      groupRef.current.rotation.y += delta * 0.35;
-      groupRef.current.rotation.x += delta * 0.08;
-      
-      // Mouse parallax
-      groupRef.current.rotation.x += mouse.current.y * 0.0006;
-      groupRef.current.rotation.y += mouse.current.x * 0.0006;
+      // Rotation combining base scroll rotation speed + cursor interactive offset
+      groupRef.current.rotation.x += delta * params.rotationSpeedX + mouse.current.y * 0.0006;
+      groupRef.current.rotation.y += delta * params.rotationSpeedY + mouse.current.x * 0.0006;
+      groupRef.current.rotation.z += delta * params.rotationSpeedZ;
 
       // Rotate engineering orbital rings in opposite directions
       if (ringRef.current) {
-        ringRef.current.rotation.x += delta * 0.2;
-        ringRef.current.rotation.y += delta * 0.3;
+        ringRef.current.rotation.x += delta * 0.2 * params.ring1Speed;
+        ringRef.current.rotation.y += delta * 0.3 * params.ring1Speed;
       }
       if (ringRef2.current) {
-        ringRef2.current.rotation.y -= delta * 0.15;
-        ringRef2.current.rotation.z += delta * 0.25;
+        ringRef2.current.rotation.y -= delta * 0.15 * params.ring2Speed;
+        ringRef2.current.rotation.z += delta * 0.25 * params.ring2Speed;
       }
     }
 
-    // Scroll-driven scale - shrinks as you scroll past hero
-    const vhProgress = scrollY.current /
-      (typeof window !== 'undefined' ? window.innerHeight : 1000);
-    const targetScale = Math.max(0.3, 1 - vhProgress * 0.6);
+    // Smoothly interpolate position and scale (continuous transition choreography)
+    groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, params.x, 0.06);
+    groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, params.y, 0.06);
+    groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, params.z, 0.06);
+
+    // 2. Responsive Scaling based on aspect ratios
+    // If viewport is in portrait mode (aspect < 1), scale down shape so it fits nicely
+    const aspect = viewport.aspect;
+    const responsiveScaleFactor = aspect < 1 ? Math.max(0.45, aspect * 0.95) : 1.0;
+    const targetScale = params.scale * responsiveScaleFactor;
+    
     groupRef.current.scale.lerp(
       new THREE.Vector3(targetScale, targetScale, targetScale),
       0.08
     );
-    // Float up slightly on scroll
-    groupRef.current.position.y +=
-      (-vhProgress * 1.2 - groupRef.current.position.y) * 0.06;
+
+    // 3. Dynamic Morphing of mesh material parameters directly on the GPU thread (highly performant!)
+    if (materialRef.current) {
+      materialRef.current.roughness = THREE.MathUtils.lerp(materialRef.current.roughness, params.roughness, 0.08);
+      materialRef.current.metalness = THREE.MathUtils.lerp(materialRef.current.metalness, params.metalness, 0.08);
+      materialRef.current.transmission = THREE.MathUtils.lerp(materialRef.current.transmission, params.transmission, 0.08);
+      if (params.iridescence !== undefined) {
+        materialRef.current.iridescence = THREE.MathUtils.lerp(materialRef.current.iridescence, params.iridescence, 0.08);
+      }
+    }
+
+    // 4. Dynamic Morphing of wireframe and ring opacities
+    if (inkWireframeMaterialRef.current) {
+      inkWireframeMaterialRef.current.opacity = THREE.MathUtils.lerp(
+        inkWireframeMaterialRef.current.opacity,
+        params.inkWireframeOpacity,
+        0.08
+      );
+    }
+    if (redlineWireframeMaterialRef.current) {
+      redlineWireframeMaterialRef.current.opacity = THREE.MathUtils.lerp(
+        redlineWireframeMaterialRef.current.opacity,
+        params.redlineWireframeOpacity,
+        0.08
+      );
+    }
+    if (ring1MaterialRef.current) {
+      ring1MaterialRef.current.opacity = THREE.MathUtils.lerp(
+        ring1MaterialRef.current.opacity,
+        params.ring1Opacity,
+        0.08
+      );
+    }
+    if (ring2MaterialRef.current) {
+      ring2MaterialRef.current.opacity = THREE.MathUtils.lerp(
+        ring2MaterialRef.current.opacity,
+        params.ring2Opacity,
+        0.08
+      );
+    }
   });
 
   return (
@@ -128,8 +187,10 @@ function FloatingGeometry() {
       <Float speed={2.0} rotationIntensity={0.2} floatIntensity={0.5}>
         {/* Core Torus Knot (Refractive Glass/Chrome Base) */}
         <mesh castShadow>
-          <torusKnotGeometry args={[1, 0.26, 256, 48]} />
+          {/* Lower geometry details on mobile for performance tuning */}
+          <torusKnotGeometry args={isMobile ? [1, 0.26, 128, 24] : [1, 0.26, 256, 48]} />
           <meshPhysicalMaterial
+            ref={materialRef}
             color="#e8e5e0"
             metalness={0.92}
             roughness={0.08}
@@ -146,42 +207,57 @@ function FloatingGeometry() {
 
         {/* 3D Pencil Sketch Ink Wireframe Overlay */}
         <mesh>
-          <torusKnotGeometry args={[1.0015, 0.2605, 256, 48]} />
-          <meshBasicMaterial 
-            color="#1b1c1c" 
-            wireframe 
-            transparent 
-            opacity={0.28}
+          <torusKnotGeometry args={isMobile ? [1.0015, 0.2605, 128, 24] : [1.0015, 0.2605, 256, 48]} />
+          <meshBasicMaterial
+            ref={inkWireframeMaterialRef}
+            color="#1b1c1c"
+            wireframe
+            transparent
+            opacity={0.15}
           />
         </mesh>
 
         {/* 3D Technical Construction Redline Accent Wireframe */}
         <mesh>
-          <torusKnotGeometry args={[1.003, 0.261, 128, 24]} />
-          <meshBasicMaterial 
-            color="#B5502D" 
-            wireframe 
-            transparent 
-            opacity={0.22}
+          <torusKnotGeometry args={isMobile ? [1.003, 0.261, 64, 16] : [1.003, 0.261, 128, 24]} />
+          <meshBasicMaterial
+            ref={redlineWireframeMaterialRef}
+            color="#B5502D"
+            wireframe
+            transparent
+            opacity={0.1}
           />
         </mesh>
 
         {/* Orbiting thin wireframe ring 1 (Terracotta) */}
         <mesh ref={ringRef}>
-          <torusGeometry args={[1.5, 0.012, 8, 64]} />
-          <meshBasicMaterial color="#B5502D" opacity={0.4} transparent wireframe />
+          <torusGeometry args={[1.5, 0.012, 8, isMobile ? 32 : 64]} />
+          <meshBasicMaterial
+            ref={ring1MaterialRef}
+            color="#B5502D"
+            opacity={0.3}
+            transparent
+            wireframe
+          />
         </mesh>
 
         {/* Orbiting thin wireframe ring 2 (Ink) */}
         <mesh ref={ringRef2}>
-          <torusGeometry args={[1.8, 0.008, 6, 48]} />
-          <meshBasicMaterial color="#1b1c1c" opacity={0.2} transparent wireframe />
+          <torusGeometry args={[1.8, 0.008, 6, isMobile ? 24 : 48]} />
+          <meshBasicMaterial
+            ref={ring2MaterialRef}
+            color="#1b1c1c"
+            opacity={0.15}
+            transparent
+            wireframe
+          />
         </mesh>
       </Float>
 
+      {/* Sparks - Scaled count on mobile to preserve 60fps performance */}
       {/* Terracotta sparks */}
       <Sparkles
-        count={90}
+        count={isMobile ? 30 : 90}
         scale={9}
         size={2.2}
         speed={0.25}
@@ -190,7 +266,7 @@ function FloatingGeometry() {
       />
       {/* Warm cream ambient sparks */}
       <Sparkles
-        count={60}
+        count={isMobile ? 20 : 60}
         scale={6}
         size={1.2}
         speed={0.1}
@@ -199,7 +275,7 @@ function FloatingGeometry() {
       />
       {/* Micro gold specks */}
       <Sparkles
-        count={45}
+        count={isMobile ? 15 : 45}
         scale={4}
         size={0.8}
         speed={0.4}
@@ -210,35 +286,194 @@ function FloatingGeometry() {
   );
 }
 
+/* === Camera coordinates coordinator component === */
+function CameraController({ scrollParams }: { scrollParams: React.MutableRefObject<any> }) {
+  const { camera } = useThree();
+
+  useFrame(() => {
+    const params = scrollParams.current;
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, params.cameraZ, 0.06);
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, params.cameraY, 0.06);
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, params.cameraX, 0.06);
+  });
+
+  return null;
+}
+
 /* === Canvas export === */
-export default function HeroCanvas() {
+export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean }) {
+  // Shared ref holding morphable 3D parameters
+  const scrollParams = useRef({
+    // Initial Hero State (Identity)
+    x: 0,
+    y: isMobile ? -1.2 : -1.0,
+    z: 0,
+    rotationSpeedX: 0.08,
+    rotationSpeedY: 0.35,
+    rotationSpeedZ: 0.0,
+    scale: 1.0,
+
+    roughness: 0.08,
+    metalness: 0.92,
+    transmission: 0.35,
+    iridescence: 0.8,
+
+    inkWireframeOpacity: 0.15,
+    redlineWireframeOpacity: 0.1,
+    ring1Opacity: 0.3,
+    ring2Opacity: 0.15,
+    ring1Speed: 1.0,
+    ring2Speed: 1.0,
+
+    cameraZ: 5.0,
+    cameraY: 0.0,
+    cameraX: 0.0,
+    pointLightIntensity: 5.0,
+    spotLightIntensity: 4.0,
+  });
+
+  // Setup GSAP scroll-bound triggers
+  useEffect(() => {
+    let ctx: any;
+
+    const initGSAP = async () => {
+      const { default: gsap } = await import('gsap');
+      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '#main-content',
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 1.0, // Scrub scroll updates smoothly
+          },
+        });
+
+        // 1. Identity -> Craft (Hero section to About section)
+        tl.to(scrollParams.current, {
+          x: isMobile ? 0 : 1.8,
+          y: isMobile ? -1.6 : -0.2,
+          z: 0,
+          scale: isMobile ? 0.65 : 0.85,
+          roughness: 0.35,
+          metalness: 0.65,
+          transmission: 0.2,
+          inkWireframeOpacity: 0.75,
+          redlineWireframeOpacity: 0.65,
+          ring1Opacity: 0.8,
+          ring2Opacity: 0.6,
+          ring1Speed: 2.2,
+          ring2Speed: 1.8,
+          rotationSpeedX: 0.18,
+          rotationSpeedY: 0.65,
+          cameraZ: 4.8,
+          pointLightIntensity: 6.5,
+          spotLightIntensity: 5.5,
+          duration: 1.0,
+        })
+        // 2. Craft -> Future Vision (About section to Articles/Newsletter section)
+        .to(scrollParams.current, {
+          x: isMobile ? 0 : -1.8,
+          y: isMobile ? -1.5 : -0.4,
+          z: -0.5,
+          scale: isMobile ? 0.8 : 1.15,
+          roughness: 0.05,
+          metalness: 0.95,
+          transmission: 0.55,
+          iridescence: 1.0,
+          inkWireframeOpacity: 0.25,
+          redlineWireframeOpacity: 0.15,
+          ring1Opacity: 0.2,
+          ring2Opacity: 0.1,
+          ring1Speed: 0.6,
+          ring2Speed: 0.5,
+          rotationSpeedX: 0.05,
+          rotationSpeedY: 0.18,
+          cameraZ: 5.2,
+          pointLightIntensity: 8.0,
+          spotLightIntensity: 7.0,
+          duration: 1.0,
+        })
+        // 3. Future Vision -> CTA & Footer
+        .to(scrollParams.current, {
+          x: 0,
+          y: isMobile ? -2.2 : -0.8,
+          z: -1,
+          scale: isMobile ? 0.6 : 0.8,
+          roughness: 0.12,
+          metalness: 0.9,
+          transmission: 0.4,
+          iridescence: 0.8,
+          inkWireframeOpacity: 0.12,
+          redlineWireframeOpacity: 0.1,
+          ring1Opacity: 0.15,
+          ring2Opacity: 0.1,
+          ring1Speed: 0.8,
+          ring2Speed: 0.8,
+          rotationSpeedX: 0.08,
+          rotationSpeedY: 0.3,
+          cameraZ: 5.5,
+          pointLightIntensity: 5.0,
+          spotLightIntensity: 4.0,
+          duration: 1.0,
+        });
+      });
+    };
+
+    initGSAP();
+
+    return () => {
+      if (ctx) ctx.revert();
+    };
+  }, [isMobile]);
+
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: '520px', pointerEvents: 'none' }}>
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100svh',
+        pointerEvents: 'none',
+        zIndex: 1, // Behind page content but in front of background grid
+      }}
+    >
       <Canvas
         camera={{ position: [0, 0, 5], fov: 40 }}
         gl={{
-          antialias: true,
+          antialias: !isMobile, // Disable antialiasing on mobile for a massive fill-rate performance boost
           alpha: true,
           powerPreference: 'high-performance',
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.25,
         }}
-        dpr={[1, 1.5]}
-        shadows
-        style={{ background: 'transparent' }}
+        dpr={isMobile ? 1.0 : [1, 1.5]} // Cap DPR at 1.0 on mobile, 1.5 on desktop
+        shadows={!isMobile} // Disable shadows on mobile to preserve GPU fragment shader pipeline
+        style={{
+          background: 'transparent',
+          width: '100%',
+          height: '100%',
+          touchAction: 'pan-y', // Let mobile touch vertical scrolls slide natively, horizontal drags rotate WebGL
+          pointerEvents: 'auto',
+        }}
       >
-        <AnimatedLights />
+        <CameraController scrollParams={scrollParams} />
+
+        <AnimatedLights scrollParams={scrollParams} />
 
         {/* Studio HDRI environment for reflections */}
         <Environment preset="studio" />
 
-        <FloatingGeometry />
+        <FloatingGeometry scrollParams={scrollParams} isMobile={isMobile} />
 
         <OrbitControls
           enableZoom={false}
           enablePan={false}
           enableRotate
-          rotateSpeed={0.2}
+          rotateSpeed={isMobile ? 0.35 : 0.2}
           autoRotate={false}
         />
       </Canvas>

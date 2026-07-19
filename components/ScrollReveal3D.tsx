@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
 
 interface ScrollReveal3DProps {
   children: React.ReactNode;
@@ -16,41 +15,74 @@ export default function ScrollReveal3D({
   className = '',
   style = {},
 }: ScrollReveal3DProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let ctx: any;
+    
+    const init = async () => {
+      const { default: gsap } = await import('gsap');
+      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+      gsap.registerPlugin(ScrollTrigger);
+
+      if (!containerRef.current) return;
+
+      // Check for prefers-reduced-motion
+      const prefersReducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+
+      if (prefersReducedMotion) {
+        gsap.set(containerRef.current, {
+          opacity: 1,
+          transform: 'none',
+        });
+        return;
+      }
+
+      ctx = gsap.context(() => {
+        gsap.fromTo(
+          containerRef.current,
+          {
+            opacity: 0,
+            transform: 'perspective(1200px) rotateX(12deg) translateY(60px) scale(0.95)',
+          },
+          {
+            opacity: 1,
+            transform: 'perspective(1200px) rotateX(0deg) translateY(0px) scale(1)',
+            ease: 'power1.out',
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top 92%', // start animating when the top of the element is near the bottom
+              end: 'top 70%',   // complete when it reaches the upper part of the viewport
+              scrub: 0.8,       // smooth scrub linked to scroll speed
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }, containerRef);
+    };
+
+    init();
+
+    return () => {
+      if (ctx) ctx.revert();
+    };
+  }, []);
+
   return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        y: 80,
-        rotateX: 18,
-        scale: 0.93,
-      }}
-      whileInView={{
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        scale: 1,
-      }}
-      viewport={{
-        once: true,
-        margin: '-8% 0px -8% 0px',
-      }}
-      transition={{
-        type: 'spring',
-        stiffness: 65,      // custom premium spring timings
-        damping: 14,
-        mass: 0.85,
-        delay: delay,
-      }}
+    <div
+      ref={containerRef}
+      className={className}
       style={{
-        perspective: '1200px',
+        willChange: 'transform, opacity',
         transformStyle: 'preserve-3d',
         transformOrigin: 'top center',
-        willChange: 'transform, opacity',
         ...style,
       }}
-      className={className}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
+
