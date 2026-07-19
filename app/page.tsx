@@ -249,9 +249,6 @@ export default function HomePage() {
     <>
       <ScrollProgress />
 
-      {/* Flagship Fixed 3D Hero Canvas Overlay - Runs performantly on both desktop and mobile viewports */}
-      <HeroCanvas isMobile={isMobile} />
-
       {/* --- HERO --- */}
       <section
         aria-label="Hero"
@@ -471,6 +468,9 @@ export default function HomePage() {
                   }}
                 />
 
+                {/* Localized 3D Sculpture Canvas (zIndex 0 behind profile photo) */}
+                <HeroCanvas isMobile={isMobile} />
+
                 {/* Main Circular Profile Profile Photo Glass Container */}
                 <div
                   className="circular-frame"
@@ -489,6 +489,7 @@ export default function HomePage() {
                     backgroundColor: '#e8e5e0',
                     boxShadow: '0 20px 45px rgba(27, 28, 28, 0.15)',
                     overflow: 'hidden',
+                    zIndex: 2,
                   }}
                 >
                   <Image

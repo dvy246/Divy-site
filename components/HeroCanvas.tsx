@@ -445,13 +445,13 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
   // Shared ref holding morphable 3D parameters
   const scrollParams = useRef({
     // Initial State: start centered behind portrait with scale 0 if not scrolled
-    x: hasScrolledOnLoad ? (isMobile ? 0 : 1.7) : 0,
-    y: hasScrolledOnLoad ? (isMobile ? -0.25 : -0.32) : 0,
+    x: 0,
+    y: 0,
     z: 0,
-    rotationSpeedX: 0.08,
-    rotationSpeedY: 0.25,
+    rotationSpeedX: 0.03, // slow, visual luxury museum feel
+    rotationSpeedY: 0.05,
     rotationSpeedZ: 0.0,
-    scale: hasScrolledOnLoad ? (isMobile ? 0.65 : 0.85) : 0.001,
+    scale: hasScrolledOnLoad ? (isMobile ? 1.05 : 1.25) : 0.001,
     color: isMobile ? '#ffffff' : '#dfb46c',
 
     roughness: 0.06,
@@ -459,10 +459,10 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
     transmission: hasScrolledOnLoad ? 0.88 : 1.0,
     iridescence: 0.5,
 
-    inkWireframeOpacity: hasScrolledOnLoad ? 0.1 : 0.0,
-    redlineWireframeOpacity: hasScrolledOnLoad ? 0.1 : 0.0,
-    ring1Opacity: hasScrolledOnLoad ? 0.2 : 0.0,
-    ring2Opacity: hasScrolledOnLoad ? 0.2 : 0.0,
+    inkWireframeOpacity: hasScrolledOnLoad ? 0.15 : 0.0,
+    redlineWireframeOpacity: hasScrolledOnLoad ? 0.15 : 0.0,
+    ring1Opacity: hasScrolledOnLoad ? 0.35 : 0.0,
+    ring2Opacity: hasScrolledOnLoad ? 0.25 : 0.0,
     ring1Speed: 1.0,
     ring2Speed: 1.0,
 
@@ -473,28 +473,28 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
     spotLightIntensity: 4.0,
   });
 
-  // Setup GSAP scroll-bound triggers
+  // Setup GSAP entry reveal animation
   useEffect(() => {
-    let ctx: any;
+    let active = true;
+    let revealTween: any = null;
 
     const initGSAP = async () => {
       const { default: gsap } = await import('gsap');
-      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
-      gsap.registerPlugin(ScrollTrigger);
+      if (!active) return;
 
-      // Reveal animation emerging from portrait (1.2s delay)
+      // Reveal animation emerging from portrait (0.8s delay)
       if (!hasScrolledOnLoad) {
-        gsap.to(scrollParams.current, {
-          x: isMobile ? 0 : 1.7,
-          y: isMobile ? -0.25 : -0.32,
-          scale: isMobile ? 0.65 : 0.85,
+        revealTween = gsap.to(scrollParams.current, {
+          x: 0,
+          y: 0,
+          scale: isMobile ? 1.05 : 1.25,
           transmission: 0.88,
-          inkWireframeOpacity: 0.1,
-          redlineWireframeOpacity: 0.1,
-          ring1Opacity: 0.2,
-          ring2Opacity: 0.2,
+          inkWireframeOpacity: 0.15,
+          redlineWireframeOpacity: 0.15,
+          ring1Opacity: 0.35,
+          ring2Opacity: 0.25,
           duration: 2.2,
-          delay: 1.0,
+          delay: 0.8,
           ease: 'power3.out',
           onStart: () => {
             window.dispatchEvent(new CustomEvent('dy_sculpture_reveal_start'));
@@ -504,152 +504,26 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
           }
         });
       }
-
-      // Define standard layout states
-      const state1 = {
-        x: isMobile ? 0 : 1.7,
-        y: isMobile ? -0.25 : -0.32,
-        z: 0,
-        scale: isMobile ? 0.65 : 0.85,
-        color: isMobile ? '#ffffff' : '#dfb46c',
-        roughness: 0.06,
-        metalness: 0.05,
-        transmission: 0.88,
-        inkWireframeOpacity: 0.1,
-        redlineWireframeOpacity: 0.1,
-        ring1Opacity: 0.2,
-        ring2Opacity: 0.2,
-        ring1Speed: 1.0,
-        ring2Speed: 1.0,
-        rotationSpeedX: 0.08,
-        rotationSpeedY: 0.25,
-        cameraZ: 4.8,
-        pointLightIntensity: 5.0,
-        spotLightIntensity: 4.0,
-      };
-
-      const state2 = {
-        x: isMobile ? 0 : 1.7,
-        y: isMobile ? -0.25 : -0.32,
-        z: 0,
-        scale: isMobile ? 0.65 : 0.85,
-        color: isMobile ? '#ffffff' : '#dfb46c',
-        roughness: 0.06,
-        metalness: 0.05,
-        transmission: 0.88,
-        inkWireframeOpacity: 0.75, // Showcase blueprint wires for craft
-        redlineWireframeOpacity: 0.65,
-        ring1Opacity: 0.8,
-        ring2Opacity: 0.6,
-        ring1Speed: 2.2,
-        ring2Speed: 1.8,
-        rotationSpeedX: 0.18,
-        rotationSpeedY: 0.65,
-        cameraZ: 4.8,
-        pointLightIntensity: 6.5,
-        spotLightIntensity: 5.5,
-      };
-
-      const state3 = {
-        x: isMobile ? 0 : 1.7,
-        y: isMobile ? -0.25 : -0.32,
-        z: 0,
-        scale: isMobile ? 0.75 : 1.1,
-        color: '#ffffff', // Turn white behind text layouts
-        roughness: 0.06,
-        metalness: 0.05,
-        transmission: 0.88,
-        inkWireframeOpacity: 0.2,
-        redlineWireframeOpacity: 0.1,
-        ring1Opacity: 0.2,
-        ring2Opacity: 0.1,
-        ring1Speed: 0.8,
-        ring2Speed: 0.6,
-        rotationSpeedX: 0.08,
-        rotationSpeedY: 0.25,
-        cameraZ: 4.8,
-        pointLightIntensity: 8.0,
-        spotLightIntensity: 7.0,
-      };
-
-      const state4 = {
-        x: isMobile ? 0 : 1.7,
-        y: isMobile ? -0.25 : -0.32,
-        z: 0,
-        scale: isMobile ? 0.6 : 0.8,
-        color: '#ffffff', // Turn white behind CTA form
-        roughness: 0.06,
-        metalness: 0.05,
-        transmission: 0.88,
-        inkWireframeOpacity: 0.1,
-        redlineWireframeOpacity: 0.1,
-        ring1Opacity: 0.15,
-        ring2Opacity: 0.1,
-        ring1Speed: 0.8,
-        ring2Speed: 0.8,
-        rotationSpeedX: 0.08,
-        rotationSpeedY: 0.2,
-        cameraZ: 4.8,
-        pointLightIntensity: 5.0,
-        spotLightIntensity: 4.0,
-      };
-
-      ctx = gsap.context(() => {
-        // Trigger 1: Transition into About section (bio-section)
-        ScrollTrigger.create({
-          trigger: '.bio-section',
-          start: 'top 65%',
-          onEnter: () => {
-            gsap.to(scrollParams.current, { ...state2, duration: 1.1, ease: 'power2.out' });
-          },
-          onLeaveBack: () => {
-            gsap.to(scrollParams.current, { ...state1, duration: 1.1, ease: 'power2.out' });
-          },
-        });
-
-        // Trigger 2: Transition into Articles preview
-        ScrollTrigger.create({
-          trigger: '.articles-preview',
-          start: 'top 65%',
-          onEnter: () => {
-            gsap.to(scrollParams.current, { ...state3, duration: 1.1, ease: 'power2.out' });
-          },
-          onLeaveBack: () => {
-            gsap.to(scrollParams.current, { ...state2, duration: 1.1, ease: 'power2.out' });
-          },
-        });
-
-        // Trigger 3: Transition into CTA / Footer
-        ScrollTrigger.create({
-          trigger: '.cta-section',
-          start: 'top 65%',
-          onEnter: () => {
-            gsap.to(scrollParams.current, { ...state4, duration: 1.1, ease: 'power2.out' });
-          },
-          onLeaveBack: () => {
-            gsap.to(scrollParams.current, { ...state3, duration: 1.1, ease: 'power2.out' });
-          },
-        });
-      });
     };
 
     initGSAP();
 
     return () => {
-      if (ctx) ctx.revert();
+      active = false;
+      if (revealTween) revealTween.kill();
     };
   }, [isMobile]);
 
   return (
     <div
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100svh',
+        position: 'absolute',
+        top: '-45px',
+        left: '-45px',
+        right: '-45px',
+        bottom: '-45px',
         pointerEvents: 'none',
-        zIndex: 1, // Behind page content but in front of background grid
+        zIndex: 0, // sit behind profile image container
       }}
     >
       <Canvas
