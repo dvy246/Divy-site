@@ -126,21 +126,43 @@ function FloatingGeometry() {
   return (
     <group ref={groupRef}>
       <Float speed={2.0} rotationIntensity={0.2} floatIntensity={0.5}>
-        {/* Core Torus Knot */}
+        {/* Core Torus Knot (Refractive Glass/Chrome Base) */}
         <mesh castShadow>
           <torusKnotGeometry args={[1, 0.26, 256, 48]} />
-          {/* Chrome-glass iridescent physical material */}
           <meshPhysicalMaterial
-            color="#c8c4be"
-            metalness={0.96}
-            roughness={0.05}
+            color="#e8e5e0"
+            metalness={0.92}
+            roughness={0.08}
             reflectivity={1.0}
             clearcoat={1.0}
             clearcoatRoughness={0.02}
             envMapIntensity={3.5}
-            iridescence={0.85}
-            iridescenceIOR={1.45}
+            iridescence={0.8}
             iridescenceThicknessRange={[100, 400]}
+            transmission={0.35}
+            thickness={1.2}
+          />
+        </mesh>
+
+        {/* 3D Pencil Sketch Ink Wireframe Overlay */}
+        <mesh>
+          <torusKnotGeometry args={[1.0015, 0.2605, 256, 48]} />
+          <meshBasicMaterial 
+            color="#1b1c1c" 
+            wireframe 
+            transparent 
+            opacity={0.28}
+          />
+        </mesh>
+
+        {/* 3D Technical Construction Redline Accent Wireframe */}
+        <mesh>
+          <torusKnotGeometry args={[1.003, 0.261, 128, 24]} />
+          <meshBasicMaterial 
+            color="#B5502D" 
+            wireframe 
+            transparent 
+            opacity={0.22}
           />
         </mesh>
 
