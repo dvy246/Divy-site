@@ -62,7 +62,7 @@ interface AccentProps {
   mouseRef: React.MutableRefObject<{ x: number; y: number; tx: number; ty: number }>;
 }
 
-/* === Individual Accent Element Component (Premium Liquid Glass Drop) === */
+/* === Individual Accent Element Component (Premium Liquid Glass Drop with click-to-split) === */
 function AccentElement({
   baseX,
   baseY,
@@ -77,12 +77,37 @@ function AccentElement({
 }: AccentProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<any>(null);
+  const groupRef = useRef<THREE.Group>(null);
+  
   const timeOffset = useRef(Math.random() * 100);
   const currentScaleFactor = useRef(0.001);
+  const splitTime = useRef(0);
+
+  const [isSplit, setIsSplit] = useState(false);
+
+  // Initialize random particle vectors for click-to-split animation
+  const particles = useRef(
+    Array.from({ length: 6 }).map(() => ({
+      x: 0,
+      y: 0,
+      z: 0,
+      vx: (Math.random() - 0.5) * 2.8,
+      vy: (Math.random() - 0.5) * 2.8,
+      vz: (Math.random() - 0.5) * 1.5,
+      scale: 0.22 + Math.random() * 0.12,
+      angle: Math.random() * Math.PI * 2,
+    }))
+  );
+
+  const handlePointerDown = (e: any) => {
+    e.stopPropagation();
+    if (!isMobile) {
+      setIsSplit(true);
+      splitTime.current = 0;
+    }
+  };
 
   useFrame((state, delta) => {
-    if (!meshRef.current) return;
-
     // 1. Calculate scroll parallax
     const scrollY = typeof window !== 'undefined' ? window.scrollY : 0;
     const winHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
@@ -92,6 +117,53 @@ function AccentElement({
     const elapsed = state.clock.getElapsedTime() + timeOffset.current;
     const floatY = Math.sin(elapsed * floatSpeed) * floatAmp + Math.cos(elapsed * floatSpeed * 0.45) * (floatAmp * 0.4);
     const floatX = Math.cos(elapsed * floatSpeed * 0.85) * floatAmp + Math.sin(elapsed * floatSpeed * 0.35) * (floatAmp * 0.4);
+
+    // Dynamic split animation updates
+    if (isSplit && groupRef.current) {
+      splitTime.current += delta;
+      const t = splitTime.current;
+      const friction = Math.exp(-t * 1.6);
+      const fade = Math.max(0, 1 - (t - 4.5) / 2.5); // Fade out towards 7s
+
+      groupRef.current.children.forEach((child, idx) => {
+        const p = particles.current[idx];
+        if (p) {
+          // Update velocity physics directly on Three.js scene graph for 60fps speed
+          p.x += p.vx * delta * friction;
+          p.y += p.vy * delta * friction;
+          p.z += p.vz * delta * friction;
+
+          // Add a gentle floating wave
+          const wave = Math.sin(state.clock.getElapsedTime() * 1.4 + idx) * 0.08;
+          child.position.set(p.x, p.y + wave, p.z);
+          
+          // Shrink scale slightly and fade opacity
+          const baseScale = scale[0] * p.scale * fade;
+          child.scale.set(baseScale, baseScale * 1.4, baseScale); // retain teardrop proportions
+        }
+      });
+      
+      // Interpolate main group position during split so they stay centered as they drift
+      const targetY = baseY + scrollOffset * parallax + floatY;
+      const targetX = baseX + floatX;
+      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.08);
+      groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.08);
+      groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, baseZ, 0.08);
+
+      if (splitTime.current > 7.0) {
+        setIsSplit(false);
+        splitTime.current = 0;
+        // reset particle offsets
+        particles.current.forEach((p) => {
+          p.x = 0;
+          p.y = 0;
+          p.z = 0;
+        });
+      }
+      return;
+    }
+
+    if (!meshRef.current) return;
 
     // 3. Proximity Interactive Reaction (warp & scale when cursor gets close)
     let proximityScale = 1.0;
@@ -158,11 +230,33 @@ function AccentElement({
     }
   });
 
+  if (isSplit) {
+    return (
+      <group ref={groupRef}>
+        {particles.current.map((p, idx) => (
+          <mesh key={idx}>
+            <sphereGeometry args={[1, 32, 32]} />
+            <meshPhysicalMaterial
+              color="#F6DEC9" // Share same champagne-terracotta tint
+              roughness={0.02}
+              transmission={0.93} // Excellent high-performance reflection/refraction sharing global envmap
+              thickness={0.5}
+              clearcoat={1.0}
+              clearcoatRoughness={0.01}
+              transparent
+            />
+          </mesh>
+        ))}
+      </group>
+    );
+  }
+
   return (
     <Float speed={1.8} rotationIntensity={0.15} floatIntensity={0.6}>
       <mesh
         ref={meshRef}
         castShadow={false}
+        onPointerDown={handlePointerDown}
       >
         <sphereGeometry args={[1, 64, 64]} />
         <MeshTransmissionMaterial
@@ -210,7 +304,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
 
   const vWidth = viewport.width;
 
-  // Symmetrical layout of two gemstones to frame "Divy Yadav" completely clear of the text block
+  // Symmetrical layout of two gemstones that scroll at a calibrated parallax to float till the profile picture
   const accentsList = isMobile
     ? [
         {
@@ -218,7 +312,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           baseY: 2.2, // high up, completely above text
           baseZ: 0.5,
           scale: [0.2, 0.33, 0.2] as [number, number, number], // Stretched teardrop
-          parallax: 1.0,
+          parallax: 0.35, // Slow scroll rate so they drift next to profile picture as it scrolls into view
           floatSpeed: 0.9,
           floatAmp: 0.18,
           rotSpeed: [0.1, 0.2, 0.05] as [number, number, number],
@@ -228,7 +322,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           baseY: 2.2, // high up, completely above text
           baseZ: 0.5,
           scale: [0.2, 0.33, 0.2] as [number, number, number], // Stretched teardrop
-          parallax: 1.02,
+          parallax: 0.38, // Slow scroll rate so they drift next to profile picture as it scrolls into view
           floatSpeed: 1.15,
           floatAmp: 0.18,
           rotSpeed: [-0.08, 0.18, 0.07] as [number, number, number],
@@ -240,7 +334,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           baseY: 0.1,
           baseZ: 0.5,
           scale: [0.34, 0.56, 0.34] as [number, number, number], // stretched premium teardrop
-          parallax: 1.0,
+          parallax: 0.35, // Slower parallax scroll factor so drops float next to profile picture when scrolled
           floatSpeed: 1.0,
           floatAmp: 0.28,
           rotSpeed: [0.12, 0.22, 0.07] as [number, number, number],
@@ -250,7 +344,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           baseY: 0.1,
           baseZ: 0.5,
           scale: [0.34, 0.56, 0.34] as [number, number, number], // stretched premium teardrop
-          parallax: 1.02,
+          parallax: 0.38, // Slower parallax scroll factor so drops float next to profile picture when scrolled
           floatSpeed: 1.25,
           floatAmp: 0.28,
           rotSpeed: [0.15, -0.25, 0.05] as [number, number, number],
@@ -302,15 +396,17 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
 export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(true);
+  const [pointerEvents, setPointerEvents] = useState<'none' | 'auto'>('none');
 
-  // IntersectionObserver to completely unmount Canvas when scrolled past
+  // IntersectionObserver to completely unmount Canvas when scrolled past bio section
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsInView(entry.isIntersecting);
       },
-      { rootMargin: '200px 0px 200px 0px', threshold: 0.01 }
+      // Keep canvas mounted until scrolled past bio/profile picture (approx 1400px bottom offset)
+      { rootMargin: '200px 0px 1400px 0px', threshold: 0.01 }
     );
     if (containerRef.current) {
       observer.observe(containerRef.current);
@@ -328,6 +424,24 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
     return () => clearTimeout(timer);
   }, []);
 
+  // Dynamically toggle pointer events when hover is on side margins to allow clicking drops on desktop
+  useEffect(() => {
+    if (typeof window === 'undefined' || isMobile) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const w = window.innerWidth;
+      // Margins left 22% and right 22% do not block any text interactions in the center of the page
+      if (e.clientX < w * 0.22 || e.clientX > w * 0.78) {
+        setPointerEvents('auto');
+      } else {
+        setPointerEvents('none');
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [isMobile]);
+
   return (
     <div
       ref={containerRef}
@@ -337,7 +451,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
         left: 0,
         width: '100vw',
         height: '100svh',
-        pointerEvents: 'none',
+        pointerEvents: pointerEvents, // Dynamically toggled to prevent scroll hijack on text
         zIndex: 1, // Behind page content but in front of background grid
       }}
     >
@@ -357,7 +471,6 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
             background: 'transparent',
             width: '100%',
             height: '100%',
-            pointerEvents: 'none', // Allow all click events to pass through
           }}
         >
           <AnimatedLights />
