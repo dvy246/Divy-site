@@ -13,33 +13,7 @@ import Magnetic from '@/components/Magnetic';
 import { BIO } from '@/lib/bio';
 import articles from '@/data/articles.json';
 
-/* === Dynamic 3D import === */
-const HeroCanvas = dynamic(() => import('@/components/HeroCanvas'), {
-  ssr: false,
-  loading: () => (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#F5F5DC',
-        zIndex: 999,
-      }}
-    >
-      <div
-        style={{
-          width: '48px',
-          height: '48px',
-          border: '1px solid #1b1c1c',
-          borderTopColor: '#B5502D',
-          animation: 'spin 1.2s linear infinite',
-        }}
-      />
-    </div>
-  ),
-});
+
 
 /* === Constants === */
 const MARQUEE_ITEMS = [
@@ -248,9 +222,6 @@ export default function HomePage() {
   return (
     <>
       <ScrollProgress />
-
-      {/* Flagship Fixed 3D Hero Canvas Overlay - Runs performantly on both desktop and mobile viewports */}
-      <HeroCanvas isMobile={isMobile} />
 
       {/* --- HERO --- */}
       <section
