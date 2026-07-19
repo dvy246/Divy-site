@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, Environment, Sparkles, ContactShadows } from '@react-three/drei';
+import { Float, Environment, Sparkles, ContactShadows, MeshTransmissionMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 /* === Animated lights coordinated with scroll === */
@@ -283,18 +283,13 @@ function FloatingGeometry({
     // Microscopic physical material breathing dynamics
     const livingRoughness = params.roughness + Math.sin(elapsed * 0.12) * 0.012;
     const livingTransmission = params.transmission + Math.cos(elapsed * 0.08) * 0.03;
-    const livingIridescence = params.iridescence !== undefined ? (params.iridescence + Math.sin(elapsed * 0.1) * 0.06) : 0.8;
 
     // 3. Dynamic Morphing of mesh material parameters directly on the GPU thread (highly performant!)
     if (materialRef.current) {
       materialRef.current.roughness = THREE.MathUtils.lerp(materialRef.current.roughness, livingRoughness, 0.08);
-      materialRef.current.metalness = THREE.MathUtils.lerp(materialRef.current.metalness, params.metalness, 0.08);
       materialRef.current.transmission = THREE.MathUtils.lerp(materialRef.current.transmission, livingTransmission, 0.08);
       if (params.color) {
         materialRef.current.color.lerp(finalColor, 0.08);
-      }
-      if (params.iridescence !== undefined) {
-        materialRef.current.iridescence = THREE.MathUtils.lerp(materialRef.current.iridescence, livingIridescence, 0.08);
       }
     }
 
@@ -332,73 +327,82 @@ function FloatingGeometry({
   return (
     <group ref={groupRef}>
       <Float speed={2.0} rotationIntensity={0.2} floatIntensity={0.5}>
-        {/* Core Torus Knot (Refractive Glass/Chrome Base) */}
+        {/* Core Torus Knot (Refractive Glass Core) */}
         <mesh castShadow>
           {/* Lower geometry details on mobile for performance tuning */}
           <torusKnotGeometry args={isMobile ? [1, 0.26, 128, 24] : [1, 0.26, 256, 48]} />
-          <meshPhysicalMaterial
+          <MeshTransmissionMaterial
             ref={materialRef}
             color="#ffffff"
-            metalness={0.0}
             roughness={0.06}
-            roughnessMap={noiseTexture || undefined}
-            reflectivity={1.0}
-            clearcoat={1.0}
-            clearcoatRoughness={0.01}
-            envMapIntensity={3.5}
-            iridescence={0.6}
-            iridescenceThicknessRange={[100, 400]}
-            transmission={0.95}
-            thickness={1.5}
-            ior={1.5}
+            transmission={1.0}
+            thickness={1.3}
+            ior={1.52}
+            chromaticAberration={0.06}
+            anisotropicBlur={0.1}
+            distortion={0.35}
+            distortionScale={0.25}
+            temporalDistortion={0.2}
+            samples={isMobile ? 6 : 10}
+            transparent
           />
         </mesh>
 
-        {/* 3D Pencil Sketch Ink Wireframe Overlay */}
+        {/* 3D Brushed Titanium Inner Framework Wireframe */}
         <mesh>
-          <torusKnotGeometry args={isMobile ? [1.0015, 0.2605, 128, 24] : [1.0015, 0.2605, 256, 48]} />
-          <meshBasicMaterial
+          <torusKnotGeometry args={isMobile ? [1.002, 0.2605, 128, 24] : [1.002, 0.2605, 256, 48]} />
+          <meshStandardMaterial
             ref={inkWireframeMaterialRef}
-            color="#1b1c1c"
+            color="#d8d3cd"
             wireframe
             transparent
-            opacity={0.15}
+            opacity={0.35}
+            metalness={1.0}
+            roughness={0.28}
           />
         </mesh>
 
-        {/* 3D Technical Construction Redline Accent Wireframe */}
+        {/* 3D Technical Satin Terracotta Wireframe Accent */}
         <mesh>
-          <torusKnotGeometry args={isMobile ? [1.003, 0.261, 64, 16] : [1.003, 0.261, 128, 24]} />
-          <meshBasicMaterial
+          <torusKnotGeometry args={isMobile ? [1.004, 0.261, 64, 16] : [1.004, 0.261, 128, 24]} />
+          <meshStandardMaterial
             ref={redlineWireframeMaterialRef}
             color="#B5502D"
             wireframe
             transparent
-            opacity={0.1}
+            opacity={0.25}
+            metalness={0.9}
+            roughness={0.22}
           />
         </mesh>
 
-        {/* Orbiting thin wireframe ring 1 (Terracotta) */}
+        {/* Orbiting thin ring 1 (Polished White Ceramic) */}
         <mesh ref={ringRef}>
           <torusGeometry args={[1.5, 0.008, 8, isMobile ? 32 : 64]} />
-          <meshStandardMaterial
+          <meshPhysicalMaterial
             ref={ring1MaterialRef}
-            color="#B5502D"
-            roughness={0.2}
-            metalness={0.9}
+            color="#fbf9f9"
+            roughness={0.02}
+            metalness={0.0}
+            reflectivity={1.0}
+            clearcoat={1.0}
+            clearcoatRoughness={0.02}
             transparent
             opacity={0.35}
           />
         </mesh>
 
-        {/* Orbiting thin wireframe ring 2 (Ink) */}
+        {/* Orbiting thin ring 2 (Brushed Charcoal Ceramic) */}
         <mesh ref={ringRef2}>
           <torusGeometry args={[1.8, 0.005, 6, isMobile ? 24 : 48]} />
-          <meshStandardMaterial
+          <meshPhysicalMaterial
             ref={ring2MaterialRef}
             color="#1b1c1c"
-            roughness={0.3}
-            metalness={0.8}
+            roughness={0.04}
+            metalness={0.0}
+            reflectivity={0.9}
+            clearcoat={0.9}
+            clearcoatRoughness={0.04}
             transparent
             opacity={0.25}
           />
@@ -469,9 +473,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
     color: '#ffffff',
 
     roughness: 0.06,
-    metalness: 0.0,
     transmission: hasScrolledOnLoad ? 0.95 : 1.0,
-    iridescence: 0.6,
 
     inkWireframeOpacity: hasScrolledOnLoad ? 0.06 : 0.0,
     redlineWireframeOpacity: hasScrolledOnLoad ? 0.06 : 0.0,

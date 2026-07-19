@@ -12,8 +12,10 @@ import ScrollReveal3D from '@/components/ScrollReveal3D';
 import Magnetic from '@/components/Magnetic';
 import { BIO } from '@/lib/bio';
 import articles from '@/data/articles.json';
-
-
+/* === Dynamic 3D import === */
+const HeroCanvas = dynamic(() => import('@/components/HeroCanvas'), {
+  ssr: false,
+});
 
 /* === Constants === */
 const MARQUEE_ITEMS = [
@@ -222,6 +224,9 @@ export default function HomePage() {
   return (
     <>
       <ScrollProgress />
+
+      {/* Flagship Fixed 3D Hero Canvas Overlay - Runs performantly on both desktop and mobile viewports */}
+      <HeroCanvas isMobile={isMobile} />
 
       {/* --- HERO --- */}
       <section

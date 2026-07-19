@@ -62,7 +62,7 @@ export default function ArticleCard({
   // Dynamic light sheen position tracking cursor
   const sheenBg = useTransform(
     [springX, springY],
-    ([mx, my]) => `radial-gradient(circle at ${(mx as number + 0.5) * 100}% ${(my as number + 0.5) * 100}%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 55%)`
+    ([mx, my]) => `radial-gradient(circle 280px at ${(mx as number + 0.5) * 100}% ${(my as number + 0.5) * 100}%, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.08) 35%, transparent 70%)`
   );
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -175,19 +175,29 @@ export default function ArticleCard({
           >
             <div>
               {tags && tags.length > 0 && (
-                <p
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '9px',
-                    letterSpacing: '0.2em',
-                    textTransform: 'uppercase',
-                    fontWeight: 700,
-                    color: '#B5502D',
-                    marginBottom: '0.5rem',
-                  }}
-                >
-                  {tags.slice(0, 2).join(' · ')}
-                </p>
+                <div style={{ display: 'flex', gap: '0.35rem', marginBottom: '0.6rem', flexWrap: 'wrap' }}>
+                  {tags.slice(0, 2).map((tag) => (
+                    <span
+                      key={tag}
+                      style={{
+                        fontFamily: 'var(--font-body)',
+                        fontSize: '8px',
+                        letterSpacing: '0.12em',
+                        textTransform: 'uppercase',
+                        fontWeight: 700,
+                        color: '#B5502D',
+                        backgroundColor: 'rgba(232, 232, 208, 0.55)', // translucent parchment acrylic
+                        backdropFilter: 'blur(4px)',
+                        WebkitBackdropFilter: 'blur(4px)',
+                        border: '1px solid rgba(27, 28, 28, 0.06)', // sub-pixel border
+                        padding: '0.2rem 0.55rem',
+                        display: 'inline-block',
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               )}
               <h3
                 style={{
@@ -254,28 +264,39 @@ export default function ArticleCard({
             color: '#F5F5DC',
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg) translateZ(1px)', // pushes plane out
+            transform: 'rotateY(180deg) translateZ(1.5px)', // pushes plane out
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
             padding: '2rem 1.75rem',
+            border: '1px solid rgba(245, 245, 220, 0.15)', // sub-pixel frame
           }}
         >
           <div>
             {tags && tags.length > 0 && (
-              <p
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '9px',
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  fontWeight: 700,
-                  color: '#B5502D',
-                  marginBottom: '1rem',
-                }}
-              >
-                {tags.join(' · ')}
-              </p>
+              <div style={{ display: 'flex', gap: '0.35rem', marginBottom: '0.8rem', flexWrap: 'wrap' }}>
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '8px',
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      fontWeight: 700,
+                      color: '#B5502D',
+                      backgroundColor: 'rgba(255, 255, 255, 0.07)', // translucent dark acrylic
+                      backdropFilter: 'blur(4px)',
+                      WebkitBackdropFilter: 'blur(4px)',
+                      border: '1px solid rgba(245, 245, 220, 0.11)', // sub-pixel tag border
+                      padding: '0.2rem 0.55rem',
+                      display: 'inline-block',
+                    }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             )}
             <h3
               style={{

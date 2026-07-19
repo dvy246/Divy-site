@@ -122,21 +122,25 @@ export default function Nav() {
             'background-color 450ms cubic-bezier(0.16,1,0.3,1), ' +
             'padding 450ms cubic-bezier(0.16,1,0.3,1), ' +
             'transform 350ms cubic-bezier(0.16,1,0.3,1), ' +
-            'border-color 450ms ease',
+            'border-color 450ms ease, ' +
+            'box-shadow 450ms ease',
           backgroundColor: scrolled
-            ? 'rgba(245, 245, 220, 0.78)'
-            : 'rgba(245, 245, 220, 0.35)',
+            ? 'rgba(245, 245, 220, 0.82)'
+            : 'transparent',
           backdropFilter: scrolled 
             ? 'blur(20px) saturate(1.2)' 
-            : 'blur(8px)',
+            : 'none',
           WebkitBackdropFilter: scrolled 
             ? 'blur(20px) saturate(1.2)' 
-            : 'blur(8px)',
+            : 'none',
+          borderTop: scrolled
+            ? '1px solid rgba(255, 255, 255, 0.45)'
+            : '1px solid transparent',
           borderBottom: scrolled
-            ? '1px solid rgba(27, 28, 28, 0.08)'
-            : '1px solid rgba(27, 28, 28, 0.03)',
+            ? '1px solid rgba(27, 28, 28, 0.09)'
+            : '1px solid rgba(27, 28, 28, 0.02)',
           boxShadow: scrolled
-            ? '0 10px 35px rgba(27, 28, 28, 0.03), 0 1px 0 rgba(27, 28, 28, 0.02)'
+            ? '0 12px 40px rgba(27, 28, 28, 0.04), 0 1px 0 rgba(27, 28, 28, 0.01)'
             : 'none',
           transform: visible ? 'translateY(0)' : 'translateY(-100%)',
         }}
