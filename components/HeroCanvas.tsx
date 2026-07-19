@@ -57,38 +57,6 @@ function AnimatedLights({ scrollParams }: { scrollParams: React.MutableRefObject
   );
 }
 
-/* === Procedural high-frequency noise texture for microscopic material imperfections === */
-function useNoiseTexture() {
-  const [texture, setTexture] = useState<THREE.CanvasTexture | null>(null);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const canvas = document.createElement('canvas');
-    canvas.width = 128;
-    canvas.height = 128;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      const imgData = ctx.createImageData(128, 128);
-      for (let i = 0; i < imgData.data.length; i += 4) {
-        const val = Math.floor(Math.random() * 85) + 120; // values between 120 and 205 (fine contrast)
-        imgData.data[i] = val;     // R
-        imgData.data[i + 1] = val; // G
-        imgData.data[i + 2] = val; // B
-        imgData.data[i + 3] = 255; // A
-      }
-      ctx.putImageData(imgData, 0, 0);
-
-      const tex = new THREE.CanvasTexture(canvas);
-      tex.wrapS = THREE.RepeatWrapping;
-      tex.wrapT = THREE.RepeatWrapping;
-      tex.repeat.set(8, 8); // repeat microscopic grain details
-      setTexture(tex);
-    }
-  }, []);
-
-  return texture;
-}
-
 /* === Main geometry + materials with dynamic morphing & responsive scaling === */
 function FloatingGeometry({
   scrollParams,
@@ -97,7 +65,6 @@ function FloatingGeometry({
   scrollParams: React.MutableRefObject<any>;
   isMobile: boolean;
 }) {
-  const noiseTexture = useNoiseTexture();
   const groupRef = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Mesh>(null);
   const ringRef2 = useRef<THREE.Mesh>(null);
@@ -409,34 +376,7 @@ function FloatingGeometry({
         </mesh>
       </Float>
 
-      {/* Sparks - Scaled count on mobile to preserve 60fps performance */}
-      {/* Terracotta sparks */}
-      <Sparkles
-        count={isMobile ? 30 : 90}
-        scale={9}
-        size={2.2}
-        speed={0.25}
-        opacity={0.35}
-        color="#B5502D"
-      />
-      {/* Warm cream ambient sparks */}
-      <Sparkles
-        count={isMobile ? 20 : 60}
-        scale={6}
-        size={1.2}
-        speed={0.1}
-        opacity={0.15}
-        color="#F5F5DC"
-      />
-      {/* Micro gold specks */}
-      <Sparkles
-        count={isMobile ? 15 : 45}
-        scale={4}
-        size={0.8}
-        speed={0.4}
-        opacity={0.5}
-        color="#D4A853"
-      />
+
     </group>
   );
 }
@@ -577,15 +517,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
           blur={2.5}
           far={4.0}
         />
-        {/* Environmental drifting sparkles representing dust particles in atmospheric space */}
-        <Sparkles
-          count={isMobile ? 15 : 45}
-          scale={6.0}
-          size={isMobile ? 0.8 : 1.5}
-          speed={0.2}
-          opacity={0.35}
-          color="#B5502D"
-        />
+
       </Canvas>
     </div>
   );
