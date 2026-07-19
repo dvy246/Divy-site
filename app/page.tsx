@@ -288,11 +288,11 @@ export default function HomePage() {
               style={{
                 fontFamily: 'var(--font-body)',
                 fontSize: 'clamp(3.5rem, 9vw, 9rem)',
-                fontWeight: 800,
+                fontWeight: 900,
                 fontStyle: 'normal',
                 lineHeight: 1.0,
-                letterSpacing: '-0.01em',
-                color: '#1b1c1c',
+                letterSpacing: '-0.02em',
+                color: '#0e0f0f',
                 marginBottom: '1.75rem',
                 overflow: 'hidden',
                 textAlign: 'center',
@@ -326,8 +326,8 @@ export default function HomePage() {
                   style={{
                     fontFamily: 'var(--font-display)',
                     fontSize: 'clamp(1.1rem, 2.5vw, 1.75rem)',
-                    fontWeight: 600,
-                    color: idx === 0 ? '#1b1c1c' : '#747878',
+                    fontWeight: 700,
+                    color: idx === 0 ? '#0e0f0f' : '#1b1c1c',
                     animation: `fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) ${0.6 + idx * 0.15}s both`,
                   }}
                 >
@@ -340,10 +340,11 @@ export default function HomePage() {
             <p
               style={{
                 fontFamily: 'var(--font-body)',
-                fontSize: 'clamp(0.9rem, 1.4vw, 1.05rem)',
-                lineHeight: 1.8,
-                color: '#444748',
-                maxWidth: '600px',
+                fontSize: 'clamp(0.95rem, 1.5vw, 1.1rem)',
+                lineHeight: 1.85,
+                color: '#1b1c1c',
+                fontWeight: 500,
+                maxWidth: '620px',
                 marginBottom: '2.5rem',
                 animation: 'fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s both',
                 textAlign: 'center',
@@ -372,11 +373,11 @@ export default function HomePage() {
                     className="hover-underline"
                     style={{
                       fontFamily: 'var(--font-body)',
-                      fontSize: '10px',
-                      letterSpacing: '0.2em',
+                      fontSize: '10.5px',
+                      letterSpacing: '0.22em',
                       textTransform: 'uppercase',
-                      fontWeight: 600,
-                      color: '#1b1c1c',
+                      fontWeight: 700,
+                      color: '#0e0f0f',
                       textDecoration: 'none',
                       transition: 'color 160ms ease',
                       display: 'block',
@@ -403,78 +404,104 @@ export default function HomePage() {
               alignItems: 'center',
               justifyContent: 'center',
               width: '100%',
-              minHeight: isMobile ? '320px' : '560px',
+              minHeight: isMobile ? '340px' : '580px',
               pointerEvents: 'none',
             }}
           >
             <Magnetic range={45} strength={0.15}>
               <div
-                className="circular-frame"
-                onMouseMove={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const x = ((e.clientX - rect.left) / rect.width) * 100;
-                  const y = ((e.clientY - rect.top) / rect.height) * 100;
-                  setCoords({ x, y });
-                }}
-                onMouseLeave={() => setCoords({ x: 50, y: 50 })}
                 style={{
-                  width: isMobile ? '260px' : '380px',
-                  height: isMobile ? '260px' : '380px',
-                  border: '2px solid #1b1c1c',
                   position: 'relative',
-                  backgroundColor: '#e8e5e0',
+                  width: isMobile ? '276px' : '396px',
+                  height: isMobile ? '276px' : '396px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   pointerEvents: 'auto',
-                  cursor: 'pointer',
-                  boxShadow: '0 20px 45px rgba(27, 28, 28, 0.12)',
-                  overflow: 'hidden',
                 }}
               >
-                <Image
-                  src="/images/profile.jpg"
-                  alt="Divy Yadav Portrait"
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 260px, 380px"
-                  style={{
-                    objectFit: 'cover',
-                    zIndex: 1,
-                  }}
-                />
-                
-                {/* Dynamic Mouse-tracking Glass Highlight Overlay */}
+                {/* Outer Terracotta guidelines rotating dashed technical ring */}
                 <div
+                  className="circular-frame animate-spin"
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    background: `radial-gradient(circle at ${coords.x}% ${coords.y}%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.15) 100%)`,
-                    mixBlendMode: 'overlay',
+                    border: '1px dashed #B5502D',
+                    opacity: 0.8,
                     pointerEvents: 'none',
-                    zIndex: 2,
-                    transition: 'background 0.05s ease-out',
+                    animationDuration: '35s',
                   }}
                 />
 
-                {/* Glass Lens Internal Shadow Rim */}
+                {/* Main Circular Profile Photo Glass Container */}
                 <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    boxShadow: 'inset 0 0 25px rgba(255, 255, 255, 0.35)',
-                    pointerEvents: 'none',
-                    zIndex: 3,
+                  className="circular-frame"
+                  onMouseMove={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    setCoords({ x, y });
                   }}
-                />
+                  onMouseLeave={() => setCoords({ x: 50, y: 50 })}
+                  style={{
+                    width: isMobile ? '260px' : '380px',
+                    height: isMobile ? '260px' : '380px',
+                    border: '2px solid #1b1c1c',
+                    position: 'relative',
+                    backgroundColor: '#e8e5e0',
+                    boxShadow: '0 20px 45px rgba(27, 28, 28, 0.15)',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Image
+                    src="/images/profile.jpg"
+                    alt="Divy Yadav Portrait"
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 260px, 380px"
+                    style={{
+                      objectFit: 'cover',
+                      zIndex: 1,
+                    }}
+                  />
+                  
+                  {/* Dynamic Mouse-tracking Glass Highlight Overlay */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: `radial-gradient(circle at ${coords.x}% ${coords.y}%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.15) 100%)`,
+                      mixBlendMode: 'overlay',
+                      pointerEvents: 'none',
+                      zIndex: 2,
+                      transition: 'background 0.05s ease-out',
+                    }}
+                  />
+
+                  {/* Glass Lens Internal Shadow Rim */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      boxShadow: 'inset 0 0 25px rgba(255, 255, 255, 0.35)',
+                      pointerEvents: 'none',
+                      zIndex: 3,
+                    }}
+                  />
+                </div>
               </div>
             </Magnetic>
 
-            {/* Editorial greeting text */}
+            {/* Bolder, highly professional uppercase Swiss-style subtitle */}
             <p
               style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: isMobile ? '1.15rem' : '1.35rem',
-                fontStyle: 'italic',
+                fontFamily: 'var(--font-body)',
+                fontSize: isMobile ? '11px' : '12px',
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                fontWeight: 700,
                 color: '#B5502D',
-                marginTop: '1.5rem',
+                marginTop: '1.75rem',
                 textAlign: 'center',
                 pointerEvents: 'auto',
               }}

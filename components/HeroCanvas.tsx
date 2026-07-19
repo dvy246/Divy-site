@@ -378,10 +378,10 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
     rotationSpeedZ: 0.0,
     scale: 1.0,
 
-    roughness: 0.08,
-    metalness: 0.92,
-    transmission: 0.35,
-    iridescence: 0.8,
+    roughness: 0.15,
+    metalness: 0.15,
+    transmission: 0.85,
+    iridescence: 0.4,
 
     inkWireframeOpacity: 0.15,
     redlineWireframeOpacity: 0.1,
