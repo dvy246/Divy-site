@@ -394,18 +394,39 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* 3D placeholder layout spacer - pointerEvents: none lets OrbitControls interaction fall through */}
+          {/* Cleanly framed editorial profile picture */}
           <div
             style={{
               display: 'flex',
-              justifyContent: 'center',
               alignItems: 'center',
-              minHeight: isMobile ? '280px' : '520px',
+              justifyContent: 'center',
               width: '100%',
-              maxWidth: '800px',
+              minHeight: isMobile ? '280px' : '520px',
               pointerEvents: 'none',
             }}
-          />
+          >
+            <div
+              style={{
+                width: isMobile ? '260px' : '380px',
+                height: isMobile ? '260px' : '380px',
+                border: '1.5px solid #1b1c1c',
+                position: 'relative',
+                backgroundColor: '#e8e5e0',
+                pointerEvents: 'auto',
+              }}
+            >
+              <Image
+                src="/images/profile.jpg"
+                alt="Divy Yadav Portrait"
+                fill
+                priority
+                sizes="(max-width: 768px) 260px, 380px"
+                style={{
+                  objectFit: 'cover',
+                }}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Scroll indicator */}
