@@ -49,6 +49,61 @@ function AnimatedLights() {
   );
 }
 
+/* === Camera Scrollytelling Path Controller === */
+function CameraController({ isMobile }: { isMobile: boolean }) {
+  const { camera } = useThree();
+
+  useFrame(() => {
+    const scrollY = typeof window !== 'undefined' ? window.scrollY : 0;
+    const winHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+    
+    // Scale progress between 0 and 1 over 2.2 viewport heights
+    const scrollyProgress = Math.min(1.0, Math.max(0.0, scrollY / (winHeight * 2.2)));
+
+    // Camera Reveal Path: Zoom in slightly, shift X/Y, then return to center
+    let targetX = 0;
+    let targetY = 0;
+    let targetZ = 5.0;
+
+    if (!isMobile) {
+      if (scrollyProgress < 0.35) {
+        const alpha = scrollyProgress / 0.35;
+        targetX = THREE.MathUtils.lerp(0.0, 0.2, alpha);
+        targetY = THREE.MathUtils.lerp(0.0, 0.15, alpha);
+        targetZ = THREE.MathUtils.lerp(5.0, 4.4, alpha);
+      } else if (scrollyProgress < 0.7) {
+        const alpha = (scrollyProgress - 0.35) / 0.35;
+        targetX = THREE.MathUtils.lerp(0.2, -0.25, alpha);
+        targetY = THREE.MathUtils.lerp(0.15, -0.1, alpha);
+        targetZ = THREE.MathUtils.lerp(4.4, 3.9, alpha);
+      } else {
+        const alpha = (scrollyProgress - 0.7) / 0.3;
+        targetX = THREE.MathUtils.lerp(-0.25, 0.0, alpha);
+        targetY = THREE.MathUtils.lerp(-0.1, 0.0, alpha);
+        targetZ = THREE.MathUtils.lerp(3.9, 5.0, alpha);
+      }
+    } else {
+      // Mobile paths are vertical only to fit narrow viewport widths
+      if (scrollyProgress < 0.35) {
+        const alpha = scrollyProgress / 0.35;
+        targetZ = THREE.MathUtils.lerp(5.0, 4.5, alpha);
+      } else if (scrollyProgress < 0.7) {
+        const alpha = (scrollyProgress - 0.35) / 0.35;
+        targetZ = THREE.MathUtils.lerp(4.5, 4.0, alpha);
+      } else {
+        const alpha = (scrollyProgress - 0.7) / 0.3;
+        targetZ = THREE.MathUtils.lerp(4.0, 5.0, alpha);
+      }
+    }
+
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetX, 0.08);
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, 0.08);
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.08);
+  });
+
+  return null;
+}
+
 interface AccentProps {
   baseX: number;
   baseY: number;
@@ -111,7 +166,9 @@ function AccentElement({
     // 1. Calculate scroll parallax
     const scrollY = typeof window !== 'undefined' ? window.scrollY : 0;
     const winHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
-    const scrollOffset = (scrollY / winHeight) * state.viewport.height;
+    
+    // Scale progress between 0 and 1 over 2.2 viewport heights
+    const scrollyProgress = Math.min(1.0, Math.max(0.0, scrollY / (winHeight * 2.2)));
 
     // 2. Lissajous organic float drift (multi-frequency curves for fluid non-repeating paths)
     const elapsed = state.clock.getElapsedTime() + timeOffset.current;
@@ -144,11 +201,47 @@ function AccentElement({
       });
       
       // Interpolate main group position during split so they stay centered as they drift
-      const targetY = baseY + scrollOffset * parallax + floatY;
-      const targetX = baseX + floatX;
+      let currentBaseX = baseX;
+      let currentBaseY = baseY;
+      let currentBaseZ = baseZ;
+
+      if (!isMobile) {
+        if (scrollyProgress < 0.35) {
+          const alpha = scrollyProgress / 0.35;
+          const side = baseX > 0 ? 1 : -1;
+          currentBaseX = THREE.MathUtils.lerp(baseX, side * state.viewport.width * 0.24, alpha);
+          currentBaseY = THREE.MathUtils.lerp(baseY, 0.0, alpha);
+        } else if (scrollyProgress < 0.7) {
+          const alpha = (scrollyProgress - 0.35) / 0.35;
+          const side = baseX > 0 ? 1 : -1;
+          currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.24, side * state.viewport.width * 0.21, alpha);
+          currentBaseY = THREE.MathUtils.lerp(0.0, -0.2, alpha);
+          currentBaseZ = THREE.MathUtils.lerp(baseZ, baseZ + 0.3, alpha);
+        } else {
+          const alpha = (scrollyProgress - 0.7) / 0.3;
+          const side = baseX > 0 ? 1 : -1;
+          currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.21, side * state.viewport.width * 0.35, alpha);
+          currentBaseY = THREE.MathUtils.lerp(-0.2, 0.0, alpha);
+          currentBaseZ = THREE.MathUtils.lerp(baseZ + 0.3, baseZ, alpha);
+        }
+      } else {
+        if (scrollyProgress < 0.35) {
+          const alpha = scrollyProgress / 0.35;
+          currentBaseY = THREE.MathUtils.lerp(baseY, 1.8, alpha);
+        } else if (scrollyProgress < 0.7) {
+          const alpha = (scrollyProgress - 0.35) / 0.35;
+          currentBaseY = THREE.MathUtils.lerp(1.8, 1.2, alpha);
+        } else {
+          const alpha = (scrollyProgress - 0.7) / 0.3;
+          currentBaseY = THREE.MathUtils.lerp(1.2, 2.2, alpha);
+        }
+      }
+
+      const targetY = currentBaseY + floatY;
+      const targetX = currentBaseX + floatX;
       groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.08);
       groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.08);
-      groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, baseZ, 0.08);
+      groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, currentBaseZ, 0.08);
 
       if (splitTime.current > 7.0) {
         setIsSplit(false);
@@ -194,13 +287,53 @@ function AccentElement({
       }
     }
 
-    // Interpolate target positions (scrolling up relative to camera)
-    const targetY = baseY + scrollOffset * parallax + floatY;
-    const targetX = baseX + floatX;
+    // Coordinate interpolation beats
+    let currentBaseX = baseX;
+    let currentBaseY = baseY;
+    let currentBaseZ = baseZ;
+
+    if (!isMobile) {
+      if (scrollyProgress < 0.35) {
+        // Interpolate between Slide 1 and Slide 2
+        const alpha = scrollyProgress / 0.35;
+        const side = baseX > 0 ? 1 : -1;
+        currentBaseX = THREE.MathUtils.lerp(baseX, side * state.viewport.width * 0.24, alpha);
+        currentBaseY = THREE.MathUtils.lerp(baseY, 0.0, alpha);
+      } else if (scrollyProgress < 0.7) {
+        // Interpolate between Slide 2 and Slide 3
+        const alpha = (scrollyProgress - 0.35) / 0.35;
+        const side = baseX > 0 ? 1 : -1;
+        currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.24, side * state.viewport.width * 0.21, alpha);
+        currentBaseY = THREE.MathUtils.lerp(0.0, -0.2, alpha);
+        currentBaseZ = THREE.MathUtils.lerp(baseZ, baseZ + 0.3, alpha);
+      } else {
+        // Interpolate to Slide 4 (portrait)
+        const alpha = (scrollyProgress - 0.7) / 0.3;
+        const side = baseX > 0 ? 1 : -1;
+        currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.21, side * state.viewport.width * 0.35, alpha);
+        currentBaseY = THREE.MathUtils.lerp(-0.2, 0.0, alpha);
+        currentBaseZ = THREE.MathUtils.lerp(baseZ + 0.3, baseZ, alpha);
+      }
+    } else {
+      if (scrollyProgress < 0.35) {
+        const alpha = scrollyProgress / 0.35;
+        currentBaseY = THREE.MathUtils.lerp(baseY, 1.8, alpha);
+      } else if (scrollyProgress < 0.7) {
+        const alpha = (scrollyProgress - 0.35) / 0.35;
+        currentBaseY = THREE.MathUtils.lerp(1.8, 1.2, alpha);
+      } else {
+        const alpha = (scrollyProgress - 0.7) / 0.3;
+        currentBaseY = THREE.MathUtils.lerp(1.2, 2.2, alpha);
+      }
+    }
+
+    // Interpolate target positions
+    const targetY = currentBaseY + floatY;
+    const targetX = currentBaseX + floatX;
 
     meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.08);
     meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.08);
-    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, baseZ, 0.08);
+    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, currentBaseZ, 0.08);
 
     // 4. Calm constant rotation
     meshRef.current.rotation.x += delta * rotSpeed[0] * 0.25;
@@ -287,6 +420,7 @@ function AccentElement({
 function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
   const { viewport } = useThree();
   const mouse = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
+  const shadowRefs = useRef<THREE.Group[]>([]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -312,7 +446,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           baseY: 2.2, // high up, completely above text
           baseZ: 0.5,
           scale: [0.2, 0.33, 0.2] as [number, number, number], // Stretched teardrop
-          parallax: 0.35, // Slow scroll rate so they drift next to profile picture as it scrolls into view
+          parallax: 0.35,
           floatSpeed: 0.9,
           floatAmp: 0.18,
           rotSpeed: [0.1, 0.2, 0.05] as [number, number, number],
@@ -322,7 +456,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           baseY: 2.2, // high up, completely above text
           baseZ: 0.5,
           scale: [0.2, 0.33, 0.2] as [number, number, number], // Stretched teardrop
-          parallax: 0.38, // Slow scroll rate so they drift next to profile picture as it scrolls into view
+          parallax: 0.38,
           floatSpeed: 1.15,
           floatAmp: 0.18,
           rotSpeed: [-0.08, 0.18, 0.07] as [number, number, number],
@@ -334,7 +468,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           baseY: 0.1,
           baseZ: 0.5,
           scale: [0.34, 0.56, 0.34] as [number, number, number], // stretched premium teardrop
-          parallax: 0.35, // Slower parallax scroll factor so drops float next to profile picture when scrolled
+          parallax: 0.35,
           floatSpeed: 1.0,
           floatAmp: 0.28,
           rotSpeed: [0.12, 0.22, 0.07] as [number, number, number],
@@ -344,12 +478,60 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           baseY: 0.1,
           baseZ: 0.5,
           scale: [0.34, 0.56, 0.34] as [number, number, number], // stretched premium teardrop
-          parallax: 0.38, // Slower parallax scroll factor so drops float next to profile picture when scrolled
+          parallax: 0.38,
           floatSpeed: 1.25,
           floatAmp: 0.28,
           rotSpeed: [0.15, -0.25, 0.05] as [number, number, number],
         },
       ];
+
+  // Dynamic parallax updates for contact shadows projecting correctly underneath drops along path
+  useFrame((state) => {
+    const scrollY = typeof window !== 'undefined' ? window.scrollY : 0;
+    const winHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+    const scrollyProgress = Math.min(1.0, Math.max(0.0, scrollY / (winHeight * 2.2)));
+
+    accentsList.forEach((item, idx) => {
+      const shadow = shadowRefs.current[idx];
+      if (shadow) {
+        let currentBaseX = item.baseX;
+        let currentBaseY = item.baseY;
+
+        if (!isMobile) {
+          if (scrollyProgress < 0.35) {
+            const alpha = scrollyProgress / 0.35;
+            const side = item.baseX > 0 ? 1 : -1;
+            currentBaseX = THREE.MathUtils.lerp(item.baseX, side * state.viewport.width * 0.24, alpha);
+            currentBaseY = THREE.MathUtils.lerp(item.baseY, 0.0, alpha);
+          } else if (scrollyProgress < 0.7) {
+            const alpha = (scrollyProgress - 0.35) / 0.35;
+            const side = item.baseX > 0 ? 1 : -1;
+            currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.24, side * state.viewport.width * 0.21, alpha);
+            currentBaseY = THREE.MathUtils.lerp(0.0, -0.2, alpha);
+          } else {
+            const alpha = (scrollyProgress - 0.7) / 0.3;
+            const side = item.baseX > 0 ? 1 : -1;
+            currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.21, side * state.viewport.width * 0.35, alpha);
+            currentBaseY = THREE.MathUtils.lerp(-0.2, 0.0, alpha);
+          }
+        } else {
+          if (scrollyProgress < 0.35) {
+            const alpha = scrollyProgress / 0.35;
+            currentBaseY = THREE.MathUtils.lerp(item.baseY, 1.8, alpha);
+          } else if (scrollyProgress < 0.7) {
+            const alpha = (scrollyProgress - 0.35) / 0.35;
+            currentBaseY = THREE.MathUtils.lerp(1.8, 1.2, alpha);
+          } else {
+            const alpha = (scrollyProgress - 0.7) / 0.3;
+            currentBaseY = THREE.MathUtils.lerp(1.2, 2.2, alpha);
+          }
+        }
+
+        shadow.position.x = THREE.MathUtils.lerp(shadow.position.x, currentBaseX, 0.08);
+        shadow.position.y = THREE.MathUtils.lerp(shadow.position.y, currentBaseY - 1.6, 0.08);
+      }
+    });
+  });
 
   return (
     <group>
@@ -377,16 +559,17 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
         />
       ))}
 
-      {/* 3. Soft Contact Shadows below each crystal space */}
+      {/* 3. Soft Contact Shadows dynamically following droplets */}
       {accentsList.map((item, idx) => (
-        <ContactShadows
-          key={`shadow-${idx}`}
-          position={[item.baseX, item.baseY - 1.6, item.baseZ - 1.0]}
-          opacity={isMobile ? 0.25 : 0.4}
-          scale={isMobile ? 3.0 : 4.5}
-          blur={isMobile ? 1.5 : 2.2}
-          far={3.0}
-        />
+        <group key={`shadow-grp-${idx}`} ref={(el) => { if (el) shadowRefs.current[idx] = el; }}>
+          <ContactShadows
+            position={[0, 0, item.baseZ - 1.0]}
+            opacity={isMobile ? 0.25 : 0.4}
+            scale={isMobile ? 3.0 : 4.5}
+            blur={isMobile ? 1.5 : 2.2}
+            far={3.0}
+          />
+        </group>
       ))}
     </group>
   );
@@ -480,6 +663,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
           {/* Studio HDRI environment for reflections */}
           <Environment preset="studio" />
 
+          <CameraController isMobile={isMobile} />
           <FloatingGeometry isMobile={isMobile} />
         </Canvas>
       )}

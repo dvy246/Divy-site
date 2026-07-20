@@ -192,7 +192,7 @@ export default function HomePage() {
       gsap.registerPlugin(ScrollTrigger);
 
       ctx = gsap.context(() => {
-        // Parallax scroll on marquee text strip or background elements if needed
+        // Parallax scroll on marquee text strip
         gsap.to('.marquee-inner', {
           xPercent: -15,
           ease: 'none',
@@ -203,6 +203,23 @@ export default function HomePage() {
             scrub: 0.8,
           }
         });
+
+        // Apple-level Scrollytelling Reveal Timeline
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '.scrollytelling-trigger',
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 0.6,
+          }
+        });
+
+        tl.to('.scrolly-slide-1', { opacity: 0, y: -50, ease: 'power2.inOut' }, 0.12)
+          .fromTo('.scrolly-slide-2', { opacity: 0, y: 50 }, { opacity: 1, y: 0, ease: 'power2.out' }, 0.22)
+          .to('.scrolly-slide-2', { opacity: 0, y: -50, ease: 'power2.inOut' }, 0.45)
+          .fromTo('.scrolly-slide-3', { opacity: 0, y: 50 }, { opacity: 1, y: 0, ease: 'power2.out' }, 0.52)
+          .to('.scrolly-slide-3', { opacity: 0, y: -50, ease: 'power2.inOut' }, 0.72)
+          .fromTo('.scrolly-slide-4', { opacity: 0, y: 50 }, { opacity: 1, y: 0, ease: 'power2.out' }, 0.8);
       });
     };
     init();
@@ -212,6 +229,20 @@ export default function HomePage() {
     };
   }, [mounted]);
 
+  // Keep a local scrollProgress state for auxiliary overlays if needed
+  const [scrollProgress, setScrollProgress] = useState(0);
+  useEffect(() => {
+    if (!mounted) return;
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const winHeight = window.innerHeight;
+      const progress = Math.min(1.0, Math.max(0.0, scrollY / (winHeight * 2.2)));
+      setScrollProgress(progress);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [mounted]);
+
   if (!mounted) return null;
 
   return (
@@ -219,56 +250,54 @@ export default function HomePage() {
       <ScrollProgress />
       {/* Faceted 3D Glass Crystal Element - Visibility Gated */}
       <HeroCanvas isMobile={isMobile} />
-      {/* --- HERO --- */}
-      <section
-        aria-label="Hero"
+
+      {/* --- SCROLLYTELLING CONTAINER --- */}
+      <div
+        className="scrollytelling-trigger"
         style={{
-          minHeight: '100svh',
-          display: 'flex',
-          alignItems: 'center',
-          padding: isMobile ? '8rem 5vw 5rem' : '11.5rem 5vw 7.5rem',
           position: 'relative',
-          overflow: 'hidden',
-          zIndex: 10,
-          pointerEvents: 'none',
+          height: '350vh', // 3.5 viewports of scroll space
         }}
       >
-        {/* Background editorial line */}
-        <div
-          aria-hidden
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: 0,
-            right: 0,
-            height: '1px',
-            background: 'rgba(27,28,28,0.05)',
-            transform: 'translateY(-50%)',
-            pointerEvents: 'none',
-          }}
-        />
-
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
+            position: 'sticky',
+            top: 0,
+            height: '100svh',
             width: '100%',
-            gap: isMobile ? '2.5rem' : '4.5rem',
-            zIndex: 2,
-            pointerEvents: 'none',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          {/* EDITORIAL TEXT */}
+          {/* Background editorial line */}
           <div
+            aria-hidden
             style={{
+              position: 'absolute',
+              top: '50%',
+              left: 0,
+              right: 0,
+              height: '1px',
+              background: 'rgba(27,28,28,0.05)',
+              transform: 'translateY(-50%)',
+              pointerEvents: 'none',
+            }}
+          />
+
+          {/* Slide 1: The Identity (Divy Yadav) */}
+          <div
+            className="scrolly-slide-1"
+            style={{
+              position: 'absolute',
+              inset: 0,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              width: '100%',
-              maxWidth: '800px',
-              pointerEvents: 'auto',
+              justifyContent: 'center',
+              padding: '0 5vw',
+              zIndex: 2,
             }}
           >
             {/* Label */}
@@ -401,309 +430,95 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Circular Glass Lens Profile Portrait */}
+          {/* Slide 2: The Craft */}
           <div
+            className="scrolly-slide-2"
             style={{
+              position: 'absolute',
+              inset: 0,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '100%',
-              minHeight: isMobile ? '340px' : '580px',
-              pointerEvents: 'none',
+              padding: '0 5vw',
+              opacity: 0,
+              transform: 'translateY(40px)',
+              zIndex: 2,
             }}
           >
-            <Magnetic range={45} strength={0.15}>
-              <div
-                style={{
-                  position: 'relative',
-                  width: isMobile ? '276px' : '396px',
-                  height: isMobile ? '276px' : '396px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  pointerEvents: 'auto',
-                }}
-              >
-                {/* Outer Terracotta guidelines rotating dashed technical ring */}
-                <div
-                  className="circular-frame animate-spin"
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    border: '1px dashed #B5502D',
-                    opacity: revealState === 'revealing' ? 1.0 : 0.8,
-                    pointerEvents: 'none',
-                    animationDuration: revealState === 'revealing' ? '7s' : '35s',
-                    boxShadow: revealState === 'revealing' ? '0 0 30px rgba(181, 80, 45, 0.4)' : 'none',
-                    transition: 'opacity 0.6s ease, box-shadow 0.6s ease',
-                  }}
-                />
-
-                {/* Main Circular Profile Profile Photo Glass Container */}
-                <div
-                  className="circular-frame"
-                  onMouseMove={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    const x = ((e.clientX - rect.left) / rect.width) * 100;
-                    const y = ((e.clientY - rect.top) / rect.height) * 100;
-                    setCoords({ x, y });
-                  }}
-                  onMouseLeave={() => setCoords({ x: 50, y: 50 })}
-                  style={{
-                    width: isMobile ? '260px' : '380px',
-                    height: isMobile ? '260px' : '380px',
-                    border: '2px solid #1b1c1c',
-                    position: 'relative',
-                    backgroundColor: '#e8e5e0',
-                    boxShadow: '0 20px 45px rgba(27, 28, 28, 0.15)',
-                    overflow: 'hidden',
-                    zIndex: 2,
-                  }}
-                >
-                  <Image
-                    src="/images/profile.jpg"
-                    alt="Divy Yadav Portrait"
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 260px, 380px"
-                    style={{
-                      objectFit: 'cover',
-                      zIndex: 1,
-                      filter: revealState === 'revealing' ? 'blur(6px) contrast(1.15) brightness(1.08)' : 'none',
-                      opacity: revealState === 'revealing' ? 0.78 : 1,
-                      transition: 'filter 2.2s cubic-bezier(0.16,1,0.3,1), opacity 2.2s cubic-bezier(0.16,1,0.3,1)',
-                    }}
-                  />
-                  
-                  {/* Gold/Refraction emerging energy overlay */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'radial-gradient(circle, rgba(223, 180, 108, 0.45) 0%, rgba(181, 80, 45, 0.1) 60%, transparent 100%)',
-                      opacity: revealState === 'revealing' ? 1 : 0,
-                      mixBlendMode: 'color-dodge',
-                      pointerEvents: 'none',
-                      zIndex: 3,
-                      transition: 'opacity 1.5s cubic-bezier(0.16,1,0.3,1)',
-                    }}
-                  />
-
-                  {/* Dynamic Mouse-tracking Glass Highlight Overlay */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: `radial-gradient(circle at ${coords.x}% ${coords.y}%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.15) 100%)`,
-                      mixBlendMode: 'overlay',
-                      pointerEvents: 'none',
-                      zIndex: 2,
-                      transition: 'background 0.05s ease-out',
-                    }}
-                  />
-
-                  {/* Glass Lens Internal Shadow Rim */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      boxShadow: 'inset 0 0 25px rgba(255, 255, 255, 0.35)',
-                      pointerEvents: 'none',
-                      zIndex: 3,
-                    }}
-                  />
-                </div>
-              </div>
-            </Magnetic>
-
-            {/* Hand-sketched Subtitle greeting placed cleanly under the photo container */}
-            <p
-              style={{
-                fontFamily: 'var(--font-sketch)',
-                fontSize: isMobile ? '1.8rem' : '2.4rem',
-                color: '#B5502D',
-                marginTop: '1.75rem',
-                textAlign: 'center',
-                pointerEvents: 'auto',
-                transform: 'rotate(-1.5deg)',
-                animation: 'fadeIn 0.8s ease 1.2s both',
-              }}
-            >
-              Hey, I am Divy
+            <p className="label-caps" style={{ marginBottom: '1.5rem' }}>THE CRAFT</p>
+            <h2 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(1.8rem, 4.5vw, 3.5rem)',
+              fontWeight: 700,
+              color: '#1b1c1c',
+              lineHeight: 1.15,
+              marginBottom: '1.5rem',
+              textAlign: 'center',
+              maxWidth: '820px',
+            }}>
+              Architecting High-Throughput{' '}
+              <span style={{ fontStyle: 'italic', color: '#B5502D' }}>
+                AI Core Systems
+              </span>
+            </h2>
+            <p style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: 'clamp(1rem, 1.6vw, 1.2rem)',
+              lineHeight: 1.85,
+              color: '#444748',
+              maxWidth: '680px',
+              textAlign: 'center',
+              fontWeight: 500,
+            }}>
+              Building low-latency RAG architectures, agentic pipelines, and custom LLM microservices. I translate complex research substrates into production-ready software systems built for scaling communication.
             </p>
           </div>
-        </div>
 
-        {/* Scroll indicator */}
-        <div
-          aria-hidden
-          style={{
-            position: 'absolute',
-            bottom: '2.5rem',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.5rem',
-            animation: 'fadeIn 1s ease 1.5s both',
-          }}
-        >
-          <span
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '9px',
-              letterSpacing: '0.25em',
-              textTransform: 'uppercase',
-              color: '#747878',
-              fontWeight: 600,
-            }}
-          >
-            Scroll
-          </span>
+          {/* Slide 3: The Metrics */}
           <div
+            className="scrolly-slide-3"
             style={{
-              width: '1px',
-              height: '30px',
-              position: 'relative',
-              backgroundColor: 'rgba(27,28,28,0.15)',
-              overflow: 'hidden',
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0 5vw',
+              opacity: 0,
+              transform: 'translateY(40px)',
+              zIndex: 2,
             }}
           >
+            <p className="label-caps" style={{ marginBottom: '2.5rem' }}>METRICS OF IMPACT</p>
             <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                backgroundColor: '#1b1c1c',
-                animation: 'scrollPulse 2.2s cubic-bezier(0.16,1,0.3,1) 2s infinite',
-                transformOrigin: 'top center',
-                height: '100%',
-              }}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* --- MARQUEE --- */}
-      <MarqueeStrip inverted />
-
-      {/* --- ABOUT / STATS --- */}
-      <section
-        ref={bioRef}
-        className="bio-section"
-        style={{
-          padding: '7rem 5vw',
-          perspective: '1200px',
-          overflow: 'visible',
-          position: 'relative',
-          zIndex: 10,
-          pointerEvents: 'none',
-        }}
-      >
-        <ScrollReveal3D>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-              gap: '5rem',
-              alignItems: 'start',
-              pointerEvents: 'auto',
-            }}
-          >
-            {/* Left text */}
-            <div>
-              <p className="label-caps" style={{ marginBottom: '1rem' }}>About</p>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)',
-                  fontWeight: 700,
-                  color: '#1b1c1c',
-                  lineHeight: 1.15,
-                  marginBottom: '1.75rem',
-                }}
-              >
-                Building at the intersection of{' '}
-                <span style={{ fontStyle: 'italic', color: '#B5502D' }}>
-                  AI and communication
-                </span>
-              </h2>
-              <p
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '1rem',
-                  lineHeight: 1.85,
-                  color: '#444748',
-                  marginBottom: '2.5rem',
-                }}
-              >
-                From RAG pipelines to agentic systems - I build and write about the
-                technical substrate of modern AI applications. Every project is a proof
-                of concept; every article is a blueprint that 2,000+ engineers read weekly.
-              </p>
-              <Magnetic range={36} strength={0.3}>
-                <Link
-                  href="/articles"
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '10px',
-                    letterSpacing: '0.2em',
-                    textTransform: 'uppercase',
-                    fontWeight: 600,
-                    color: '#1b1c1c',
-                    borderBottom: '1px solid #1b1c1c',
-                    paddingBottom: '3px',
-                    transition: 'color 160ms ease, border-color 160ms ease',
-                    display: 'inline-block',
-                  }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget;
-                    el.style.color = '#B5502D';
-                    el.style.borderColor = '#B5502D';
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget;
-                    el.style.color = '#1b1c1c';
-                    el.style.borderColor = '#1b1c1c';
-                  }}
-                >
-                  Read my writing →
-                </Link>
-              </Magnetic>
-            </div>
-
-            {/* Right stats grid */}
-            <div
-              className="stats-grid"
-              ref={statsRef}
               style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '1px',
-                backgroundColor: '#1b1c1c',
-                border: '1px solid #1b1c1c',
+                gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
+                gap: '2rem',
+                width: '100%',
+                maxWidth: '900px',
               }}
             >
               {STATS.map((stat, i) => (
                 <div
                   key={stat.label}
-                  className="stat-item"
                   style={{
-                    backgroundColor: i % 2 === 0 ? '#F5F5DC' : '#E8E8D0',
-                    padding: '2.5rem 2rem',
+                    backgroundColor: i % 2 === 0 ? 'rgba(245, 245, 220, 0.45)' : 'rgba(232, 232, 208, 0.45)',
+                    border: '1px solid #1b1c1c',
+                    padding: '2.5rem 1.5rem',
                     textAlign: 'center',
+                    backdropFilter: 'blur(8px)',
                   }}
                 >
                   <p
                     style={{
                       fontFamily: 'var(--font-display)',
-                      fontSize: 'clamp(2rem, 4vw, 3rem)',
+                      fontSize: 'clamp(2.2rem, 3.5vw, 3.2rem)',
                       fontWeight: 700,
-                      color: '#1b1c1c',
-                      lineHeight: 1,
+                      color: '#B5502D',
+                      lineHeight: 1.1,
                       marginBottom: '0.5rem',
                     }}
                   >
@@ -715,7 +530,7 @@ export default function HomePage() {
                       fontSize: '10px',
                       letterSpacing: '0.15em',
                       textTransform: 'uppercase',
-                      color: '#747878',
+                      color: '#1b1c1c',
                       fontWeight: 600,
                     }}
                   >
@@ -724,6 +539,279 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Slide 4: Circular Portrait Reveal */}
+          <div
+            className="scrolly-slide-4"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0 5vw',
+              opacity: 0,
+              transform: 'translateY(40px)',
+              zIndex: 2,
+            }}
+          >
+            <div
+              style={{
+                position: 'relative',
+                width: isMobile ? '276px' : '396px',
+                height: isMobile ? '276px' : '396px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {/* Outer Terracotta guidelines rotating dashed technical ring */}
+              <div
+                className="circular-frame animate-spin"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  border: '1px dashed #B5502D',
+                  opacity: 0.8,
+                  pointerEvents: 'none',
+                  animationDuration: '35s',
+                }}
+              />
+
+              {/* Main Circular Profile Photo */}
+              <div
+                className="circular-frame"
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = ((e.clientX - rect.left) / rect.width) * 100;
+                  const y = ((e.clientY - rect.top) / rect.height) * 100;
+                  setCoords({ x, y });
+                }}
+                onMouseLeave={() => setCoords({ x: 50, y: 50 })}
+                style={{
+                  width: isMobile ? '260px' : '380px',
+                  height: isMobile ? '260px' : '380px',
+                  border: '2px solid #1b1c1c',
+                  position: 'relative',
+                  backgroundColor: '#e8e5e0',
+                  boxShadow: '0 20px 45px rgba(27, 28, 28, 0.15)',
+                  overflow: 'hidden',
+                  zIndex: 2,
+                }}
+              >
+                <Image
+                  src="/images/profile.jpg"
+                  alt="Divy Yadav Portrait"
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 260px, 380px"
+                  style={{
+                    objectFit: 'cover',
+                    zIndex: 1,
+                    filter: revealState === 'revealing' ? 'blur(6px) contrast(1.15) brightness(1.08)' : 'none',
+                    opacity: revealState === 'revealing' ? 0.78 : 1,
+                    transition: 'filter 2.2s cubic-bezier(0.16,1,0.3,1), opacity 2.2s cubic-bezier(0.16,1,0.3,1)',
+                  }}
+                />
+                
+                {/* Gold/Refraction emerging energy overlay */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'radial-gradient(circle, rgba(223, 180, 108, 0.45) 0%, rgba(181, 80, 45, 0.1) 60%, transparent 100%)',
+                    opacity: revealState === 'revealing' ? 1 : 0,
+                    mixBlendMode: 'color-dodge',
+                    pointerEvents: 'none',
+                    zIndex: 3,
+                    transition: 'opacity 1.5s cubic-bezier(0.16,1,0.3,1)',
+                  }}
+                />
+
+                {/* Dynamic Mouse-tracking Glass Highlight Overlay */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: `radial-gradient(circle at ${coords.x}% ${coords.y}%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.15) 100%)`,
+                    mixBlendMode: 'overlay',
+                    pointerEvents: 'none',
+                    zIndex: 2,
+                    transition: 'background 0.05s ease-out',
+                  }}
+                />
+
+                {/* Glass Lens Internal Shadow Rim */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    boxShadow: 'inset 0 0 25px rgba(255, 255, 255, 0.35)',
+                    pointerEvents: 'none',
+                    zIndex: 3,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Hand-sketched Subtitle greeting */}
+            <p
+              style={{
+                fontFamily: 'var(--font-sketch)',
+                fontSize: isMobile ? '1.8rem' : '2.4rem',
+                color: '#B5502D',
+                marginTop: '1.75rem',
+                textAlign: 'center',
+                transform: 'rotate(-1.5deg)',
+                animation: 'fadeIn 0.8s ease 1.2s both',
+              }}
+            >
+              Hey, I am Divy
+            </p>
+          </div>
+
+          {/* Scroll cue (only visible on first beat) */}
+          <div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              bottom: '2.5rem',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '0.5rem',
+              animation: 'fadeIn 1s ease 1.5s both',
+              opacity: scrollProgress < 0.15 ? 1 - scrollProgress / 0.15 : 0,
+              pointerEvents: 'none',
+              transition: 'opacity 0.3s ease',
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '9px',
+                letterSpacing: '0.25em',
+                textTransform: 'uppercase',
+                color: '#747878',
+                fontWeight: 600,
+              }}
+            >
+              Scroll
+            </span>
+            <div
+              style={{
+                width: '1px',
+                height: '30px',
+                position: 'relative',
+                backgroundColor: 'rgba(27,28,28,0.15)',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  backgroundColor: '#1b1c1c',
+                  animation: 'scrollPulse 2.2s cubic-bezier(0.16,1,0.3,1) 2s infinite',
+                  transformOrigin: 'top center',
+                  height: '100%',
+                }}
+              />
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* --- MARQUEE --- */}
+      <MarqueeStrip inverted />
+
+      {/* --- ABOUT --- */}
+      <section
+        ref={bioRef}
+        className="bio-section"
+        style={{
+          padding: '10rem 5vw',
+          perspective: '1200px',
+          overflow: 'visible',
+          position: 'relative',
+          zIndex: 10,
+          pointerEvents: 'none',
+        }}
+      >
+        <ScrollReveal3D>
+          <div
+            style={{
+              maxWidth: '840px',
+              margin: '0 auto',
+              textAlign: 'center',
+              pointerEvents: 'auto',
+            }}
+          >
+            <p className="label-caps" style={{ marginBottom: '1.5rem' }}>About</p>
+            <h2
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(2rem, 4.5vw, 3.5rem)',
+                fontWeight: 700,
+                color: '#1b1c1c',
+                lineHeight: 1.2,
+                marginBottom: '2rem',
+              }}
+            >
+              Building at the intersection of{' '}
+              <span style={{ fontStyle: 'italic', color: '#B5502D' }}>
+                AI and communication
+              </span>
+            </h2>
+            <p
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 'clamp(1rem, 1.6vw, 1.25rem)',
+                lineHeight: 1.9,
+                color: '#444748',
+                marginBottom: '3rem',
+                fontWeight: 500,
+              }}
+            >
+              From custom RAG pipelines to multi-agent intelligence - I construct the
+              technical substrate that allows LLMs to solve real-world problems. Every system is optimized for throughput; every article is an engineering blueprint read by 2,000+ practitioners weekly.
+            </p>
+            <Magnetic range={36} strength={0.3}>
+              <Link
+                href="/articles"
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '11px',
+                  letterSpacing: '0.2em',
+                  textTransform: 'uppercase',
+                  fontWeight: 700,
+                  color: '#1b1c1c',
+                  borderBottom: '1px solid #1b1c1c',
+                  paddingBottom: '4px',
+                  transition: 'color 160ms ease, border-color 160ms ease',
+                  display: 'inline-block',
+                }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget;
+                  el.style.color = '#B5502D';
+                  el.style.borderColor = '#B5502D';
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget;
+                  el.style.color = '#1b1c1c';
+                  el.style.borderColor = '#1b1c1c';
+                }}
+              >
+                Read the Atelier Writing →
+              </Link>
+            </Magnetic>
           </div>
         </ScrollReveal3D>
       </section>
