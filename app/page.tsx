@@ -205,9 +205,9 @@ export default function HomePage() {
         });
 
         // Initial setup in GSAP context to avoid flash
-        gsap.set('.scrolly-slide-2', { autoAlpha: 0, yPercent: 100 });
-        gsap.set('.scrolly-slide-3', { autoAlpha: 0, yPercent: 100 });
-        gsap.set('.scrolly-slide-4', { autoAlpha: 0, yPercent: 100 });
+        gsap.set('.scrolly-slide-2', { autoAlpha: 0, y: 60, filter: 'blur(8px)', scale: 1.05 });
+        gsap.set('.scrolly-slide-3', { autoAlpha: 0, y: 60, filter: 'blur(8px)', scale: 1.05 });
+        gsap.set('.scrolly-slide-4', { autoAlpha: 0, y: 60, filter: 'blur(8px)', scale: 1.05 });
 
         // Apple-level Scrollytelling Reveal Timeline
         const tl = gsap.timeline({
@@ -219,21 +219,21 @@ export default function HomePage() {
           }
         });
 
-        // Slide 1 exits (upwards)
-        tl.to('.scrolly-slide-1', { autoAlpha: 0, yPercent: -100, ease: 'power2.inOut' }, 0.05)
+        // Slide 1 exits (upwards/dissolves)
+        tl.to('.scrolly-slide-1', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.17 }, 0.05)
           
-          // Slide 2 enters (from bottom)
-          .to('.scrolly-slide-2', { autoAlpha: 1, yPercent: 0, ease: 'power2.out' }, 0.22)
-          // Slide 2 exits (upwards)
-          .to('.scrolly-slide-2', { autoAlpha: 0, yPercent: -100, ease: 'power2.in' }, 0.45)
+          // Slide 2 enters (from bottom/focuses)
+          .to('.scrolly-slide-2', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.17 }, 0.22)
+          // Slide 2 exits (upwards/dissolves)
+          .to('.scrolly-slide-2', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.17 }, 0.49)
 
-          // Slide 3 enters (from bottom)
-          .to('.scrolly-slide-3', { autoAlpha: 1, yPercent: 0, ease: 'power2.out' }, 0.55)
-          // Slide 3 exits (upwards)
-          .to('.scrolly-slide-3', { autoAlpha: 0, yPercent: -100, ease: 'power2.in' }, 0.75)
+          // Slide 3 enters (from bottom/focuses)
+          .to('.scrolly-slide-3', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.17 }, 0.66)
+          // Slide 3 exits (upwards/dissolves)
+          .to('.scrolly-slide-3', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.17 }, 0.93)
 
-          // Slide 4 enters (from bottom)
-          .to('.scrolly-slide-4', { autoAlpha: 1, yPercent: 0, ease: 'power2.out' }, 0.85);
+          // Slide 4 enters (from bottom/focuses)
+          .to('.scrolly-slide-4', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.17 }, 1.10);
       });
     };
     init();
@@ -457,7 +457,8 @@ export default function HomePage() {
               padding: '0 5vw',
               opacity: 0,
               visibility: 'hidden',
-              transform: 'translateY(100vh)',
+              transform: 'translateY(60px)',
+              filter: 'blur(8px)',
               zIndex: 2,
             }}
           >
@@ -503,7 +504,8 @@ export default function HomePage() {
               padding: '0 5vw',
               opacity: 0,
               visibility: 'hidden',
-              transform: 'translateY(100vh)',
+              transform: 'translateY(60px)',
+              filter: 'blur(8px)',
               zIndex: 2,
             }}
           >
@@ -570,7 +572,8 @@ export default function HomePage() {
               padding: '0 5vw',
               opacity: 0,
               visibility: 'hidden',
-              transform: 'translateY(100vh)',
+              transform: 'translateY(60px)',
+              filter: 'blur(8px)',
               zIndex: 2,
             }}
           >
