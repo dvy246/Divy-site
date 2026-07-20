@@ -141,7 +141,7 @@ export default function Nav() {
             'border-color 450ms ease, ' +
             'box-shadow 450ms ease',
           backgroundColor: scrolled
-            ? (isMobile ? 'rgba(245, 245, 220, 0.96)' : 'rgba(245, 245, 220, 0.82)')
+            ? (isMobile ? 'rgba(232, 232, 208, 0.97)' : 'rgba(232, 232, 208, 0.84)')
             : 'transparent',
           backdropFilter: scrolled && !isMobile
             ? 'blur(20px) saturate(1.2)' 
@@ -153,10 +153,10 @@ export default function Nav() {
             ? '1px solid rgba(255, 255, 255, 0.45)'
             : '1px solid transparent',
           borderBottom: scrolled
-            ? '1px solid rgba(27, 28, 28, 0.09)'
+            ? '1px solid rgba(27, 28, 28, 0.12)'
             : '1px solid rgba(27, 28, 28, 0.02)',
           boxShadow: scrolled
-            ? '0 12px 40px rgba(27, 28, 28, 0.04), 0 1px 0 rgba(27, 28, 28, 0.01)'
+            ? '0 12px 40px rgba(27, 28, 28, 0.05), 0 1px 0 rgba(27, 28, 28, 0.02)'
             : 'none',
           transform: visible ? 'translateY(0)' : 'translateY(-100%)',
         }}
