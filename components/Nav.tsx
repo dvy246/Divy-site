@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { label: 'Newsletter', href: '/newsletter' },
   { label: 'Projects',   href: '/projects' },
   { label: 'Skills',     href: '/skills' },
+  { label: 'Connect',    href: '/connect' },
 ];
 
 export default function Nav() {
@@ -201,36 +202,9 @@ export default function Nav() {
             </Magnetic>
           </div>
 
-          {/* Right group of links + CTA button */}
+          {/* Right group of links */}
           <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center', justifyContent: 'flex-end', width: '38%' }}>
             {NAV_LINKS.slice(2).map((link) => renderLink(link))}
-            {/* CTA button */}
-            <Magnetic range={40} strength={0.3}>
-              <Link
-                href="/connect"
-                style={{
-                  fontFamily: '"DM Sans", sans-serif',
-                  fontSize: '10px',
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  fontWeight: 700,
-                  color: '#F5F5DC',
-                  backgroundColor: '#1b1c1c',
-                  textDecoration: 'none',
-                  padding: '0.55rem 1.1rem',
-                  transition: 'background-color 160ms ease',
-                  display: 'block',
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#B5502D';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1b1c1c';
-                }}
-              >
-                Connect
-              </Link>
-            </Magnetic>
           </div>
         </div>
 
@@ -328,7 +302,7 @@ export default function Nav() {
             href={link.href}
             style={{
               fontFamily: '"Playfair Display", Georgia, serif',
-              fontSize: '2rem',
+              fontSize: '2.2rem',
               fontWeight: 700,
               fontStyle: pathname === link.href ? 'italic' : 'normal',
               color: pathname === link.href ? '#B5502D' : '#1b1c1c',
@@ -341,27 +315,6 @@ export default function Nav() {
             {link.label}
           </Link>
         ))}
-
-        <Link
-          href="/connect"
-          style={{
-            fontFamily: '"DM Sans", sans-serif',
-            fontSize: '11px',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            fontWeight: 700,
-            color: '#F5F5DC',
-            backgroundColor: '#1b1c1c',
-            textDecoration: 'none',
-            padding: '1rem 2.5rem',
-            marginTop: '1rem',
-            opacity: menuOpen ? 1 : 0,
-            transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',
-            transition: `opacity 400ms ease ${NAV_LINKS.length * 60}ms, transform 400ms ease ${NAV_LINKS.length * 60}ms`,
-          }}
-        >
-          Connect
-        </Link>
       </div>
 
       {/* Responsive CSS */}

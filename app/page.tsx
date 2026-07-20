@@ -204,6 +204,11 @@ export default function HomePage() {
           }
         });
 
+        // Initial setup in GSAP context to avoid flash
+        gsap.set('.scrolly-slide-2', { autoAlpha: 0, yPercent: 100 });
+        gsap.set('.scrolly-slide-3', { autoAlpha: 0, yPercent: 100 });
+        gsap.set('.scrolly-slide-4', { autoAlpha: 0, yPercent: 100 });
+
         // Apple-level Scrollytelling Reveal Timeline
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -214,12 +219,21 @@ export default function HomePage() {
           }
         });
 
-        tl.to('.scrolly-slide-1', { opacity: 0, y: -50, ease: 'power2.inOut' }, 0.12)
-          .fromTo('.scrolly-slide-2', { opacity: 0, y: 50 }, { opacity: 1, y: 0, ease: 'power2.out' }, 0.22)
-          .to('.scrolly-slide-2', { opacity: 0, y: -50, ease: 'power2.inOut' }, 0.45)
-          .fromTo('.scrolly-slide-3', { opacity: 0, y: 50 }, { opacity: 1, y: 0, ease: 'power2.out' }, 0.52)
-          .to('.scrolly-slide-3', { opacity: 0, y: -50, ease: 'power2.inOut' }, 0.72)
-          .fromTo('.scrolly-slide-4', { opacity: 0, y: 50 }, { opacity: 1, y: 0, ease: 'power2.out' }, 0.8);
+        // Slide 1 exits (upwards)
+        tl.to('.scrolly-slide-1', { autoAlpha: 0, yPercent: -100, ease: 'power2.inOut' }, 0.05)
+          
+          // Slide 2 enters (from bottom)
+          .to('.scrolly-slide-2', { autoAlpha: 1, yPercent: 0, ease: 'power2.out' }, 0.22)
+          // Slide 2 exits (upwards)
+          .to('.scrolly-slide-2', { autoAlpha: 0, yPercent: -100, ease: 'power2.in' }, 0.45)
+
+          // Slide 3 enters (from bottom)
+          .to('.scrolly-slide-3', { autoAlpha: 1, yPercent: 0, ease: 'power2.out' }, 0.55)
+          // Slide 3 exits (upwards)
+          .to('.scrolly-slide-3', { autoAlpha: 0, yPercent: -100, ease: 'power2.in' }, 0.75)
+
+          // Slide 4 enters (from bottom)
+          .to('.scrolly-slide-4', { autoAlpha: 1, yPercent: 0, ease: 'power2.out' }, 0.85);
       });
     };
     init();
@@ -442,7 +456,8 @@ export default function HomePage() {
               justifyContent: 'center',
               padding: '0 5vw',
               opacity: 0,
-              transform: 'translateY(40px)',
+              visibility: 'hidden',
+              transform: 'translateY(100vh)',
               zIndex: 2,
             }}
           >
@@ -487,7 +502,8 @@ export default function HomePage() {
               justifyContent: 'center',
               padding: '0 5vw',
               opacity: 0,
-              transform: 'translateY(40px)',
+              visibility: 'hidden',
+              transform: 'translateY(100vh)',
               zIndex: 2,
             }}
           >
@@ -553,7 +569,8 @@ export default function HomePage() {
               justifyContent: 'center',
               padding: '0 5vw',
               opacity: 0,
-              transform: 'translateY(40px)',
+              visibility: 'hidden',
+              transform: 'translateY(100vh)',
               zIndex: 2,
             }}
           >
