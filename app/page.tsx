@@ -283,6 +283,7 @@ export default function HomePage() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            zIndex: 2,
           }}
         >
           {/* Background editorial line */}
