@@ -158,11 +158,38 @@ function AccentElement({
     }))
   );
 
+  const isDragging = useRef(false);
+  const pointerId = useRef<number | null>(null);
+  const dragOffset = useRef(new THREE.Vector3(0, 0, 0));
+  const springVelocity = useRef(new THREE.Vector3(0, 0, 0));
+  const clickStartTime = useRef(0);
+  const dragDistance = useRef(0);
+
   const handlePointerDown = (e: any) => {
     e.stopPropagation();
     if (!isMobile) {
-      setIsSplit(true);
-      splitTime.current = 0;
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      isDragging.current = true;
+      pointerId.current = e.pointerId;
+      clickStartTime.current = Date.now();
+      dragDistance.current = 0;
+      document.body.style.cursor = 'grabbing';
+    }
+  };
+
+  const handlePointerUp = (e: any) => {
+    e.stopPropagation();
+    if (isDragging.current) {
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      isDragging.current = false;
+      pointerId.current = null;
+      document.body.style.cursor = 'grab';
+      
+      const elapsed = Date.now() - clickStartTime.current;
+      if (elapsed < 250 && dragDistance.current < 0.15) {
+        setIsSplit(true);
+        splitTime.current = 0;
+      }
     }
   };
 
@@ -343,13 +370,62 @@ function AccentElement({
       }
     }
 
-    // Interpolate target positions
-    const targetY = currentBaseY + floatY;
-    const targetX = currentBaseX + floatX;
+    // Drag update physics
+    if (isDragging.current) {
+      const camera = state.camera as THREE.PerspectiveCamera;
+      const dist = camera.position.z - meshRef.current.position.z;
+      const aspect = state.size.width / state.size.height;
+      const fovRad = (camera.fov * Math.PI) / 360;
+      const vHeight = 2 * Math.tan(fovRad) * dist;
+      const vWidth = vHeight * aspect;
 
-    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.08);
-    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.08);
-    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, currentBaseZ, 0.08);
+      const cursorWorldX = (state.pointer.x * vWidth) / 2;
+      const cursorWorldY = (state.pointer.y * vHeight) / 2;
+
+      const currentTargetX = currentBaseX + floatX;
+      const currentTargetY = currentBaseY + floatY;
+
+      const targetOffsetX = cursorWorldX - currentTargetX;
+      const targetOffsetY = cursorWorldY - currentTargetY;
+
+      const dx = targetOffsetX - dragOffset.current.x;
+      const dy = targetOffsetY - dragOffset.current.y;
+      dragDistance.current += Math.sqrt(dx * dx + dy * dy);
+
+      dragOffset.current.x = THREE.MathUtils.lerp(dragOffset.current.x, targetOffsetX, 0.22);
+      dragOffset.current.y = THREE.MathUtils.lerp(dragOffset.current.y, targetOffsetY, 0.22);
+      dragOffset.current.z = THREE.MathUtils.lerp(dragOffset.current.z, 0, 0.22);
+
+      springVelocity.current.set(0, 0, 0);
+    } else {
+      const stiffness = 160;
+      const damping = 12;
+      
+      const forceX = -stiffness * dragOffset.current.x;
+      const forceY = -stiffness * dragOffset.current.y;
+      const forceZ = -stiffness * dragOffset.current.z;
+
+      const ax = forceX - damping * springVelocity.current.x;
+      const ay = forceY - damping * springVelocity.current.y;
+      const az = forceZ - damping * springVelocity.current.z;
+
+      springVelocity.current.x += ax * delta;
+      springVelocity.current.y += ay * delta;
+      springVelocity.current.z += az * delta;
+
+      dragOffset.current.x += springVelocity.current.x * delta;
+      dragOffset.current.y += springVelocity.current.y * delta;
+      dragOffset.current.z += springVelocity.current.z * delta;
+    }
+
+    // Interpolate target positions
+    const finalY = currentBaseY + floatY + dragOffset.current.y;
+    const finalX = currentBaseX + floatX + dragOffset.current.x;
+    const finalZ = currentBaseZ + dragOffset.current.z;
+
+    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, finalY, 0.08);
+    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, finalX, 0.08);
+    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, finalZ, 0.08);
 
     // 4. Calm constant rotation
     meshRef.current.rotation.x += delta * rotSpeed[0] * 0.25;
@@ -466,6 +542,14 @@ function AccentElement({
         ref={meshRef}
         castShadow={false}
         onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        onPointerOver={() => {
+          if (!isMobile) document.body.style.cursor = 'grab';
+        }}
+        onPointerOut={() => {
+          if (!isMobile) document.body.style.cursor = '';
+        }}
       >
         <sphereGeometry ref={geomRef} args={[1, isMobile ? 24 : (index < 2 ? 32 : 16), isMobile ? 24 : (index < 2 ? 32 : 16)]} />
         <MeshTransmissionMaterial
