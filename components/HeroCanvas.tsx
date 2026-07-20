@@ -379,7 +379,8 @@ function AccentElement({
     }
 
     // 6. Procedural 3D Wave morphing (Simplex-like organic morphology)
-    if (geomRef.current) {
+    // ONLY run vertex displacement on the two foreground spheres (0 & 1) to save CPU/GPU overhead!
+    if (index < 2 && geomRef.current) {
       const posAttr = geomRef.current.attributes.position;
       const count = posAttr.count;
 
@@ -466,24 +467,24 @@ function AccentElement({
         castShadow={false}
         onPointerDown={handlePointerDown}
       >
-        <sphereGeometry ref={geomRef} args={[1, isMobile ? 32 : 40, isMobile ? 32 : 40]} />
+        <sphereGeometry ref={geomRef} args={[1, isMobile ? 24 : (index < 2 ? 32 : 16), isMobile ? 24 : (index < 2 ? 32 : 16)]} />
         <MeshTransmissionMaterial
           ref={materialRef}
           color="#F6DEC9" // Warm, luxurious champagne-terracotta tint
-          roughness={0.02} // Super polished look
+          roughness={index < 2 ? 0.02 : 0.05} // Super polished for foreground, slightly rougher for background
           transmission={0.93} // Blend refraction and champagne-warm background tint
-          thickness={isMobile ? 0.7 : 1.6} // Thinner on mobile for faster render passes
+          thickness={isMobile ? 0.7 : (index < 2 ? 1.6 : 0.8)} // Thinner for background gems to render faster
           ior={1.48} // Real glass refractive index
-          chromaticAberration={isMobile ? 0.005 : 0.025} // Color separation at curves
-          anisotropicBlur={isMobile ? 0.0 : 0.12}
-          distortion={isMobile ? 0.04 : 0.12} // Warp of background
-          distortionScale={isMobile ? 0.15 : 0.3}
+          chromaticAberration={isMobile ? 0.005 : (index < 2 ? 0.025 : 0.01)}
+          anisotropicBlur={isMobile ? 0.0 : (index < 2 ? 0.12 : 0.0)}
+          distortion={isMobile ? 0.04 : (index < 2 ? 0.12 : 0.03)}
+          distortionScale={isMobile ? 0.15 : (index < 2 ? 0.3 : 0.1)}
           temporalDistortion={0.0}
-          backside={!isMobile} // Double-sided refraction (desktop only for performance)
-          clearcoat={isMobile ? 0 : 1.0} // Extra reflective coating (desktop only)
+          backside={!isMobile && index < 2} // Double-sided refraction (foreground desktop only)
+          clearcoat={!isMobile && index < 2 ? 1.0 : 0.0} // Extra reflective coating (foreground desktop only)
           clearcoatRoughness={0.01}
-          resolution={isMobile ? 128 : 1024} // High-res single instance on desktop
-          samples={isMobile ? 2 : 16} // High quality samples for desktop
+          resolution={isMobile ? 128 : (index < 2 ? 512 : 128)} // Optimized resolution (512 for foreground, 128 for background)
+          samples={isMobile ? 2 : (index < 2 ? 6 : 2)} // Optimized samples (6 for foreground, 2 for background)
           transparent
         />
       </mesh>
@@ -546,6 +547,16 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           floatAmp: 0.12,
           rotSpeed: [0.06, -0.1, 0.04] as [number, number, number],
         },
+        {
+          baseX: -vWidth * 0.18, // bottom-left background drop on mobile
+          baseY: 2.8,
+          baseZ: -0.8,
+          scale: [0.11, 0.18, 0.11] as [number, number, number],
+          parallax: 0.18,
+          floatSpeed: 0.8,
+          floatAmp: 0.1,
+          rotSpeed: [-0.05, 0.08, 0.03] as [number, number, number],
+        },
       ]
     : [
         {
@@ -578,6 +589,16 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           floatAmp: 0.18,
           rotSpeed: [-0.05, 0.12, 0.03] as [number, number, number],
         },
+        {
+          baseX: -vWidth * 0.22, // background bottom-left gem 4, floating offset deeper
+          baseY: -1.5,
+          baseZ: -1.2,
+          scale: [0.18, 0.3, 0.18] as [number, number, number],
+          parallax: 0.18,
+          floatSpeed: 0.75,
+          floatAmp: 0.14,
+          rotSpeed: [0.08, -0.15, 0.04] as [number, number, number],
+        },
       ];
 
   // Dynamic parallax updates for contact shadows projecting correctly underneath drops along path
@@ -593,8 +614,8 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
         let currentBaseY = item.baseY;
 
         if (!isMobile) {
-          if (idx === 2) {
-            // Background gem 3: drifts down slower
+          if (idx >= 2) {
+            // Background gem 3 & 4: drifts down slower
             currentBaseY = item.baseY - scrollyProgress * 1.5;
           } else {
             if (scrollyProgress < 0.35) {
@@ -615,7 +636,7 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
             }
           }
         } else {
-          if (idx === 2) {
+          if (idx >= 2) {
             currentBaseY = item.baseY + scrollyProgress * 0.8;
           } else {
             // Mobile paths: stay high up (Y >= 2.0) to frame header and completely avoid central body text
