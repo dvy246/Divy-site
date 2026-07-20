@@ -206,10 +206,8 @@ export default function Nav() {
             {NAV_LINKS.slice(2).map((link) => renderLink(link))}
             {/* CTA button */}
             <Magnetic range={40} strength={0.3}>
-              <a
-                href="https://aiengsimplified.beehiiv.com/"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/connect"
                 style={{
                   fontFamily: '"DM Sans", sans-serif',
                   fontSize: '10px',
@@ -230,8 +228,8 @@ export default function Nav() {
                   (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1b1c1c';
                 }}
               >
-                Newsletter
-              </a>
+                Connect
+              </Link>
             </Magnetic>
           </div>
         </div>
@@ -344,10 +342,8 @@ export default function Nav() {
           </Link>
         ))}
 
-        <a
-          href="https://aiengsimplified.beehiiv.com/"
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          href="/connect"
           style={{
             fontFamily: '"DM Sans", sans-serif',
             fontSize: '11px',
@@ -364,8 +360,8 @@ export default function Nav() {
             transition: `opacity 400ms ease ${NAV_LINKS.length * 60}ms, transform 400ms ease ${NAV_LINKS.length * 60}ms`,
           }}
         >
-          Subscribe Free →
-        </a>
+          Connect
+        </Link>
       </div>
 
       {/* Responsive CSS */}
