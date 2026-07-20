@@ -1,5 +1,18 @@
 [
   {
+    "title": "AWS for Beginners: The Only 7 AWS Concepts You Need to Understand",
+    "url": "https://aws.plainenglish.io/aws-for-beginners-the-only-7-aws-concepts-you-need-to-understand-d2c48b533601?source=rss-8cf8d1ee55e0------2",
+    "date": "2026-07-20",
+    "summary": "Every AWS course throws 200 service names at you on day one. Here are the seven ideas that actually explain how the whole platform works…",
+    "tags": [
+      "Aws",
+      "Technology",
+      "Artificial Intelligence",
+      "Programming",
+      "Devops"
+    ]
+  },
+  {
     "title": "Kimi K3 Just Beat GPT-5.5 and Opus 4.8 — And It’s Completely Free",
     "url": "https://medium.com/ai-engineering-simplified/kimi-k3-just-beat-gpt-5-5-and-opus-4-8-and-its-completely-free-461ba5dd7429?source=rss-8cf8d1ee55e0------2",
     "date": "2026-07-19",
@@ -88,16 +101,6 @@
     "tags": [
       "Python",
       "AWS"
-    ]
-  },
-  {
-    "title": "Your AI Doesn’t Remember You. OpenWiki Brains Was Built to Fix That.",
-    "url": "https://medium.com/ai-engineering-simplified/your-ai-doesnt-remember-you-openwiki-was-built-to-fix-that-ee9dbca91927?source=rss-8cf8d1ee55e0------2",
-    "date": "2026-07-11",
-    "summary": "Most agent memory only holds onto what you explicitly say. OpenWiki goes out and builds context on its own, from the places you already…",
-    "tags": [
-      "Agents",
-      "RAG"
     ]
   }
 ]

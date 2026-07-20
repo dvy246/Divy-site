@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "generate-3d-model",
+  "owner": "tomekgancarczyk",
+  "repo": "kata-workshop-cc",
+  "path": ".claude/skills/generate-3d-model",
+  "branch": "main",
+  "sha": "3d4fce5304eb18484ce28ddbc29c9999db2ce58d",
+  "source": "manual"
+}

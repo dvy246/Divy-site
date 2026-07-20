@@ -5,11 +5,12 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { RoughNotation } from 'react-rough-notation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import ArticleCard from '@/components/ArticleCard';
 import SketchDivider from '@/components/SketchDivider';
 import ScrollReveal3D from '@/components/ScrollReveal3D';
 import Magnetic from '@/components/Magnetic';
+import IntroLoader from '@/components/IntroLoader';
 import { BIO } from '@/lib/bio';
 import articles from '@/data/articles.json';
 const HeroCanvas = dynamic(() => import('@/components/HeroCanvas'), {
@@ -88,7 +89,7 @@ const STATS = [
   { num: '2',   label: 'Production Clients' },
 ];
 
-const TAGLINE = ['AI', 'Engineer', 'crafting', 'intelligent', 'software', 'and', 'ideas.'];
+const TAGLINE = ['Engineering', 'RAG,', 'agentic', 'workflows,', 'and', 'production', 'LLM', 'infrastructure.'];
 
 /* === Marquee strip === */
 function MarqueeStrip({ inverted = false }: { inverted?: boolean }) {
@@ -195,6 +196,7 @@ function SplitText({
 
 /* === Homepage === */
 export default function HomePage() {
+  const [loading, setLoading] = useState(true);
   const [show, setShow]       = useState(false);
   const [isMobile, setMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -203,17 +205,22 @@ export default function HomePage() {
   const bioRef    = useRef<HTMLElement>(null);
   const statsRef  = useRef<HTMLDivElement>(null);
 
-  /* Hydration + mobile detection + entrance sequence trigger */
+  /* Check sessionStorage for loader on mount */
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const played = sessionStorage.getItem('dy_portfolio_loader_played');
+      if (played === 'true') {
+        setLoading(false);
+      }
+    }
+  }, []);
+
+  /* Hydration + mobile detection */
   useEffect(() => {
     setMounted(true);
     const check = () => setMobile(window.innerWidth < 768);
     check();
     window.addEventListener('resize', check);
-
-    // Reveal main typography heading automatically on mount
-    const triggerTimer = setTimeout(() => {
-      setShow(true);
-    }, 300);
 
     const handleRevealStart = () => setRevealState('revealing');
     const handleRevealComplete = () => setRevealState('complete');
@@ -223,11 +230,20 @@ export default function HomePage() {
 
     return () => {
       window.removeEventListener('resize', check);
-      clearTimeout(triggerTimer);
       window.removeEventListener('dy_sculpture_reveal_start', handleRevealStart);
       window.removeEventListener('dy_sculpture_reveal_complete', handleRevealComplete);
     };
   }, []);
+
+  /* Trigger typography reveal after loader finishes */
+  useEffect(() => {
+    if (!loading && mounted) {
+      const triggerTimer = setTimeout(() => {
+        setShow(true);
+      }, 150);
+      return () => clearTimeout(triggerTimer);
+    }
+  }, [loading, mounted]);
 
   /* GSAP scroll triggers for page-specific elements */
   useEffect(() => {
@@ -308,6 +324,17 @@ export default function HomePage() {
 
   return (
     <>
+      <AnimatePresence mode="wait">
+        {loading && (
+          <IntroLoader
+            onComplete={() => {
+              sessionStorage.setItem('dy_portfolio_loader_played', 'true');
+              setLoading(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
       <ScrollProgress />
       {/* Faceted 3D Glass Crystal Element - Visibility Gated */}
       <HeroCanvas isMobile={isMobile} />
@@ -434,22 +461,55 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Bio snippet */}
-            <p
+            {/* Bio grid section */}
+            <div
               style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 'clamp(0.95rem, 1.5vw, 1.1rem)',
-                lineHeight: 1.85,
-                color: '#1b1c1c',
-                fontWeight: 500,
-                maxWidth: '620px',
-                marginBottom: '3.2rem',
+                display: 'grid',
+                gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+                gap: isMobile ? '1.5rem' : '2.5rem',
+                width: '100%',
+                maxWidth: '820px',
+                marginBottom: '3.6rem',
+                padding: isMobile ? '1.5rem 1.25rem' : '2rem 1.5rem',
+                backgroundColor: 'rgba(232, 232, 208, 0.25)', // soft translucent parchment card background
+                border: '1px solid #1b1c1c',
                 animation: 'fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s both',
-                textAlign: 'center',
+                textAlign: 'left',
               }}
             >
-              {BIO}
-            </p>
+              {/* Column 1: Focus */}
+              <div>
+                <p className="label-caps" style={{ fontSize: '10px', color: '#B5502D', marginBottom: '0.6rem', fontWeight: 700, letterSpacing: '0.12em' }}>CORE FOCUS</p>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  {['Multi-Agent Systems', 'RAG Pipelines', 'LLM Infrastructure'].map((item) => (
+                    <li key={item} style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: '#1b1c1c', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                      <span style={{ color: '#B5502D', fontSize: '12px' }}>▪</span> {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              {/* Column 2: Collaboration */}
+              <div>
+                <p className="label-caps" style={{ fontSize: '10px', color: '#B5502D', marginBottom: '0.6rem', fontWeight: 700, letterSpacing: '0.12em' }}>COLLABORATED WITH</p>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  {['TensorLake', 'Superteams AI', 'Freelance Atelier'].map((item) => (
+                    <li key={item} style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: '#1b1c1c', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                      <span style={{ color: '#B5502D', fontSize: '12px' }}>▪</span> {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              {/* Column 3: Reach */}
+              <div>
+                <p className="label-caps" style={{ fontSize: '10px', color: '#B5502D', marginBottom: '0.6rem', fontWeight: 700, letterSpacing: '0.12em' }}>AUDIENCE REACH</p>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: '#1b1c1c', fontWeight: 600, margin: 0, lineHeight: 1.45 }}>
+                  <span style={{ fontSize: '20px', fontWeight: 800, color: '#B5502D', display: 'block', marginBottom: '0.1rem', lineHeight: 1 }}>2,000+</span>
+                  engineers weekly across Medium, Beehiiv, and Hashnode.
+                </p>
+              </div>
+            </div>
 
             {/* Social links with Magnetic wrappers */}
             <div
@@ -484,9 +544,13 @@ export default function HomePage() {
                     }}
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLAnchorElement).style.color = '#B5502D';
+                      const svg = e.currentTarget.querySelector('svg');
+                      if (svg) svg.style.transform = 'translateY(-2.5px) scale(1.1)';
                     }}
                     onMouseLeave={(e) => {
                       (e.currentTarget as HTMLAnchorElement).style.color = '#1b1c1c';
+                      const svg = e.currentTarget.querySelector('svg');
+                      if (svg) svg.style.transform = 'translateY(0) scale(1)';
                     }}
                   >
                     {getSocialIcon(link.label)}

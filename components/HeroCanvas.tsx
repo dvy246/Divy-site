@@ -133,6 +133,8 @@ function AccentElement({
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<any>(null);
   const groupRef = useRef<THREE.Group>(null);
+  const geomRef = useRef<THREE.BufferGeometry>(null);
+  const originalPos = useRef<Float32Array | null>(null);
   
   const timeOffset = useRef(Math.random() * 100);
   const currentScaleFactor = useRef(0.001);
@@ -362,6 +364,65 @@ function AccentElement({
       materialRef.current.thickness = THREE.MathUtils.lerp(materialRef.current.thickness, proximityThickness, 0.08);
       materialRef.current.distortion = THREE.MathUtils.lerp(materialRef.current.distortion, proximityDistortion, 0.08);
     }
+
+    // 6. Procedural 3D Wave morphing (Simplex-like organic morphology)
+    if (geomRef.current) {
+      const posAttr = geomRef.current.attributes.position;
+      const count = posAttr.count;
+
+      if (!originalPos.current) {
+        originalPos.current = new Float32Array(posAttr.array);
+      }
+
+      const tempPos = posAttr.array as Float32Array;
+      const time = state.clock.getElapsedTime() * 1.5;
+
+      // Project mouse coordinates to calculate swell
+      let cx = 999, cy = 999;
+      if (!isMobile && mouseRef.current) {
+        cx = mouseRef.current.x * state.viewport.width * 0.5;
+        cy = mouseRef.current.y * state.viewport.height * 0.5;
+      }
+
+      const mx = meshRef.current?.position.x || 0;
+      const my = meshRef.current?.position.y || 0;
+
+      for (let i = 0; i < count; i++) {
+        const x = originalPos.current[i * 3];
+        const y = originalPos.current[i * 3 + 1];
+        const z = originalPos.current[i * 3 + 2];
+
+        // For a unit sphere, normal is vector coordinate
+        const len = Math.sqrt(x * x + y * y + z * z) || 1;
+        const nx = x / len;
+        const ny = y / len;
+        const nz = z / len;
+
+        // Dynamic wave displacement curves
+        const wave1 = Math.sin(x * 1.6 + time) * Math.cos(y * 1.6 + time) * 0.09;
+        const wave2 = Math.sin(z * 3.2 - time * 1.1) * 0.05;
+        const wave3 = Math.cos(x * 4.8 + y * 4.8 + time * 1.5) * 0.02;
+        let displacement = wave1 + wave2 + wave3;
+
+        // Swell vertex if cursor is close in world space
+        const vx = mx + x;
+        const vy = my + y;
+        const dx = vx - cx;
+        const dy = vy - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 1.6) {
+          const swell = Math.max(0, 1 - dist / 1.6) * 0.18;
+          displacement += swell;
+        }
+
+        tempPos[i * 3]     = x + nx * displacement;
+        tempPos[i * 3 + 1] = y + ny * displacement;
+        tempPos[i * 3 + 2] = z + nz * displacement;
+      }
+
+      posAttr.needsUpdate = true;
+      geomRef.current.computeVertexNormals();
+    }
   });
 
   if (isSplit) {
@@ -392,7 +453,7 @@ function AccentElement({
         castShadow={false}
         onPointerDown={handlePointerDown}
       >
-        <sphereGeometry args={[1, 64, 64]} />
+        <sphereGeometry ref={geomRef} args={[1, isMobile ? 32 : 40, isMobile ? 32 : 40]} />
         <MeshTransmissionMaterial
           ref={materialRef}
           color="#F6DEC9" // Warm, luxurious champagne-terracotta tint
