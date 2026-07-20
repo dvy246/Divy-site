@@ -369,16 +369,16 @@ function AccentElement({
         // Mobile Gems 3 & 4 background path
         currentBaseY = baseY + scrollyProgress * 0.8;
       } else {
-        // Mobile paths: stay high up (Y >= 2.0) to frame header and completely avoid central body text
+        // Mobile paths: stay high up (Y >= 1.2) to frame header and completely avoid central body text
         if (scrollyProgress < 0.35) {
           const alpha = scrollyProgress / 0.35;
-          currentBaseY = THREE.MathUtils.lerp(baseY, 2.0, alpha);
+          currentBaseY = THREE.MathUtils.lerp(baseY, 1.2, alpha);
         } else if (scrollyProgress < 0.7) {
           const alpha = (scrollyProgress - 0.35) / 0.35;
-          currentBaseY = THREE.MathUtils.lerp(2.0, 2.1, alpha);
+          currentBaseY = THREE.MathUtils.lerp(1.2, 1.25, alpha);
         } else {
           const alpha = (scrollyProgress - 0.7) / 0.3;
-          currentBaseY = THREE.MathUtils.lerp(2.1, 2.2, alpha);
+          currentBaseY = THREE.MathUtils.lerp(1.25, 1.3, alpha);
         }
       }
     }
@@ -668,8 +668,8 @@ function FloatingGeometry({ isMobile, onDragStateChange }: { isMobile: boolean; 
   const accentsList = isMobile
     ? [
         {
-          baseX: -vWidth * 0.35, // left corner on mobile
-          baseY: 2.2, // high up, completely above text
+          baseX: -vWidth * 0.35, // top-left corner on mobile
+          baseY: 1.3, // visible near header inside screen boundaries
           baseZ: 0.5,
           scale: [0.2, 0.33, 0.2] as [number, number, number], // Stretched teardrop
           parallax: 0.35,
@@ -678,8 +678,8 @@ function FloatingGeometry({ isMobile, onDragStateChange }: { isMobile: boolean; 
           rotSpeed: [0.1, 0.2, 0.05] as [number, number, number],
         },
         {
-          baseX: vWidth * 0.35, // right corner on mobile
-          baseY: 2.2, // high up, completely above text
+          baseX: vWidth * 0.35, // top-right corner on mobile
+          baseY: 1.3, // visible near header inside screen boundaries
           baseZ: 0.5,
           scale: [0.2, 0.33, 0.2] as [number, number, number], // Stretched teardrop
           parallax: 0.38,
@@ -689,7 +689,7 @@ function FloatingGeometry({ isMobile, onDragStateChange }: { isMobile: boolean; 
         },
         {
           baseX: vWidth * 0.35, // bottom-right background drop on mobile, away from center text
-          baseY: -1.6,
+          baseY: -1.3, // visible near bottom fold inside screen boundaries
           baseZ: -0.6,
           scale: [0.13, 0.22, 0.13] as [number, number, number],
           parallax: 0.22,
@@ -699,7 +699,7 @@ function FloatingGeometry({ isMobile, onDragStateChange }: { isMobile: boolean; 
         },
         {
           baseX: -vWidth * 0.35, // bottom-left background drop on mobile, away from center text
-          baseY: -1.6,
+          baseY: -1.3, // visible near bottom fold inside screen boundaries
           baseZ: -0.8,
           scale: [0.11, 0.18, 0.11] as [number, number, number],
           parallax: 0.18,
