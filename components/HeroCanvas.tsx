@@ -297,33 +297,34 @@ function AccentElement({
         // Interpolate between Slide 1 and Slide 2
         const alpha = scrollyProgress / 0.35;
         const side = baseX > 0 ? 1 : -1;
-        currentBaseX = THREE.MathUtils.lerp(baseX, side * state.viewport.width * 0.24, alpha);
+        currentBaseX = THREE.MathUtils.lerp(baseX, side * state.viewport.width * 0.36, alpha);
         currentBaseY = THREE.MathUtils.lerp(baseY, 0.0, alpha);
       } else if (scrollyProgress < 0.7) {
         // Interpolate between Slide 2 and Slide 3
         const alpha = (scrollyProgress - 0.35) / 0.35;
         const side = baseX > 0 ? 1 : -1;
-        currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.24, side * state.viewport.width * 0.21, alpha);
+        currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.36, side * state.viewport.width * 0.37, alpha);
         currentBaseY = THREE.MathUtils.lerp(0.0, -0.2, alpha);
         currentBaseZ = THREE.MathUtils.lerp(baseZ, baseZ + 0.3, alpha);
       } else {
         // Interpolate to Slide 4 (portrait)
         const alpha = (scrollyProgress - 0.7) / 0.3;
         const side = baseX > 0 ? 1 : -1;
-        currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.21, side * state.viewport.width * 0.35, alpha);
+        currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.37, side * state.viewport.width * 0.36, alpha);
         currentBaseY = THREE.MathUtils.lerp(-0.2, 0.0, alpha);
         currentBaseZ = THREE.MathUtils.lerp(baseZ + 0.3, baseZ, alpha);
       }
     } else {
+      // Mobile paths: stay high up (Y >= 2.0) to frame header and completely avoid central body text
       if (scrollyProgress < 0.35) {
         const alpha = scrollyProgress / 0.35;
-        currentBaseY = THREE.MathUtils.lerp(baseY, 1.8, alpha);
+        currentBaseY = THREE.MathUtils.lerp(baseY, 2.0, alpha);
       } else if (scrollyProgress < 0.7) {
         const alpha = (scrollyProgress - 0.35) / 0.35;
-        currentBaseY = THREE.MathUtils.lerp(1.8, 1.2, alpha);
+        currentBaseY = THREE.MathUtils.lerp(2.0, 2.1, alpha);
       } else {
         const alpha = (scrollyProgress - 0.7) / 0.3;
-        currentBaseY = THREE.MathUtils.lerp(1.2, 2.2, alpha);
+        currentBaseY = THREE.MathUtils.lerp(2.1, 2.2, alpha);
       }
     }
 
@@ -501,29 +502,30 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           if (scrollyProgress < 0.35) {
             const alpha = scrollyProgress / 0.35;
             const side = item.baseX > 0 ? 1 : -1;
-            currentBaseX = THREE.MathUtils.lerp(item.baseX, side * state.viewport.width * 0.24, alpha);
+            currentBaseX = THREE.MathUtils.lerp(item.baseX, side * state.viewport.width * 0.36, alpha);
             currentBaseY = THREE.MathUtils.lerp(item.baseY, 0.0, alpha);
           } else if (scrollyProgress < 0.7) {
             const alpha = (scrollyProgress - 0.35) / 0.35;
             const side = item.baseX > 0 ? 1 : -1;
-            currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.24, side * state.viewport.width * 0.21, alpha);
+            currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.36, side * state.viewport.width * 0.37, alpha);
             currentBaseY = THREE.MathUtils.lerp(0.0, -0.2, alpha);
           } else {
             const alpha = (scrollyProgress - 0.7) / 0.3;
             const side = item.baseX > 0 ? 1 : -1;
-            currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.21, side * state.viewport.width * 0.35, alpha);
+            currentBaseX = THREE.MathUtils.lerp(side * state.viewport.width * 0.37, side * state.viewport.width * 0.36, alpha);
             currentBaseY = THREE.MathUtils.lerp(-0.2, 0.0, alpha);
           }
         } else {
+          // Mobile paths: stay high up (Y >= 2.0) to frame header and completely avoid central body text
           if (scrollyProgress < 0.35) {
             const alpha = scrollyProgress / 0.35;
-            currentBaseY = THREE.MathUtils.lerp(item.baseY, 1.8, alpha);
+            currentBaseY = THREE.MathUtils.lerp(item.baseY, 2.0, alpha);
           } else if (scrollyProgress < 0.7) {
             const alpha = (scrollyProgress - 0.35) / 0.35;
-            currentBaseY = THREE.MathUtils.lerp(1.8, 1.2, alpha);
+            currentBaseY = THREE.MathUtils.lerp(2.0, 2.1, alpha);
           } else {
             const alpha = (scrollyProgress - 0.7) / 0.3;
-            currentBaseY = THREE.MathUtils.lerp(1.2, 2.2, alpha);
+            currentBaseY = THREE.MathUtils.lerp(2.1, 2.2, alpha);
           }
         }
 
