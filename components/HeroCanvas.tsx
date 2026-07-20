@@ -688,8 +688,8 @@ function FloatingGeometry({ isMobile, onDragStateChange }: { isMobile: boolean; 
           rotSpeed: [-0.08, 0.18, 0.07] as [number, number, number],
         },
         {
-          baseX: vWidth * 0.25, // offset right background drop on mobile, away from center text
-          baseY: 2.8,
+          baseX: vWidth * 0.35, // bottom-right background drop on mobile, away from center text
+          baseY: -1.6,
           baseZ: -0.6,
           scale: [0.13, 0.22, 0.13] as [number, number, number],
           parallax: 0.22,
@@ -698,8 +698,8 @@ function FloatingGeometry({ isMobile, onDragStateChange }: { isMobile: boolean; 
           rotSpeed: [0.06, -0.1, 0.04] as [number, number, number],
         },
         {
-          baseX: -vWidth * 0.25, // bottom-left background drop on mobile, away from center text
-          baseY: 2.8,
+          baseX: -vWidth * 0.35, // bottom-left background drop on mobile, away from center text
+          baseY: -1.6,
           baseZ: -0.8,
           scale: [0.11, 0.18, 0.11] as [number, number, number],
           parallax: 0.18,
@@ -730,8 +730,8 @@ function FloatingGeometry({ isMobile, onDragStateChange }: { isMobile: boolean; 
           rotSpeed: [0.15, -0.25, 0.05] as [number, number, number],
         },
         {
-          baseX: vWidth * 0.26, // background gem 3, shifted further to the right margin
-          baseY: -1.3,
+          baseX: vWidth * 0.34, // background gem 3, bottom-right corner
+          baseY: -1.8,
           baseZ: -1.0,
           scale: [0.2, 0.34, 0.2] as [number, number, number],
           parallax: 0.2,
@@ -740,8 +740,8 @@ function FloatingGeometry({ isMobile, onDragStateChange }: { isMobile: boolean; 
           rotSpeed: [-0.05, 0.12, 0.03] as [number, number, number],
         },
         {
-          baseX: -vWidth * 0.28, // background bottom-left gem 4, shifted further to the left margin
-          baseY: -1.5,
+          baseX: -vWidth * 0.34, // background bottom-left gem 4, bottom-left corner
+          baseY: -1.8,
           baseZ: -1.2,
           scale: [0.18, 0.3, 0.18] as [number, number, number],
           parallax: 0.18,
