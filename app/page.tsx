@@ -267,36 +267,38 @@ export default function HomePage() {
           }
         });
 
-        // Initial setup in GSAP context to avoid flash
-        gsap.set('.scrolly-slide-2', { autoAlpha: 0, y: 60, filter: 'blur(8px)', scale: 1.05 });
-        gsap.set('.scrolly-slide-3', { autoAlpha: 0, y: 60, filter: 'blur(8px)', scale: 1.05 });
-        gsap.set('.scrolly-slide-4', { autoAlpha: 0, y: 60, filter: 'blur(8px)', scale: 1.05 });
+        // Initial setup in GSAP context to avoid flash (Desktop only)
+        if (!isMobile) {
+          gsap.set('.scrolly-slide-2', { autoAlpha: 0, y: 60, filter: 'blur(8px)', scale: 1.05 });
+          gsap.set('.scrolly-slide-3', { autoAlpha: 0, y: 60, filter: 'blur(8px)', scale: 1.05 });
+          gsap.set('.scrolly-slide-4', { autoAlpha: 0, y: 60, filter: 'blur(8px)', scale: 1.05 });
 
-        // Apple-level Scrollytelling Reveal Timeline
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: '.scrollytelling-trigger',
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 0.6,
-          }
-        });
+          // Apple-level Scrollytelling Reveal Timeline
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: '.scrollytelling-trigger',
+              start: 'top top',
+              end: 'bottom bottom',
+              scrub: 0.6,
+            }
+          });
 
-        // Slide 1 exits (upwards/dissolves)
-        tl.to('.scrolly-slide-1', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.15 }, 0.05)
-          
-          // Slide 2 enters (from bottom/focuses)
-          .to('.scrolly-slide-2', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.15 }, 0.20)
-          // Slide 2 exits (upwards/dissolves)
-          .to('.scrolly-slide-2', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.15 }, 0.43)
+          // Slide 1 exits (upwards/dissolves)
+          tl.to('.scrolly-slide-1', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.15 }, 0.05)
+            
+            // Slide 2 enters (from bottom/focuses)
+            .to('.scrolly-slide-2', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.15 }, 0.20)
+            // Slide 2 exits (upwards/dissolves)
+            .to('.scrolly-slide-2', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.15 }, 0.43)
 
-          // Slide 3 enters (from bottom/focuses)
-          .to('.scrolly-slide-3', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.15 }, 0.58)
-          // Slide 3 exits (upwards/dissolves)
-          .to('.scrolly-slide-3', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.15 }, 0.81)
+            // Slide 3 enters (from bottom/focuses)
+            .to('.scrolly-slide-3', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.15 }, 0.58)
+            // Slide 3 exits (upwards/dissolves)
+            .to('.scrolly-slide-3', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.15 }, 0.81)
 
-          // Slide 4 enters (from bottom/focuses)
-          .to('.scrolly-slide-4', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.15 }, 0.96);
+            // Slide 4 enters (from bottom/focuses)
+            .to('.scrolly-slide-4', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.15 }, 0.96);
+        }
       });
     };
     init();
@@ -344,49 +346,55 @@ export default function HomePage() {
         className="scrollytelling-trigger"
         style={{
           position: 'relative',
-          height: '350vh', // 3.5 viewports of scroll space
+          height: isMobile ? 'auto' : '350vh', // 3.5 viewports of scroll space on desktop, natural flow on mobile
         }}
       >
         <div
           style={{
-            position: 'sticky',
+            position: isMobile ? 'relative' : 'sticky',
             top: 0,
-            height: '100svh',
+            height: isMobile ? 'auto' : '100svh',
             width: '100%',
-            overflow: 'hidden',
+            overflow: isMobile ? 'visible' : 'hidden',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 2,
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: isMobile ? '8rem' : '0',
+            padding: isMobile ? '9rem 5vw 7rem 5vw' : '0',
           }}
         >
-          {/* Background editorial line */}
-          <div
-            aria-hidden
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: 0,
-              right: 0,
-              height: '1px',
-              background: 'rgba(27,28,28,0.05)',
-              transform: 'translateY(-50%)',
-              pointerEvents: 'none',
-            }}
-          />
+          {/* Background editorial line (Desktop only) */}
+          {!isMobile && (
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: 0,
+                right: 0,
+                height: '1px',
+                background: 'rgba(27,28,28,0.05)',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
+              }}
+            />
+          )}
 
           {/* Slide 1: The Identity (Divy Yadav) */}
           <div
             className="scrolly-slide-1"
             style={{
-              position: 'absolute',
-              inset: 0,
+              position: isMobile ? 'relative' : 'absolute',
+              inset: isMobile ? 'auto' : 0,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '0 5vw',
+              padding: isMobile ? '0' : '0 5vw',
               zIndex: 2,
+              width: '100%',
             }}
           >
             {/* Label */}
@@ -418,7 +426,7 @@ export default function HomePage() {
                 overflow: 'visible',
                 paddingBottom: '0.12em',
                 textAlign: 'center',
-                whiteSpace: 'nowrap',
+                whiteSpace: 'normal',
               }}
             >
               <RoughNotation
@@ -479,7 +487,7 @@ export default function HomePage() {
                 style={{
                   backgroundColor: 'rgba(251, 249, 249, 0.55)', // translucent surface
                   border: '1px solid rgba(27, 28, 28, 0.15)', // ink border outline
-                  padding: '2rem 1.5rem',
+                  padding: isMobile ? '1.5rem 1.25rem' : '2rem 1.5rem',
                   backdropFilter: 'blur(12px)',
                   transition: 'all 300ms cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
@@ -509,7 +517,7 @@ export default function HomePage() {
                 style={{
                   backgroundColor: 'rgba(251, 249, 249, 0.55)', // translucent surface
                   border: '1px solid rgba(27, 28, 28, 0.15)', // ink border outline
-                  padding: '2rem 1.5rem',
+                  padding: isMobile ? '1.5rem 1.25rem' : '2rem 1.5rem',
                   backdropFilter: 'blur(12px)',
                   transition: 'all 300ms cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
@@ -539,7 +547,7 @@ export default function HomePage() {
                 style={{
                   backgroundColor: 'rgba(251, 249, 249, 0.55)', // translucent surface
                   border: '1px solid rgba(27, 28, 28, 0.15)', // ink border outline
-                  padding: '2rem 1.5rem',
+                  padding: isMobile ? '1.5rem 1.25rem' : '2rem 1.5rem',
                   backdropFilter: 'blur(12px)',
                   transition: 'all 300ms cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
@@ -616,18 +624,19 @@ export default function HomePage() {
           <div
             className="scrolly-slide-2"
             style={{
-              position: 'absolute',
-              inset: 0,
+              position: isMobile ? 'relative' : 'absolute',
+              inset: isMobile ? 'auto' : 0,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '0 5vw',
-              opacity: 0,
-              visibility: 'hidden',
-              transform: 'translateY(60px)',
-              filter: 'blur(8px)',
+              padding: isMobile ? '0' : '0 5vw',
+              opacity: isMobile ? 1 : 0,
+              visibility: isMobile ? 'visible' : 'hidden',
+              transform: isMobile ? 'none' : 'translateY(60px)',
+              filter: isMobile ? 'none' : 'blur(8px)',
               zIndex: 2,
+              width: '100%',
             }}
           >
             <p className="label-caps" style={{ marginBottom: '1.5rem' }}>THE CRAFT</p>
@@ -663,18 +672,19 @@ export default function HomePage() {
           <div
             className="scrolly-slide-3"
             style={{
-              position: 'absolute',
-              inset: 0,
+              position: isMobile ? 'relative' : 'absolute',
+              inset: isMobile ? 'auto' : 0,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '0 5vw',
-              opacity: 0,
-              visibility: 'hidden',
-              transform: 'translateY(60px)',
-              filter: 'blur(8px)',
+              padding: isMobile ? '0' : '0 5vw',
+              opacity: isMobile ? 1 : 0,
+              visibility: isMobile ? 'visible' : 'hidden',
+              transform: isMobile ? 'none' : 'translateY(60px)',
+              filter: isMobile ? 'none' : 'blur(8px)',
               zIndex: 2,
+              width: '100%',
             }}
           >
             <p className="label-caps" style={{ marginBottom: '2.5rem' }}>METRICS OF IMPACT</p>
@@ -742,18 +752,19 @@ export default function HomePage() {
           <div
             className="scrolly-slide-4"
             style={{
-              position: 'absolute',
-              inset: 0,
+              position: isMobile ? 'relative' : 'absolute',
+              inset: isMobile ? 'auto' : 0,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '0 5vw',
-              opacity: 0,
-              visibility: 'hidden',
-              transform: 'translateY(60px)',
-              filter: 'blur(8px)',
+              padding: isMobile ? '0' : '0 5vw',
+              opacity: isMobile ? 1 : 0,
+              visibility: isMobile ? 'visible' : 'hidden',
+              transform: isMobile ? 'none' : 'translateY(60px)',
+              filter: isMobile ? 'none' : 'blur(8px)',
               zIndex: 2,
+              width: '100%',
             }}
           >
             <div
