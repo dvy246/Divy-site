@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 210" width="100%" height="100%">
+  <!-- Sketched Open Book (Knowledge) -->
+  <path d="M 110 80 C 130 65, 170 65, 195 80 L 195 160 C 170 145, 130 145, 110 160 Z" fill="none" stroke="#1b1c1c" stroke-width="2" />
+  <path d="M 280 80 C 260 65, 220 65, 195 80 L 195 160 C 220 145, 260 145, 280 160 Z" fill="none" stroke="#1b1c1c" stroke-width="2" stroke-linejoin="round" />
+
+  <!-- Sketched Google G outline in top right corner -->
+  <path d="M 290 60 A 20 20 0 1 1 290 40 L 305 40 L 305 50 L 290 50 M 290 50 L 305 50" fill="none" stroke="#B5502D" stroke-width="2" stroke-linecap="round" />
+
+  <!-- Core format mapping lines -->
+  <path d="M 130 100 L 175 100 M 130 115 L 175 115 M 130 130 L 160 130" stroke="#747878" stroke-width="1.5" />
+  <path d="M 215 100 L 260 100 M 215 115 L 260 115 M 215 130 L 245 130" stroke="#747878" stroke-width="1.5" />
+</svg>

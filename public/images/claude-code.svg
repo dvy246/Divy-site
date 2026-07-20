@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 210" width="100%" height="100%">
+  <!-- Hand-drawn comparing brackets -->
+  <path d="M 40 40 L 40 170 M 360 40 L 360 170" stroke="#efeded" stroke-width="1.5" />
+
+  <!-- Claude Code Terminal Sketch (Left) -->
+  <rect x="70" y="50" width="110" height="110" fill="none" stroke="#1b1c1c" stroke-width="2" />
+  <line x1="70" y1="70" x2="180" y2="70" stroke="#1b1c1c" stroke-width="1.5" />
+  <circle cx="80" cy="60" r="3" fill="#1b1c1c" />
+  <circle cx="90" cy="60" r="3" fill="#1b1c1c" />
+  <circle cx="100" cy="60" r="3" fill="#1b1c1c" />
+  <!-- Prompts inside -->
+  <path d="M 85 95 L 95 105 L 85 115" fill="none" stroke="#B5502D" stroke-width="2" />
+  <line x1="105" y1="115" x2="125" y2="115" stroke="#1b1c1c" stroke-width="2" />
+
+  <!-- VS -->
+  <text x="200" y="110" font-family="sans-serif" font-weight="bold" font-size="14" text-anchor="middle" fill="#747878">VS</text>
+
+  <!-- Codex Editor Sketch (Right) -->
+  <rect x="220" y="50" width="110" height="110" fill="none" stroke="#1b1c1c" stroke-width="2" />
+  <line x1="220" y1="70" x2="330" y2="70" stroke="#1b1c1c" stroke-width="1.5" />
+  <path d="M 235 95 L 245 95 M 235 110 L 265 110 M 235 125 L 255 125" fill="none" stroke="#747878" stroke-width="1.5" stroke-linecap="round" />
+</svg>

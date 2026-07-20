@@ -15,6 +15,31 @@ export interface ArticleCardProps {
 
 function getCardIllustration(title: string): string {
   const t = title.toLowerCase();
+
+  // Specific Medium article title mappings
+  if (t.includes('kimi k3')) {
+    return '/images/kimi-k3.svg';
+  } else if (t.includes('cost optimization') || t.includes('llm bills')) {
+    return '/images/agent-cost.svg';
+  } else if (t.includes('hacked other ai agents') || t.includes('nobody was driving')) {
+    return '/images/agent-hack.svg';
+  } else if (t.includes('claude code vs codex')) {
+    return '/images/claude-code.svg';
+  } else if (t.includes('context rot') || t.includes('long sessions')) {
+    return '/images/context-rot.svg';
+  } else if (t.includes('6 ai concepts')) {
+    return '/images/six-concepts.svg';
+  } else if (t.includes('rag experiment finally proved')) {
+    return '/images/rag-experiment.svg';
+  } else if (t.includes('google just kill rag') || t.includes('open knowledge format')) {
+    return '/images/google-okf.svg';
+  } else if (t.includes('boilerplate code') || t.includes('7 python libraries')) {
+    return '/images/python-boilerplate.svg';
+  } else if (t.includes('openwiki brains') || t.includes('remember you')) {
+    return '/images/openwiki-brains.svg';
+  }
+
+  // Fallbacks for other dynamic articles or newsletter articles
   if (t.includes('9 rag') || t.includes('rag architectures')) {
     return '/images/rag-architectures.svg';
   } else if (t.includes('langgraph') || t.includes('stateful multi-agent')) {

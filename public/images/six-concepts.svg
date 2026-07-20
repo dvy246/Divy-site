@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 210" width="100%" height="100%">
+  <!-- 2x3 Grid dividing lines -->
+  <line x1="170" y1="20" x2="170" y2="190" stroke="#efeded" stroke-width="2" />
+  <line x1="270" y1="20" x2="270" y2="190" stroke="#efeded" stroke-width="2" />
+  <line x1="70" y1="105" x2="330" y2="105" stroke="#efeded" stroke-width="2" />
+
+  <!-- Cell 1: Neural node -->
+  <circle cx="120" cy="62" r="8" fill="none" stroke="#1b1c1c" stroke-width="1.5" />
+  <circle cx="100" cy="45" r="5" fill="none" stroke="#1b1c1c" stroke-width="1" />
+  <circle cx="100" cy="80" r="5" fill="none" stroke="#1b1c1c" stroke-width="1" />
+  <line x1="104" y1="48" x2="114" y2="56" stroke="#747878" stroke-width="1" />
+  <line x1="104" y1="77" x2="114" y2="68" stroke="#747878" stroke-width="1" />
+
+  <!-- Cell 2: Prompt -->
+  <path d="M 200 45 L 240 45 L 240 75 L 220 75 L 210 85 L 210 75 L 200 75 Z" fill="none" stroke="#1b1c1c" stroke-width="1.5" />
+  <line x1="210" y1="55" x2="230" y2="55" stroke="#747878" stroke-width="1" />
+  <line x1="210" y1="65" x2="225" y2="65" stroke="#747878" stroke-width="1" />
+
+  <!-- Cell 3: Embedding Vector -->
+  <line x1="290" y1="75" x2="320" y2="45" stroke="#B5502D" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M 310 45 L 320 45 L 320 55" fill="none" stroke="#B5502D" stroke-width="2" />
+  <path d="M 290 85 L 290 75 L 300 75" fill="none" stroke="#747878" stroke-width="1" />
+
+  <!-- Cell 4: Agent loops -->
+  <path d="M 120 125 A 15 15 0 1 1 120 155 A 15 15 0 1 1 120 125" fill="none" stroke="#B5502D" stroke-width="2" stroke-dasharray="2 2" />
+  <path d="M 120 132 L 126 125 L 120 118" fill="none" stroke="#B5502D" stroke-width="1.5" />
+
+  <!-- Cell 5: Database index -->
+  <ellipse cx="220" cy="132" rx="15" ry="5" fill="none" stroke="#1b1c1c" stroke-width="1.5" />
+  <path d="M 205 132 L 205 152 A 15 5 0 0 0 235 152 L 235 132" fill="none" stroke="#1b1c1c" stroke-width="1.5" />
+
+  <!-- Cell 6: LLM parameters -->
+  <line x1="290" y1="140" x2="330" y2="140" stroke="#747878" stroke-width="1" />
+  <circle cx="310" cy="140" r="5" fill="#1b1c1c" />
+  <line x1="290" y1="150" x2="330" y2="150" stroke="#747878" stroke-width="1" />
+  <circle cx="300" cy="150" r="5" fill="#B5502D" />
+</svg>

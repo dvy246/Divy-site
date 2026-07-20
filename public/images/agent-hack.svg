@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 210" width="100%" height="100%">
+  <!-- Grid helper -->
+  <line x1="50" y1="105" x2="350" y2="105" stroke="#efeded" stroke-width="1.5" />
+
+  <!-- Agent 1 Box (Left) -->
+  <rect x="80" y="65" width="80" height="80" fill="none" stroke="#1b1c1c" stroke-width="2" />
+  <text x="120" y="110" font-family="monospace" font-size="11" text-anchor="middle" fill="#747878">AGENT_A</text>
+
+  <!-- Connection line with break/hack lightning bolt -->
+  <path d="M 160 105 L 210 105 L 205 90 L 215 120 L 210 105 L 240 105" fill="none" stroke="#B5502D" stroke-width="2.5" />
+  
+  <!-- Agent 2 Box (Right) -->
+  <rect x="240" y="65" width="80" height="80" fill="none" stroke="#1b1c1c" stroke-width="2" />
+  <text x="280" y="110" font-family="monospace" font-size="11" text-anchor="middle" fill="#747878">AGENT_B</text>
+
+  <!-- Sketched security skull or alert symbol over right agent -->
+  <path d="M 265 60 L 295 60 L 280 40 Z" fill="none" stroke="#B5502D" stroke-width="1.5" />
+  <circle cx="280" cy="53" r="1.5" fill="#B5502D" />
+</svg>
