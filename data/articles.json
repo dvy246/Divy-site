@@ -5,9 +5,8 @@
     "date": "2026-07-19",
     "summary": "The world’s largest open-source AI model is now competitive with Fable 5 while outperforming GPT-5.6 Sol, GPT-5.5, and Opus 4.8 on a major…",
     "tags": [
-      "Technology",
-      "Artificial Intelligence",
-      "Programming"
+      "LLMs",
+      "Python"
     ]
   },
   {
@@ -16,9 +15,8 @@
     "date": "2026-07-18",
     "summary": "Fixes that bring an AI agent’s bill down in production",
     "tags": [
-      "Llm",
-      "Technology",
-      "Artificial Intelligence"
+      "Agents",
+      "AWS"
     ]
   },
   {
@@ -27,9 +25,9 @@
     "date": "2026-07-18",
     "summary": "In February 2026, an autonomous bot broke into the software other AI agents run on. OWASP now says the flaw it used can’t be patched. Only…",
     "tags": [
-      "Software Development",
-      "Programming",
-      "Artificial Intelligence"
+      "Agents",
+      "Security",
+      "AWS"
     ]
   },
   {
@@ -38,9 +36,8 @@
     "date": "2026-07-17",
     "summary": "Same task, same result, ten times the bill. Here’s exactly where each AI coding agent actually wins, backed by real numbers, not marketing…",
     "tags": [
-      "Data Science",
-      "Artificial Intelligence",
-      "Programming"
+      "Agents",
+      "Python"
     ]
   },
   {
@@ -49,9 +46,8 @@
     "date": "2026-07-16",
     "summary": "It’s not the model. There’s a documented failure behind it called context rot, and almost nobody’s fixing the real cause.",
     "tags": [
-      "Data Science",
-      "Software Development",
-      "Technology"
+      "LLMs",
+      "Python"
     ]
   },
   {
@@ -60,9 +56,8 @@
     "date": "2026-07-15",
     "summary": "Job postings asking for AI skills are up 143% in a single year. The people filling those roles didn’t spend years on advanced math. They…",
     "tags": [
-      "Data Science",
-      "Artificial Intelligence",
-      "Technology"
+      "LLMs",
+      "Python"
     ]
   },
   {
@@ -71,9 +66,8 @@
     "date": "2026-07-14",
     "summary": "A new study on RAG and GraphRAG systems found that adding FAIR principles and structured knowledge graphs to the same AI model raised…",
     "tags": [
-      "Machine Learning",
-      "Technology",
-      "Data Science"
+      "RAG",
+      "Python"
     ]
   },
   {
@@ -82,9 +76,8 @@
     "date": "2026-07-13",
     "summary": "Google published a new format in June. Within weeks, engineers everywhere were asking if it just ended Retrieval-Augmented Generation.",
     "tags": [
-      "Data Science",
-      "Software Development",
-      "Programming"
+      "RAG",
+      "AWS"
     ]
   },
   {
@@ -93,9 +86,8 @@
     "date": "2026-07-13",
     "summary": "Retry logic, token counting, structured outputs, tool servers: none of it is the interesting part of building with AI. Here’s what quietly…",
     "tags": [
-      "Data Science",
-      "Technology",
-      "Programming"
+      "Python",
+      "AWS"
     ]
   },
   {
@@ -104,9 +96,8 @@
     "date": "2026-07-11",
     "summary": "Most agent memory only holds onto what you explicitly say. OpenWiki goes out and builds context on its own, from the places you already…",
     "tags": [
-      "Data Science",
-      "Artificial Intelligence",
-      "Programming"
+      "Agents",
+      "RAG"
     ]
   }
 ]

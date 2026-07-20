@@ -44,16 +44,40 @@ async function syncMedium() {
         ? cleanText.slice(0, 160) + '…' 
         : cleanText;
         
-      // 2. Format tags to Title Case and clean up
-      const tags = (item.categories || []).map((cat) => {
-        return cat
-          .split('-')
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
-      });
-      
-      // Fallback tags if empty
-      const finalTags = tags.length > 0 ? tags : ['AI Engineering', 'Technology'];
+      // 2. Map high-end engineering tags based on title keywords
+      const titleLower = item.title.toLowerCase();
+      let finalTags = [];
+
+      if (titleLower.includes('cost optimization') || titleLower.includes('bill')) {
+        finalTags = ['Agents', 'AWS'];
+      } else if (titleLower.includes('hacked') || titleLower.includes('hack')) {
+        finalTags = ['Agents', 'Security', 'AWS'];
+      } else if (titleLower.includes('kimi k3') || titleLower.includes('gpt-5') || titleLower.includes('opus')) {
+        finalTags = ['LLMs', 'Python'];
+      } else if (titleLower.includes('claude code') || titleLower.includes('codex')) {
+        finalTags = ['Agents', 'Python'];
+      } else if (titleLower.includes('context rot') || titleLower.includes('long sessions')) {
+        finalTags = ['LLMs', 'Python'];
+      } else if (titleLower.includes('6 ai concepts') || titleLower.includes('become an ai engineer')) {
+        finalTags = ['LLMs', 'Python'];
+      } else if (titleLower.includes('rag experiment') || titleLower.includes('was never the problem')) {
+        finalTags = ['RAG', 'Python'];
+      } else if (titleLower.includes('kill rag') || titleLower.includes('open knowledge format')) {
+        finalTags = ['RAG', 'AWS'];
+      } else if (titleLower.includes('boilerplate') || titleLower.includes('python libraries')) {
+        finalTags = ['Python', 'AWS'];
+      } else if (titleLower.includes('openwiki brains') || titleLower.includes('remember you')) {
+        finalTags = ['Agents', 'RAG'];
+      } else {
+        // Fallback parsed tags from Medium
+        const parsedTags = (item.categories || []).map((cat) => {
+          return cat
+            .split('-')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        });
+        finalTags = parsedTags.length > 0 ? parsedTags : ['LLMs', 'Python'];
+      }
       
       // 3. Format Date to YYYY-MM-DD
       const date = item.pubDate 
@@ -65,7 +89,7 @@ async function syncMedium() {
         url: item.link,
         date: date,
         summary: summary,
-        tags: finalTags.slice(0, 3) // maximum of 3 tags for layout spacing
+        tags: finalTags
       };
     });
     
