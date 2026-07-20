@@ -461,24 +461,39 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Bio grid section */}
+            {/* Bio grid section - 3 individual deck cards */}
             <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-                gap: isMobile ? '1.5rem' : '2.5rem',
+                gap: isMobile ? '1.25rem' : '2rem',
                 width: '100%',
                 maxWidth: '820px',
                 marginBottom: '3.6rem',
-                padding: isMobile ? '1.5rem 1.25rem' : '2rem 1.5rem',
-                backgroundColor: 'rgba(232, 232, 208, 0.25)', // soft translucent parchment card background
-                border: '1px solid #1b1c1c',
                 animation: 'fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.9s both',
                 textAlign: 'left',
               }}
             >
-              {/* Column 1: Focus */}
-              <div>
+              {/* Card 1: Focus */}
+              <div
+                style={{
+                  backgroundColor: 'rgba(251, 249, 249, 0.55)', // translucent surface
+                  border: '1px solid rgba(27, 28, 28, 0.15)', // ink border outline
+                  padding: '2rem 1.5rem',
+                  backdropFilter: 'blur(12px)',
+                  transition: 'all 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#B5502D';
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.backgroundColor = 'rgba(232, 232, 208, 0.55)'; // parchment highlight
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(27, 28, 28, 0.15)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.backgroundColor = 'rgba(251, 249, 249, 0.55)';
+                }}
+              >
                 <p className="label-caps" style={{ fontSize: '10px', color: '#B5502D', marginBottom: '0.6rem', fontWeight: 700, letterSpacing: '0.12em' }}>CORE FOCUS</p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                   {['Multi-Agent Systems', 'RAG Pipelines', 'LLM Infrastructure'].map((item) => (
@@ -489,8 +504,26 @@ export default function HomePage() {
                 </ul>
               </div>
               
-              {/* Column 2: Collaboration */}
-              <div>
+              {/* Card 2: Collaboration */}
+              <div
+                style={{
+                  backgroundColor: 'rgba(251, 249, 249, 0.55)', // translucent surface
+                  border: '1px solid rgba(27, 28, 28, 0.15)', // ink border outline
+                  padding: '2rem 1.5rem',
+                  backdropFilter: 'blur(12px)',
+                  transition: 'all 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#B5502D';
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.backgroundColor = 'rgba(232, 232, 208, 0.55)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(27, 28, 28, 0.15)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.backgroundColor = 'rgba(251, 249, 249, 0.55)';
+                }}
+              >
                 <p className="label-caps" style={{ fontSize: '10px', color: '#B5502D', marginBottom: '0.6rem', fontWeight: 700, letterSpacing: '0.12em' }}>COLLABORATED WITH</p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                   {['TensorLake', 'Superteams AI', 'Freelance Atelier'].map((item) => (
@@ -501,8 +534,26 @@ export default function HomePage() {
                 </ul>
               </div>
               
-              {/* Column 3: Reach */}
-              <div>
+              {/* Card 3: Reach */}
+              <div
+                style={{
+                  backgroundColor: 'rgba(251, 249, 249, 0.55)', // translucent surface
+                  border: '1px solid rgba(27, 28, 28, 0.15)', // ink border outline
+                  padding: '2rem 1.5rem',
+                  backdropFilter: 'blur(12px)',
+                  transition: 'all 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#B5502D';
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.backgroundColor = 'rgba(232, 232, 208, 0.55)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(27, 28, 28, 0.15)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.backgroundColor = 'rgba(251, 249, 249, 0.55)';
+                }}
+              >
                 <p className="label-caps" style={{ fontSize: '10px', color: '#B5502D', marginBottom: '0.6rem', fontWeight: 700, letterSpacing: '0.12em' }}>AUDIENCE REACH</p>
                 <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: '#1b1c1c', fontWeight: 600, margin: 0, lineHeight: 1.45 }}>
                   <span style={{ fontSize: '20px', fontWeight: 800, color: '#B5502D', display: 'block', marginBottom: '0.1rem', lineHeight: 1 }}>2,000+</span>
@@ -640,11 +691,22 @@ export default function HomePage() {
                 <div
                   key={stat.label}
                   style={{
-                    backgroundColor: i % 2 === 0 ? 'rgba(245, 245, 220, 0.45)' : 'rgba(232, 232, 208, 0.45)',
-                    border: '1px solid #1b1c1c',
+                    background: 'linear-gradient(135deg, rgba(251, 249, 249, 0.65) 0%, rgba(232, 232, 208, 0.4) 100%)',
+                    border: '1px solid rgba(27, 28, 28, 0.15)',
                     padding: '2.5rem 1.5rem',
                     textAlign: 'center',
-                    backdropFilter: 'blur(8px)',
+                    backdropFilter: 'blur(16px)',
+                    transition: 'all 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#B5502D';
+                    e.currentTarget.style.backgroundColor = 'rgba(232, 232, 208, 0.6)';
+                    e.currentTarget.style.transform = 'translateY(-5px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(27, 28, 28, 0.15)';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.transform = 'translateY(0)';
                   }}
                 >
                   <p

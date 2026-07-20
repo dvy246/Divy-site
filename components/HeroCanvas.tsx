@@ -116,6 +116,8 @@ interface AccentProps {
   isMobile: boolean;
   mouseRef: React.MutableRefObject<{ x: number; y: number; tx: number; ty: number }>;
   index: number;
+  onDragStateChange: (dragging: boolean) => void;
+  meshRefs: React.MutableRefObject<(THREE.Mesh | null)[]>;
 }
 
 /* === Individual Accent Element Component (Premium Liquid Glass Drop with click-to-split) === */
@@ -131,12 +133,21 @@ function AccentElement({
   isMobile,
   mouseRef,
   index,
+  onDragStateChange,
+  meshRefs,
 }: AccentProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<any>(null);
   const groupRef = useRef<THREE.Group>(null);
   const geomRef = useRef<THREE.BufferGeometry>(null);
   const originalPos = useRef<Float32Array | null>(null);
+
+  // Sync ref to parent meshRefs for connection wires
+  useEffect(() => {
+    if (meshRef.current) {
+      meshRefs.current[index] = meshRef.current;
+    }
+  }, [meshRef, index, meshRefs]);
   
   const timeOffset = useRef(Math.random() * 100);
   const currentScaleFactor = useRef(0.001);
@@ -174,6 +185,7 @@ function AccentElement({
       clickStartTime.current = Date.now();
       dragDistance.current = 0;
       document.body.style.cursor = 'grabbing';
+      onDragStateChange(true); // lock pointerEvents
     }
   };
 
@@ -184,6 +196,7 @@ function AccentElement({
       isDragging.current = false;
       pointerId.current = null;
       document.body.style.cursor = 'grab';
+      onDragStateChange(false); // unlock pointerEvents
       
       const elapsed = Date.now() - clickStartTime.current;
       if (elapsed < 250 && dragDistance.current < 0.15) {
@@ -488,10 +501,11 @@ function AccentElement({
         const ny = y / len;
         const nz = z / len;
 
-        // Dynamic wave displacement curves
-        const wave1 = Math.sin(x * 1.6 + time) * Math.cos(y * 1.6 + time) * 0.09;
-        const wave2 = Math.sin(z * 3.2 - time * 1.1) * 0.05;
-        const wave3 = Math.cos(x * 4.8 + y * 4.8 + time * 1.5) * 0.02;
+        // Dynamic wave displacement curves - morphs more dynamically based on scroll
+        const scrollAmpMultiplier = 1.0 + scrollyProgress * 1.4;
+        const wave1 = Math.sin(x * 1.6 + time) * Math.cos(y * 1.6 + time) * 0.09 * scrollAmpMultiplier;
+        const wave2 = Math.sin(z * 3.2 - time * 1.1) * 0.05 * scrollAmpMultiplier;
+        const wave3 = Math.cos(x * 4.8 + y * 4.8 + time * 1.5) * 0.02 * scrollAmpMultiplier;
         let displacement = wave1 + wave2 + wave3;
 
         // Swell vertex if cursor is close in world space
@@ -576,11 +590,63 @@ function AccentElement({
   );
 }
 
+/* === Connecting neural wires between droplets === */
+function ConnectionWires({ meshRefs }: { meshRefs: React.MutableRefObject<(THREE.Mesh | null)[]> }) {
+  const lineRef = useRef<THREE.LineSegments>(null);
+
+  useFrame(() => {
+    if (!lineRef.current) return;
+    const geom = lineRef.current.geometry;
+    const posAttr = geom.attributes.position;
+    const positions = posAttr.array as Float32Array;
+    
+    const meshes = meshRefs.current;
+    let posIdx = 0;
+
+    // Symmetrical connection pairs: fully connected network
+    const pairs = [
+      [0, 1], [1, 2], [2, 3], [3, 0], [0, 2], [1, 3]
+    ];
+
+    pairs.forEach(([p1, p2]) => {
+      const m1 = meshes[p1];
+      const m2 = meshes[p2];
+      if (m1 && m2) {
+        positions[posIdx++] = m1.position.x;
+        positions[posIdx++] = m1.position.y;
+        positions[posIdx++] = m1.position.z;
+        positions[posIdx++] = m2.position.x;
+        positions[posIdx++] = m2.position.y;
+        positions[posIdx++] = m2.position.z;
+      } else {
+        posIdx += 6;
+      }
+    });
+
+    posAttr.needsUpdate = true;
+  });
+
+  const initialPositions = new Float32Array(36); // 6 lines * 2 points * 3 coordinates = 36 values
+
+  return (
+    <lineSegments ref={lineRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          args={[initialPositions, 3] as any}
+        />
+      </bufferGeometry>
+      <lineBasicMaterial color="#1b1c1c" opacity={0.065} transparent />
+    </lineSegments>
+  );
+}
+
 /* === Main geometry + materials with dynamic morphing & responsive scaling === */
-function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
+function FloatingGeometry({ isMobile, onDragStateChange }: { isMobile: boolean; onDragStateChange: (dragging: boolean) => void }) {
   const { viewport } = useThree();
   const mouse = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
   const shadowRefs = useRef<THREE.Group[]>([]);
+  const meshRefs = useRef<(THREE.Mesh | null)[]>([]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -745,6 +811,9 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
 
   return (
     <group>
+      {/* Dynamic neural connection wires */}
+      {!isMobile && <ConnectionWires meshRefs={meshRefs} />}
+
       {/* 2. Symmetrical liquid crystal gems */}
       {accentsList.map((item, idx) => (
         <AccentElement
@@ -760,6 +829,8 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
           isMobile={isMobile}
           mouseRef={mouse}
           index={idx}
+          onDragStateChange={onDragStateChange}
+          meshRefs={meshRefs}
         />
       ))}
 
@@ -784,6 +855,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
   const containerRef = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(true);
   const [pointerEvents, setPointerEvents] = useState<'none' | 'auto'>('none');
+  const [anyDragging, setAnyDragging] = useState(false);
 
   // IntersectionObserver to completely unmount Canvas when scrolled past bio section
   useEffect(() => {
@@ -816,6 +888,10 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
     if (typeof window === 'undefined' || isMobile) return;
 
     const handleMouseMove = (e: MouseEvent) => {
+      if (anyDragging) {
+        setPointerEvents('auto');
+        return;
+      }
       const w = window.innerWidth;
       // Margins left 22% and right 22% do not block any text interactions in the center of the page
       if (e.clientX < w * 0.22 || e.clientX > w * 0.78) {
@@ -827,7 +903,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [isMobile]);
+  }, [isMobile, anyDragging]);
 
   return (
     <div
@@ -868,7 +944,7 @@ export default function HeroCanvas({ isMobile = false }: { isMobile?: boolean })
           <Environment preset="studio" />
 
           <CameraController isMobile={isMobile} />
-          <FloatingGeometry isMobile={isMobile} />
+          <FloatingGeometry isMobile={isMobile} onDragStateChange={setAnyDragging} />
         </Canvas>
       )}
     </div>
