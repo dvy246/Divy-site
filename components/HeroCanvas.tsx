@@ -537,13 +537,6 @@ function FloatingGeometry({ isMobile }: { isMobile: boolean }) {
 
   return (
     <group>
-      {/* 1. Backdrop Grid inside canvas to refract */}
-      <gridHelper 
-        args={[20, 20, '#e2d6c1', '#e2d6c1']} 
-        position={[0, 0, -1.5]} 
-        rotation={[Math.PI / 2, 0, 0]} 
-      />
-
       {/* 2. Symmetrical liquid crystal gems */}
       {accentsList.map((item, idx) => (
         <AccentElement

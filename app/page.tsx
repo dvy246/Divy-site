@@ -351,9 +351,11 @@ export default function HomePage() {
                 type="underline"
                 color="#B5502D"
                 show={show}
-                strokeWidth={4}
+                strokeWidth={3.5}
+                iterations={2}
+                padding={12}
                 animationDelay={1000}
-                animationDuration={700}
+                animationDuration={800}
               >
                 <SplitText text="Divy Yadav" delay={0.15} />
               </RoughNotation>

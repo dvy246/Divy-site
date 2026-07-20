@@ -175,17 +175,6 @@ export default function Footer() {
           >
             © {currentYear} Divy Yadav. Handcrafted.
           </p>
-          <p
-            style={{
-              fontFamily: '"DM Sans", system-ui, sans-serif',
-              fontSize: '11px',
-              color: 'rgba(242,240,240,0.25)',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Built with Next.js
-          </p>
         </div>
       </div>
     </footer>
