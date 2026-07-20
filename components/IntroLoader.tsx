@@ -91,7 +91,9 @@ export default function IntroLoader({ onComplete }: { onComplete: () => void }) 
       }
     }
 
-    const particles: Particle[] = Array.from({ length: 150 }).map(() => new Particle());
+    const isMobileViewport = typeof window !== 'undefined' && window.innerWidth < 768;
+    const particlesCount = isMobileViewport ? 75 : 150;
+    const particles: Particle[] = Array.from({ length: particlesCount }).map(() => new Particle());
     const startTime = Date.now();
 
     const render = () => {

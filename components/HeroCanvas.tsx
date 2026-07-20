@@ -834,14 +834,14 @@ function FloatingGeometry({ isMobile, onDragStateChange }: { isMobile: boolean; 
         />
       ))}
 
-      {/* 3. Soft Contact Shadows dynamically following droplets */}
-      {accentsList.map((item, idx) => (
+      {/* 3. Soft Contact Shadows dynamically following droplets (completely disabled on mobile to save offscreen camera render passes) */}
+      {!isMobile && accentsList.map((item, idx) => (
         <group key={`shadow-grp-${idx}`} ref={(el) => { if (el) shadowRefs.current[idx] = el; }}>
           <ContactShadows
             position={[0, 0, item.baseZ - 1.0]}
-            opacity={isMobile ? 0.25 : 0.4}
-            scale={isMobile ? 3.0 : 4.5}
-            blur={isMobile ? 1.5 : 2.2}
+            opacity={0.4}
+            scale={4.5}
+            blur={2.2}
             far={3.0}
           />
         </group>
