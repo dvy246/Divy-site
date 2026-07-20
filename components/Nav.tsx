@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { label: 'Newsletter', href: '/newsletter' },
   { label: 'Projects',   href: '/projects' },
   { label: 'Skills',     href: '/skills' },
+  { label: 'Portfolio',  href: 'https://drive.google.com/file/d/1Fz6aE8Ns_4n0R9QoC9sQN5l45MCYIyI6/view?usp=drive_link', isExternal: true },
   { label: 'Connect',    href: '/connect' },
 ];
 
@@ -69,6 +70,8 @@ export default function Nav() {
         >
           <Link
             href={link.href}
+            target={link.isExternal ? '_blank' : undefined}
+            rel={link.isExternal ? 'noopener noreferrer' : undefined}
             aria-current={isActive ? 'page' : undefined}
             style={{
               fontFamily: '"DM Sans", sans-serif',
@@ -170,7 +173,7 @@ export default function Nav() {
         >
           {/* Left group of links */}
           <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center', width: '38%' }}>
-            {NAV_LINKS.slice(0, 2).map((link) => renderLink(link))}
+            {NAV_LINKS.slice(0, 3).map((link) => renderLink(link))}
           </div>
 
           {/* Center: Monogram */}
@@ -204,7 +207,7 @@ export default function Nav() {
 
           {/* Right group of links */}
           <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center', justifyContent: 'flex-end', width: '38%' }}>
-            {NAV_LINKS.slice(2).map((link) => renderLink(link))}
+            {NAV_LINKS.slice(3).map((link) => renderLink(link))}
           </div>
         </div>
 
@@ -300,6 +303,8 @@ export default function Nav() {
           <Link
             key={link.href}
             href={link.href}
+            target={link.isExternal ? '_blank' : undefined}
+            rel={link.isExternal ? 'noopener noreferrer' : undefined}
             style={{
               fontFamily: '"Playfair Display", Georgia, serif',
               fontSize: '2.2rem',
