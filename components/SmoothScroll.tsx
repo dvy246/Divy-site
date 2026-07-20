@@ -22,7 +22,20 @@ export default function SmoothScroll() {
 
       gsap.registerPlugin(ScrollTrigger);
 
-      // R1. Scroll Hijacking Fix: duration 1.2, custom easing
+      const isMobileDevice = typeof window !== 'undefined' && window.innerWidth < 768;
+
+      if (isMobileDevice) {
+        // Setup direct ScrollTrigger updates for native mobile scrolling
+        handleResize = () => ScrollTrigger.refresh();
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('load', handleResize);
+        setTimeout(() => {
+          if (active) ScrollTrigger.refresh();
+        }, 500);
+        return;
+      }
+
+      // R1. Scroll Hijacking Fix: duration 1.3, custom easing
       lenisInstance = new Lenis({
         duration: 1.3,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -39,7 +52,6 @@ export default function SmoothScroll() {
       gsap.ticker.lagSmoothing(0);
       lenisInstance.on('scroll', ScrollTrigger.update);
 
-      // ScrollTrigger Optimization: call ScrollTrigger.refresh() on load and resize
       handleResize = () => ScrollTrigger.refresh();
       window.addEventListener('resize', handleResize);
       window.addEventListener('load', handleResize);

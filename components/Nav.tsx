@@ -305,6 +305,7 @@ export default function Nav() {
             href={link.href}
             target={link.isExternal ? '_blank' : undefined}
             rel={link.isExternal ? 'noopener noreferrer' : undefined}
+            onClick={() => setMenuOpen(false)}
             style={{
               fontFamily: '"Playfair Display", Georgia, serif',
               fontSize: '2.2rem',
