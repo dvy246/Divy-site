@@ -103,26 +103,33 @@ function ProjectCard({ project }: { project: ProjectType }) {
       {/* Featured Badge */}
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          transform: 'translateZ(30px)',
+          transformStyle: 'preserve-3d',
           marginBottom: '1.25rem',
         }}
       >
-        <span
+        <div
           style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '9px',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            fontWeight: 600,
-            color: project.featured ? '#B5502D' : '#747878',
-            border: project.featured ? '1px solid #B5502D' : '1px solid rgba(27, 28, 28, 0.15)',
-            padding: '2px 8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
-          {project.featured ? 'Featured' : 'Project'}
-        </span>
+          <span
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '9px',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              fontWeight: 600,
+              color: project.featured ? '#B5502D' : '#747878',
+              border: project.featured ? '1px solid #B5502D' : '1px solid rgba(27, 28, 28, 0.15)',
+              padding: '2px 8px',
+            }}
+          >
+            {project.featured ? 'Featured' : 'Project'}
+          </span>
+        </div>
       </div>
 
       {/* Category */}
@@ -135,37 +142,45 @@ function ProjectCard({ project }: { project: ProjectType }) {
           color: '#747878',
           fontWeight: 600,
           marginBottom: '0.75rem',
+          transform: 'translateZ(35px)',
         }}
       >
         {project.category}
       </p>
 
-      {/* Title */}
-      <h2
+      {/* Title & Description Area */}
+      <div
         style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(1.2rem, 2vw, 1.5rem)',
-          fontWeight: 700,
-          color: '#1b1c1c',
-          lineHeight: 1.25,
-          marginBottom: '1rem',
-        }}
-      >
-        {project.title}
-      </h2>
-
-      {/* Description */}
-      <p
-        style={{
-          fontFamily: 'var(--font-body)',
-          fontSize: '0.9rem',
-          lineHeight: 1.7,
-          color: '#444748',
+          transform: 'translateZ(50px)',
+          transformStyle: 'preserve-3d',
           marginBottom: '1.75rem',
         }}
       >
-        {project.description}
-      </p>
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(1.2rem, 2vw, 1.5rem)',
+            fontWeight: 700,
+            color: '#1b1c1c',
+            lineHeight: 1.25,
+            marginBottom: '1rem',
+          }}
+        >
+          {project.title}
+        </h2>
+
+        <p
+          style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.9rem',
+            lineHeight: 1.7,
+            color: '#444748',
+            margin: 0,
+          }}
+        >
+          {project.description}
+        </p>
+      </div>
 
       {/* Tags */}
       <div
@@ -175,6 +190,8 @@ function ProjectCard({ project }: { project: ProjectType }) {
           gap: '0.35rem',
           marginBottom: '2rem',
           marginTop: 'auto',
+          transform: 'translateZ(40px)',
+          transformStyle: 'preserve-3d',
         }}
       >
         {project.tags.map((tag) => (
@@ -189,15 +206,24 @@ function ProjectCard({ project }: { project: ProjectType }) {
               padding: '2px 8px',
               fontWeight: 500,
               backgroundColor: '#E8E8D0',
+              display: 'inline-block',
             }}
           >
-            {tag}
+             {tag}
           </span>
         ))}
       </div>
 
       {/* Action Buttons */}
-      <div style={{ display: 'flex', gap: '0.75rem', zIndex: 20 }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.75rem',
+          zIndex: 20,
+          transform: 'translateZ(60px)',
+          transformStyle: 'preserve-3d',
+        }}
+      >
         {project.github !== null && (
           <Magnetic range={36} strength={0.3}>
             <a

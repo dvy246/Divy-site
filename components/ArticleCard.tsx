@@ -153,6 +153,7 @@ export default function ArticleCard({
             flexDirection: 'column',
             overflow: 'hidden',
             transform: 'translateZ(0px)', // hardware acceleration standard
+            transformStyle: 'preserve-3d',
           }}
         >
           {/* Glass sheen reflection overlay (mouse-tracking) */}
@@ -174,6 +175,8 @@ export default function ArticleCard({
               width: '100%',
               height: '210px',
               borderBottom: '1px solid #1b1c1c',
+              transform: 'translateZ(30px)',
+              transformStyle: 'preserve-3d',
             }}
           >
             <Image
@@ -196,6 +199,8 @@ export default function ArticleCard({
               flexDirection: 'column',
               flexGrow: 1,
               justifyContent: 'space-between',
+              transform: 'translateZ(50px)',
+              transformStyle: 'preserve-3d',
             }}
           >
             <div>
@@ -295,9 +300,15 @@ export default function ArticleCard({
             justifyContent: 'space-between',
             padding: '2rem 1.75rem',
             border: '1px solid rgba(245, 245, 220, 0.15)', // sub-pixel frame
+            transformStyle: 'preserve-3d',
           }}
         >
-          <div>
+          <div
+            style={{
+              transform: 'translateZ(40px)',
+              transformStyle: 'preserve-3d',
+            }}
+          >
             {tags && tags.length > 0 && (
               <div style={{ display: 'flex', gap: '0.35rem', marginBottom: '0.8rem', flexWrap: 'wrap' }}>
                 {tags.map((tag) => (
@@ -349,7 +360,7 @@ export default function ArticleCard({
               </p>
             )}
           </div>
-
+          
           <div
             style={{
               display: 'flex',
@@ -357,6 +368,8 @@ export default function ArticleCard({
               justifyContent: 'space-between',
               borderTop: '1px solid rgba(245, 245, 220, 0.15)',
               paddingTop: '1.25rem',
+              transform: 'translateZ(55px)',
+              transformStyle: 'preserve-3d',
             }}
           >
             <span
