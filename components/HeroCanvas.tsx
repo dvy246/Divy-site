@@ -337,8 +337,8 @@ function AccentElement({
     let currentBaseZ = baseZ;
 
     if (!isMobile) {
-      if (index === 2) {
-        // Background gem 3: calm floating deeper, shifts down on scroll
+      if (index >= 2) {
+        // Background gems 3 & 4: calm floating deeper, shifts down on scroll
         currentBaseY = baseY - scrollyProgress * 1.5;
         currentBaseZ = baseZ - scrollyProgress * 0.5;
       } else {
@@ -365,8 +365,8 @@ function AccentElement({
         }
       }
     } else {
-      if (index === 2) {
-        // Mobile Gem 3 background path
+      if (index >= 2) {
+        // Mobile Gems 3 & 4 background path
         currentBaseY = baseY + scrollyProgress * 0.8;
       } else {
         // Mobile paths: stay high up (Y >= 2.0) to frame header and completely avoid central body text
