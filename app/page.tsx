@@ -220,20 +220,20 @@ export default function HomePage() {
         });
 
         // Slide 1 exits (upwards/dissolves)
-        tl.to('.scrolly-slide-1', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.17 }, 0.05)
+        tl.to('.scrolly-slide-1', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.15 }, 0.05)
           
           // Slide 2 enters (from bottom/focuses)
-          .to('.scrolly-slide-2', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.17 }, 0.22)
+          .to('.scrolly-slide-2', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.15 }, 0.20)
           // Slide 2 exits (upwards/dissolves)
-          .to('.scrolly-slide-2', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.17 }, 0.49)
+          .to('.scrolly-slide-2', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.15 }, 0.43)
 
           // Slide 3 enters (from bottom/focuses)
-          .to('.scrolly-slide-3', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.17 }, 0.66)
+          .to('.scrolly-slide-3', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.15 }, 0.58)
           // Slide 3 exits (upwards/dissolves)
-          .to('.scrolly-slide-3', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.17 }, 0.93)
+          .to('.scrolly-slide-3', { autoAlpha: 0, y: -60, filter: 'blur(8px)', scale: 0.95, duration: 0.15 }, 0.81)
 
           // Slide 4 enters (from bottom/focuses)
-          .to('.scrolly-slide-4', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.17 }, 1.10);
+          .to('.scrolly-slide-4', { autoAlpha: 1, y: 0, filter: 'blur(0px)', scale: 1.0, duration: 0.15 }, 0.96);
       });
     };
     init();
@@ -519,7 +519,7 @@ export default function HomePage() {
                 gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
                 gap: '2rem',
                 width: '100%',
-                maxWidth: '900px',
+                maxWidth: '780px',
               }}
             >
               {STATS.map((stat, i) => (
